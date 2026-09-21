@@ -20,6 +20,7 @@ $preservedSettings = if (Test-Path -LiteralPath $settingsPath -PathType Leaf) {
 }
 
 if (-not (Test-Path $project -PathType Leaf)) { throw "App project not found: $project" }
+if ($Configuration -ne 'Release') { throw 'WISK release publishing requires Release configuration.' }
 if ($Runtime -ne 'win-x64') { throw 'WISK release runtime must be win-x64.' }
 if ($Version -notmatch '^\d+\.\d+\.\d+([-.][0-9A-Za-z.-]+)?$') { throw 'Version must be a semantic version.' }
 $normalizedThumbprint = $CertificateThumbprint.Replace(' ', '').ToUpperInvariant()

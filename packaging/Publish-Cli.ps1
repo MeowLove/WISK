@@ -14,6 +14,7 @@ $output = Join-Path $repoRoot "artifacts\publish\Release\SelfContained\cli\$Runt
 $manifestPath = Join-Path $output "release-manifest.json"
 
 if ($Runtime -ne "win-x64") { throw "WISK release runtime must be win-x64." }
+if ($Configuration -ne "Release") { throw "WISK CLI publishing requires Release configuration." }
 if ($Version -notmatch '^\d+\.\d+\.\d+([-.][0-9A-Za-z.-]+)?$') { throw "Version must be a semantic version." }
 $normalizedThumbprint = $CertificateThumbprint.Replace(" ", "").ToUpperInvariant()
 if ($normalizedThumbprint -and $normalizedThumbprint -notmatch '^[0-9A-F]{40,64}$') { throw "Certificate thumbprint is invalid." }
