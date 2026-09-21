@@ -27,8 +27,9 @@ src/                 WISK application layers and shared contracts
 tests/               Core, execution, bridge, catalog, and UI contract tests
 catalog/             Public software/settings catalog metadata
 schema/              Machine-readable catalog and profile schemas
-packaging/           Release and CLI publishing scripts
+packaging/           Release and CLI publishing wrappers
 tools/               Read-only UI smoke and catalog validation tools
+artifacts/           Ignored build, test, and publish output
 docs/                Public architecture and development documentation
 legacy/              Retained V1 PowerShell implementation for migration context
 requirements/        Local-only V3 requirements; ignored by Git
@@ -43,20 +44,27 @@ metadata, title, and release version are WISK 3.0.0.
 The repository pins .NET SDK `10.0.401` in `global.json`.
 
 ```powershell
-.\Build-Dev.ps1 -Mode Build -Restore
-.\Build-Dev.ps1 -Mode Test
+.\Build-Wisk.ps1 -Target Build -Profile Development -RuntimeMode FrameworkDependent -Restore
+.\Build-Wisk.ps1 -Target Test -Profile Test -RuntimeMode FrameworkDependent -Restore -Coverage
+.\Build-Wisk.ps1 -Target Publish -Profile Release -RuntimeMode FrameworkDependent
+.\Build-Wisk.ps1 -Target Publish -Profile Release -RuntimeMode SelfContained
+.\Build-Wisk.ps1 -Target Publish -Profile Release -RuntimeMode SelfContained -Component Cli
 node tools/validate-catalog.mjs
 ```
 
-The first clean build may use `-Restore`; subsequent local builds can omit it.
-The default build targets the WPF application, while the full test mode runs
-the complete automated suite. No registry, software installation, or system
-setting changes are required by these checks.
+`Build-Dev.ps1` remains a compatibility wrapper for the old `-Mode` syntax.
+The script matrix keeps all intermediate output in
+`artifacts/build/<profile>/<runtime-mode>/<rid>/`, test evidence in
+`artifacts/test-results/<profile>/<runtime-mode>/<rid>/`, and publish payloads
+in `artifacts/publish/<profile>/<runtime-mode>/<rid>/`. Framework-dependent
+packages require the pinned .NET 10 runtime; self-contained packages include
+the runtime. No registry, software installation, or system setting changes are
+required by these checks.
 
-For a release artifact, use `packaging/Publish-Release.ps1`. The script creates
-a Windows x64 single-file package and a manifest with source commit, hashes,
-build time, and signature verification status. Published artifacts are kept in
-ignored `artifacts/` output and are not committed as source.
+For the signed release workflow, use `packaging/Publish-Release.ps1` or
+`packaging/Publish-Cli.ps1`. They create Windows x64 self-contained single-file
+packages under the same `artifacts/publish/Release/SelfContained/` boundary and
+write manifests with source commit, hashes, build time, and signature status.
 
 ## Safety boundary
 

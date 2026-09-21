@@ -7,10 +7,15 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
-$dll = Join-Path $repoRoot "src/WindowsInitializer.App/bin/$Configuration/net10.0-windows/WindowsInitializer.dll"
+$profile = if ($Configuration -eq 'Release') { 'Release' } else { 'Development' }
+$configurationFolder = $Configuration.ToLowerInvariant()
+$dll = Join-Path $repoRoot "artifacts/build/$profile/FrameworkDependent/win-x64/bin/WindowsInitializer.App/$configurationFolder/WindowsInitializer.dll"
 $output = Join-Path $repoRoot 'artifacts/ui-smoke'
 
-if ($Build) { & (Join-Path $repoRoot 'Build-Dev.ps1') -Mode Build -Configuration $Configuration }
+if ($Build) {
+    & (Join-Path $repoRoot 'Build-Wisk.ps1') -Target Build -Profile $profile -RuntimeMode FrameworkDependent -Restore
+    if ($LASTEXITCODE -ne 0) { throw "Build failed with exit code $LASTEXITCODE." }
+}
 if (-not (Test-Path -LiteralPath $dll -PathType Leaf)) { throw "Application DLL not found: $dll" }
 New-Item -ItemType Directory -Force -Path $output | Out-Null
 

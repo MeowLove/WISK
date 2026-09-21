@@ -1,47 +1,53 @@
-﻿# WISK Project Rules
+# WISK Project Rules
 
-## Scope
+## Boundaries
 
-WISK is the open-source Windows initialization and configuration workspace.
-The repository contains the WISK application source, tests, public catalog
-metadata, packaging scripts, and public architecture documentation. The
-product requirements manual remains local-only under the Git-ignored
-`requirements/` directory.
+- `src/` contains application layers; `tests/` contains automated tests.
+- `catalog/` and `schema/` contain public machine-readable metadata.
+- `docs/` contains public design and development documentation.
+- `packaging/` contains release wrappers; `tools/` contains validation and
+  smoke utilities; `legacy/` is migration-only code, not the default runtime.
+- `requirements/` is the local product manual and is ignored by Git.
+- `artifacts/` is generated output and is ignored by Git.
+- Keep the `WindowsInitializer.*` project and namespace names stable during
+  the WISK 3.0 migration.
 
-The `WindowsInitializer.*` project and namespace names are retained for
-compatibility during the V3 migration. The public product name and assembly
-metadata are WISK.
+## Build contract
 
-## Development build
+- Use the SDK pinned in `global.json`.
+- Use `./Build-Wisk.ps1` for application/solution build, test, run, and publish
+  operations. `packaging/Publish-*.ps1` are release wrappers that delegate
+  compilation to it before signing and writing manifests.
+- `Build-Dev.ps1` is a compatibility wrapper only.
+- Build profiles are `Test`, `Development`, and `Release`; runtime modes are
+  `FrameworkDependent` and `SelfContained`.
+- All intermediate output belongs under
+  `artifacts/build/<profile>/<runtime-mode>/<rid>/`; publish output belongs
+  under `artifacts/publish/<profile>/<runtime-mode>/<rid>/`; test results belong
+  under `artifacts/test-results/<profile>/<runtime-mode>/<rid>/`.
+- Never intentionally create project-local `bin/` or `obj/` output. The
+  `**/bin/` and `**/obj/` ignore rules are a guardrail, not an output contract.
 
-- Use the repository-pinned SDK from `global.json`.
-- Use `./Build-Dev.ps1 -Mode Build` for normal WPF development builds.
-- Use `./Build-Dev.ps1 -Mode Test` for the full test suite.
-- Use `./Build-Dev.ps1 -Mode Run` to build and launch the debug application.
-- Add `-Restore` only after a clean checkout or project/dependency change.
-- Keep WPF-UI theme dictionaries and `FluentWindow` integration intact.
+Examples:
 
-## Verification
+```powershell
+.\Build-Wisk.ps1 -Target Build -Profile Development -RuntimeMode FrameworkDependent -Restore
+.\Build-Wisk.ps1 -Target Test -Profile Test -RuntimeMode FrameworkDependent -Restore -Coverage
+.\Build-Wisk.ps1 -Target Publish -Profile Release -RuntimeMode FrameworkDependent
+.\Build-Wisk.ps1 -Target Publish -Profile Release -RuntimeMode SelfContained
+.\Build-Wisk.ps1 -Target Publish -Profile Release -RuntimeMode SelfContained -Component Cli
+```
 
-- Shared-code or UI changes require a successful build and relevant tests.
-- Run `git diff --check` before committing.
-- Do not claim visual runtime verification unless the WPF executable was
-  actually launched and inspected.
-- Do not apply registry changes, install software, or change system settings
-  on the development host.
+## Safety and verification
 
-## Release
-
-- Use `packaging/Publish-Release.ps1` only for a release artifact.
-- Release output belongs under the ignored `artifacts/publish/win-x64/` path and
-  includes `release-manifest.json`.
-- Local builds are unsigned unless a release certificate is explicitly
-  supplied; never commit signing keys or credentials.
-
-## Repository boundaries
-
-- Public source, tests, schemas, catalog metadata, and docs belong in Git.
-- Internal requirements, test secrets, local runtime state, and generated
-  artifacts do not belong in Git.
 - Preserve stable task IDs, JSON contracts, backup semantics, and explicit
-  Check/Apply/Verify boundaries when evolving the application.
+  Check/Apply/Verify boundaries.
+- Do not apply registry changes, install software, create restore points, or
+  change system settings on the development host.
+- Shared-code changes require build and relevant tests; run `git diff --check`
+  before committing.
+- Do not claim WPF startup, UAC, real Apply/Verify, or Authenticode validation
+  without actually running and inspecting it in an isolated Windows test
+  environment.
+- Never commit credentials, signing keys, local requirements, or generated
+  artifacts.

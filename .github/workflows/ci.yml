@@ -23,27 +23,18 @@ jobs:
         with:
           dotnet-version: 10.0.401
 
-      - name: Restore
-        run: dotnet restore WindowsInitializer.sln
-
       - name: Build
-        run: dotnet build WindowsInitializer.sln --configuration Release --no-restore
+        shell: pwsh
+        run: .\Build-Wisk.ps1 -Target Build -Profile Release -RuntimeMode FrameworkDependent -Restore
 
       - name: Test with coverage
-        run: >-
-          dotnet test tests/WindowsInitializer.Core.Tests/WindowsInitializer.Core.Tests.csproj
-          --configuration Release
-          -p:Platform=x64
-          --no-build
-          --settings coverlet.runsettings
-          --logger "trx;LogFileName=windows-initializer-tests.trx"
-          --results-directory artifacts/test-results
-          --collect:"XPlat Code Coverage"
+        shell: pwsh
+        run: .\Build-Wisk.ps1 -Target Test -Profile Test -RuntimeMode FrameworkDependent -Restore -Coverage
 
       - name: Enforce line coverage
         shell: pwsh
         run: |
-          $coverageFile = Get-ChildItem artifacts/test-results -Recurse -Filter coverage.cobertura.xml | Select-Object -First 1
+          $coverageFile = Get-ChildItem artifacts/test-results/Test/FrameworkDependent/win-x64 -Recurse -Filter coverage.cobertura.xml | Select-Object -First 1
           if ($null -eq $coverageFile) { throw 'Cobertura coverage report was not generated.' }
           [xml]$coverage = Get-Content -LiteralPath $coverageFile.FullName -Raw
           $lineRate = [double]::Parse($coverage.coverage.'line-rate', [Globalization.CultureInfo]::InvariantCulture)
@@ -56,6 +47,6 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: windows-initializer-test-results
-          path: artifacts/test-results
+          path: artifacts/test-results/Test/FrameworkDependent/win-x64
           if-no-files-found: error
           retention-days: 14

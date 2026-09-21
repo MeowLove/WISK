@@ -10,7 +10,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $project = Join-Path $repoRoot 'src/WindowsInitializer.App/WindowsInitializer.App.csproj'
-$outputRoot = Join-Path $repoRoot "artifacts/publish/$Runtime"
+$outputRoot = Join-Path $repoRoot "artifacts/publish/Release/SelfContained/$Runtime"
 $manifestPath = Join-Path $outputRoot 'release-manifest.json'
 $settingsPath = Join-Path $outputRoot 'WindowsInitializer.json'
 $preservedSettings = if (Test-Path -LiteralPath $settingsPath -PathType Leaf) {
@@ -20,7 +20,7 @@ $preservedSettings = if (Test-Path -LiteralPath $settingsPath -PathType Leaf) {
 }
 
 if (-not (Test-Path $project -PathType Leaf)) { throw "App project not found: $project" }
-if ($Runtime -ne 'win-x64') { throw 'V2 release runtime must be win-x64.' }
+if ($Runtime -ne 'win-x64') { throw 'WISK release runtime must be win-x64.' }
 if ($Version -notmatch '^\d+\.\d+\.\d+([-.][0-9A-Za-z.-]+)?$') { throw 'Version must be a semantic version.' }
 $normalizedThumbprint = $CertificateThumbprint.Replace(' ', '').ToUpperInvariant()
 if ($normalizedThumbprint -and $normalizedThumbprint -notmatch '^[0-9A-F]{40,64}$') { throw 'Certificate thumbprint is invalid.' }
@@ -40,10 +40,9 @@ $sourceCommit = (git -C $repoRoot rev-parse HEAD).Trim()
 $generatedAt = [DateTimeOffset]::UtcNow.ToString('O')
 $embeddedSignatureStatus = if ($normalizedThumbprint) { 'SignedRelease' } else { 'NotSignedInLocalBuild' }
 
-dotnet restore (Join-Path $repoRoot 'WindowsInitializer.sln')
-if ($LASTEXITCODE -ne 0) { throw "dotnet restore failed with exit code $LASTEXITCODE" }
-dotnet publish $project --configuration $Configuration --runtime $Runtime --self-contained true --output $outputRoot -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=None -p:DebugSymbols=false -p:PublishTrimmed=false -p:PublishAot=false -p:Version=$Version -p:SourceCommit=$sourceCommit -p:BuildTimestampUtc=$generatedAt -p:SignatureStatus=$embeddedSignatureStatus
-if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed with exit code $LASTEXITCODE" }
+$buildScript = Join-Path $repoRoot 'Build-Wisk.ps1'
+& $buildScript -Target Publish -Profile Release -RuntimeMode SelfContained -Component App -Runtime $Runtime -Version $Version -SignatureStatus $embeddedSignatureStatus
+if ($LASTEXITCODE -ne 0) { throw "WISK publish failed with exit code $LASTEXITCODE" }
 
 $exe = @(Get-ChildItem -LiteralPath $outputRoot -Filter 'WindowsInitializer.exe' -File)
 if ($exe.Count -ne 1) { throw "Expected exactly one WindowsInitializer.exe, found $($exe.Count)" }

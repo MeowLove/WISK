@@ -217,5 +217,16 @@ public sealed class UiInteractionContractTests
         Assert.Contains("colors.Count -lt 8", capture);
     }
 
-    private static string RepositoryRoot() => Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../../.."));
+    private static string RepositoryRoot()
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+        while (directory is not null)
+        {
+            var marker = Path.Combine(directory.FullName, "src", "WindowsInitializer.App", "MainWindow.xaml");
+            if (File.Exists(marker)) return directory.FullName;
+            directory = directory.Parent;
+        }
+
+        throw new DirectoryNotFoundException("WISK repository root could not be located from the test output directory.");
+    }
 }

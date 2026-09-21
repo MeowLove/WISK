@@ -33,6 +33,7 @@ WISK/
   docs/                                 public architecture and verification boundary
   legacy/                               V1 migration source, not default runtime
   requirements/                         local-only maintainer manual
+  artifacts/                            ignored build, test, and publish output
 ```
 
 The project and namespace names under `src/` remain `WindowsInitializer.*` for
@@ -112,15 +113,36 @@ source commit, UTC build time, SHA-256, and signature status. Local unsigned
 builds are clearly marked. Signing certificates, private keys, and store
 credentials remain outside the repository.
 
-## 7. Verification boundary
+## 7. Build and output boundary
+
+`Build-Wisk.ps1` is the single build entry point. `Build-Dev.ps1` only preserves
+the previous command-line shape and delegates to it. The profile/runtime matrix
+is explicit:
+
+| Profile | Configuration | Runtime mode |
+| --- | --- | --- |
+| `Test` | Debug | Framework-dependent or self-contained |
+| `Development` | Debug | Framework-dependent or self-contained |
+| `Release` | Release | Framework-dependent or self-contained |
+
+All MSBuild `bin` and `obj` output is redirected below
+`artifacts/build/<profile>/<runtime-mode>/<rid>/`; test evidence is below
+`artifacts/test-results/<profile>/<runtime-mode>/<rid>/`; publish payloads are
+below `artifacts/publish/<profile>/<runtime-mode>/<rid>/`. The root `.gitignore`
+also blocks project-local `bin/` and `obj/` output as a drift guard.
+
+## 8. Verification boundary
 
 Automated validation includes Core/Execution tests, template and history tests,
 catalog mapping, bridge framing, controlled WinGet responses, and WPF contract
 checks. Build and test commands are:
 
 ```powershell
-.\Build-Dev.ps1 -Mode Build -Restore
-.\Build-Dev.ps1 -Mode Test
+.\Build-Wisk.ps1 -Target Build -Profile Development -RuntimeMode FrameworkDependent -Restore
+.\Build-Wisk.ps1 -Target Test -Profile Test -RuntimeMode FrameworkDependent -Restore -Coverage
+.\Build-Wisk.ps1 -Target Publish -Profile Release -RuntimeMode FrameworkDependent
+.\Build-Wisk.ps1 -Target Publish -Profile Release -RuntimeMode SelfContained
+.\Build-Wisk.ps1 -Target Publish -Profile Release -RuntimeMode SelfContained -Component Cli
 node tools/validate-catalog.mjs
 ```
 

@@ -2,6 +2,8 @@
 
 - [WISK 3.0 architecture](WISK-3.0-Architecture.md) is the public design
   authority for repository boundaries, runtime layers, safety, and verification.
+- The architecture document also defines the `Build-Wisk.ps1` profile/runtime
+  matrix and the canonical `artifacts/` output boundary.
 - `requirements/` at the repository root is intentionally local-only and is
   ignored by Git. The local WISK 3.0 requirements manual is the product
   behavior authority during development.

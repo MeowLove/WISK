@@ -8,15 +8,16 @@ contracts.
 ## Before opening a pull request
 
 ```powershell
-.\Build-Dev.ps1 -Mode Build
-.\Build-Dev.ps1 -Mode Test
+.\Build-Wisk.ps1 -Target Build -Profile Development -RuntimeMode FrameworkDependent -Restore
+.\Build-Wisk.ps1 -Target Test -Profile Test -RuntimeMode FrameworkDependent -Restore -Coverage
 node tools/validate-catalog.mjs
 git diff --check
 ```
 
-Use `-Restore` on a clean checkout or after changing a project file or
-dependency. Do not run registry Apply, software installation, restore-point,
-or reboot actions on a development host.
+`Build-Dev.ps1` remains a compatibility wrapper. All build and test output
+must remain under the canonical `artifacts/` subdirectories. Do not run
+registry Apply, software installation, restore-point, or reboot actions on a
+development host.
 
 ## Application changes
 
@@ -51,4 +52,3 @@ Describe the user-visible behavior, safety impact, verification commands, and
 any environment-dependent checks that were not run. Keep unrelated legacy
 cleanup out of feature changes; the `legacy/` tree is retained for migration
 context and is not the default WISK runtime.
-

@@ -10,10 +10,10 @@ param(
 $ErrorActionPreference = "Stop"
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $project = Join-Path $repoRoot "src\WindowsInitializer.Cli\WindowsInitializer.Cli.csproj"
-$output = Join-Path $repoRoot "artifacts\publish\cli\$Runtime"
+$output = Join-Path $repoRoot "artifacts\publish\Release\SelfContained\cli\$Runtime"
 $manifestPath = Join-Path $output "release-manifest.json"
 
-if ($Runtime -ne "win-x64") { throw "V2 release runtime must be win-x64." }
+if ($Runtime -ne "win-x64") { throw "WISK release runtime must be win-x64." }
 if ($Version -notmatch '^\d+\.\d+\.\d+([-.][0-9A-Za-z.-]+)?$') { throw "Version must be a semantic version." }
 $normalizedThumbprint = $CertificateThumbprint.Replace(" ", "").ToUpperInvariant()
 if ($normalizedThumbprint -and $normalizedThumbprint -notmatch '^[0-9A-F]{40,64}$') { throw "Certificate thumbprint is invalid." }
@@ -30,10 +30,9 @@ if (-not $resolvedOutput.StartsWith($artifactsRoot + [IO.Path]::DirectorySeparat
 if (Test-Path -LiteralPath $resolvedOutput) { Remove-Item -LiteralPath $resolvedOutput -Recurse -Force }
 New-Item -ItemType Directory -Force -Path $resolvedOutput | Out-Null
 
-dotnet restore (Join-Path $repoRoot "WindowsInitializer.sln")
-if ($LASTEXITCODE -ne 0) { throw "dotnet restore failed." }
-dotnet publish $project --configuration $Configuration --runtime $Runtime --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -p:PublishAot=false -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=None -p:DebugSymbols=false -p:Version=$Version --output $output
-if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed." }
+$buildScript = Join-Path $repoRoot "Build-Wisk.ps1"
+& $buildScript -Target Publish -Profile Release -RuntimeMode SelfContained -Component Cli -Runtime $Runtime -Version $Version -SignatureStatus $(if ($normalizedThumbprint) { 'SignedRelease' } else { 'NotSignedInLocalBuild' })
+if ($LASTEXITCODE -ne 0) { throw "WISK CLI publish failed." }
 
 $payload = @(Get-ChildItem -LiteralPath $output -File | Where-Object Name -ne "release-manifest.json")
 if ($payload.Count -ne 1 -or $payload[0].Name -ne "WindowsInitializer.Cli.exe") { throw "CLI publish output must contain exactly WindowsInitializer.Cli.exe." }

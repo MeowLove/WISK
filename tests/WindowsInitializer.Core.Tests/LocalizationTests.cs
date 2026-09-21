@@ -52,7 +52,18 @@ public sealed partial class LocalizationTests
         Assert.DoesNotContain("Text[\"en\"].ToDictionary(pair => pair.Value", source);
     }
 
-    private static string RepositoryRoot() => Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../../.."));
+    private static string RepositoryRoot()
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+        while (directory is not null)
+        {
+            var marker = Path.Combine(directory.FullName, "src", "WindowsInitializer.App", "Localization.cs");
+            if (File.Exists(marker)) return directory.FullName;
+            directory = directory.Parent;
+        }
+
+        throw new DirectoryNotFoundException("WISK repository root could not be located from the test output directory.");
+    }
 
     [GeneratedRegex(@"\{local:Loc\s+([A-Za-z0-9]+)\}")]
     private static partial Regex LocalizationKeyPattern();
