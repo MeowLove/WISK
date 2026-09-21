@@ -1,7 +1,7 @@
 {
   "$schema": "../schema/catalog.schema.json",
   "schemaVersion": 1,
-  "catalogVersion": "0.1.0",
+  "catalogVersion": "3.0.0",
   "updatedAt": "2026-09-21",
   "publisher": {
     "id": "meowlove",
@@ -11,15 +11,15 @@
   "repositories": [
     {
       "id": "wisk",
-      "name": "WISK Catalog",
-      "kind": "catalog",
+      "name": "WISK",
+      "kind": "application",
       "visibility": "public",
       "url": "https://github.com/MeowLove/WISK",
-      "license": "MIT"
+      "license": "GPL-3.0"
     },
     {
       "id": "windows-initializer",
-      "name": "Windows Initializer",
+      "name": "Windows Initializer (legacy source)",
       "kind": "application",
       "visibility": "public",
       "url": "https://github.com/MeowLove/WindowsInitTools",
@@ -30,11 +30,11 @@
     {
       "id": "wisk",
       "name": "WISK",
-      "description": "A Windows 11 initialization and configuration tool with auditable plans, software actions, and registry-backed settings.",
+      "description": "WISK 3.0 Windows 11 initialization and configuration workspace with auditable plans, software actions, and registry-backed settings.",
       "status": "preview",
-      "version": "2.3.0",
-      "repositoryId": "windows-initializer",
-      "releasePage": "https://github.com/MeowLove/WindowsInitTools/releases",
+      "version": "3.0.0",
+      "repositoryId": "wisk",
+      "releasePage": "https://github.com/MeowLove/WISK/releases",
       "platforms": [
         {
           "os": "windows",
@@ -83,4 +83,3 @@
     ]
   }
 }
-

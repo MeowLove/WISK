@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <AssemblyName>WindowsInitializer.Cli</AssemblyName>
+    <RootNamespace>WindowsInitializer.Cli</RootNamespace>
+    <PlatformTarget>x64</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WindowsInitializer.Contracts\WindowsInitializer.Contracts.csproj" />
+    <ProjectReference Include="..\WindowsInitializer.Core\WindowsInitializer.Core.csproj" />
+    <ProjectReference Include="..\WindowsInitializer.Execution\WindowsInitializer.Execution.csproj" />
+    <ProjectReference Include="..\WindowsInitializer.Platform.Windows\WindowsInitializer.Platform.Windows.csproj" />
+    <ProjectReference Include="..\WindowsInitializer.PowerShell\WindowsInitializer.PowerShell.csproj" />
+  </ItemGroup>
+</Project>

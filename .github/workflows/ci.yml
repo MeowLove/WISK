@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-test-coverage:
+    runs-on: windows-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Install pinned .NET SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.401
+
+      - name: Restore
+        run: dotnet restore WindowsInitializer.sln
+
+      - name: Build
+        run: dotnet build WindowsInitializer.sln --configuration Release --no-restore
+
+      - name: Test with coverage
+        run: >-
+          dotnet test tests/WindowsInitializer.Core.Tests/WindowsInitializer.Core.Tests.csproj
+          --configuration Release
+          -p:Platform=x64
+          --no-build
+          --settings coverlet.runsettings
+          --logger "trx;LogFileName=windows-initializer-tests.trx"
+          --results-directory artifacts/test-results
+          --collect:"XPlat Code Coverage"
+
+      - name: Enforce line coverage
+        shell: pwsh
+        run: |
+          $coverageFile = Get-ChildItem artifacts/test-results -Recurse -Filter coverage.cobertura.xml | Select-Object -First 1
+          if ($null -eq $coverageFile) { throw 'Cobertura coverage report was not generated.' }
+          [xml]$coverage = Get-Content -LiteralPath $coverageFile.FullName -Raw
+          $lineRate = [double]::Parse($coverage.coverage.'line-rate', [Globalization.CultureInfo]::InvariantCulture)
+          $minimum = 0.60
+          Write-Host ('Line coverage: {0:P2}; required: {1:P0}' -f $lineRate, $minimum)
+          if ($lineRate -lt $minimum) { throw ('Line coverage {0:P2} is below {1:P0}.' -f $lineRate, $minimum) }
+
+      - name: Upload test and coverage results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: windows-initializer-test-results
+          path: artifacts/test-results
+          if-no-files-found: error
+          retention-days: 14

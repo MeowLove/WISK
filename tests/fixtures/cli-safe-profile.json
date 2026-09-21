@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "2.0",
+  "profileId": "cli-smoke",
+  "tasks": ["runtime-dotnet-8"],
+  "target": {
+    "minimumBuild": 26100,
+    "architecture": "x64",
+    "requireWindows11": true
+  },
+  "policy": {
+    "stopOnError": true,
+    "maxRetries": 0
+  },
+  "allowElevated": false,
+  "allowHighRisk": false
+}

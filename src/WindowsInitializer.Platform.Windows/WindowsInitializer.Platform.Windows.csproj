@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <AssemblyName>WindowsInitializer.Platform.Windows</AssemblyName>
+    <RootNamespace>WindowsInitializer.Platform.Windows</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WindowsInitializer.Contracts\WindowsInitializer.Contracts.csproj" />
+    <ProjectReference Include="..\WindowsInitializer.Core\WindowsInitializer.Core.csproj" />
+    <ProjectReference Include="..\WindowsInitializer.Execution\WindowsInitializer.Execution.csproj" />
+    <ProjectReference Include="..\WindowsInitializer.PowerShell\WindowsInitializer.PowerShell.csproj" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.1" />
+  </ItemGroup>
+</Project>

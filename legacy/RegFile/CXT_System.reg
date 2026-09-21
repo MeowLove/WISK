@@ -1,0 +1,442 @@
+Windows Registry Editor Version 5.00
+
+;=================================================================================
+; ϵͳ���Ż����������״ε�¼���� (V1 - �ռ��ɿ���)
+;
+; ˵��:
+; - ���ļ���������ϵͳ��(HKLM)���á�
+; - ����һ�� RunOnce ����������û��״ε�¼ʱ���� CXT_User.reg��
+; - ����ؽ����ļ��� ANSI ���뱣�档
+;=================================================================================
+
+
+;=================================================================================
+; PART 1: ϵͳ������ (HKEY_LOCAL_MACHINE\SOFTWARE\Policies)
+; (ǿ�������û�������OOBE�����ĵ�һ���û�)
+;=================================================================================
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Explorer]
+"HideSCAMeetNow"=dword:00000001
+"HideRecentlyAddedApps"=dword:00000001
+"HideRecommendedSection"=dword:00000001
+"DisableSearchBoxSuggestions"=dword:00000001
+"NoSimpleNetIDList"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Dsh]
+"AllowNewsAndInterests"=dword:00000000
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Feeds]
+"EnableFeeds"=dword:00000000
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsCopilot]
+"TurnOffWindowsCopilot"=dword:00000001
+
+;===============================================================
+; ��ʼ�˵�Ĭ�Ϲ̶������ͼ��˳���ƣ�
+;===============================================================
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\PolicyManager\current\device\Start]
+"ConfigureStartPins"="{
+    \"pinnedList\": [
+        {\"packagedAppId\":\"windows.immersivecontrolpanel_cw5n1h2txyewy!microsoft.windows.immersivecontrolpanel\"},
+        {\"packagedAppId\":\"Microsoft.WindowsStore_8wekyb3d8bbwe!App\"},
+        {\"packagedAppId\":\"Microsoft.WindowsAlarms_8wekyb3d8bbwe!App\"},
+        {\"packagedAppId\":\"Microsoft.WindowsCalculator_8wekyb3d8bbwe!App\"},
+        {\"packagedAppId\":\"Microsoft.WindowsNotepad_8wekyb3d8bbwe!App\"},
+        {\"desktopAppId\":\"Microsoft.Windows.Explorer\"},
+        {\"packagedAppId\":\"Microsoft.ScreenSketch_8wekyb3d8bbwe!App\"},
+        {\"packagedAppId\":\"Microsoft.MicrosoftEdge_8wekyb3d8bbwe!MicrosoftEdge\"},
+        {\"packagedAppId\":\"Microsoft.WindowsTerminal_8wekyb3d8bbwe!App\"}
+    ]
+}"
+
+[HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\CloudContent]
+"DisableWindowsConsumerFeatures"=dword:00000001
+"DisableConsumerAccountStateContent"=dword:00000001
+"DisableCloudOptimizedContent"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting]
+"Disabled"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search]
+"AllowCloudSearch"=dword:00000000
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\GameDVR]
+"AllowGameDVR"=dword:00000000
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization]
+"DODownloadMode"=dword:00000000
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge]
+"HideFirstRunExperience"=dword:00000001
+"BackgroundModeEnabled"=dword:00000000
+"StartupBoostEnabled"=dword:00000000
+"BingAdsSuppression"=dword:00000001
+"NewTabPageHideDefaultTopSites"=dword:00000001
+"HubsSidebarEnabled"=dword:00000000
+"DiagnosticData"=dword:00000000
+"PerformanceDetectorEnabled"=dword:00000000
+"NewTabPageContentEnabled"=dword:00000000
+"ShowMicrosoftRewards"=dword:00000000
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings]
+"FlightSettingsMaxPauseDays"=dword:00002710
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU]
+"AUOptions"=dword:00000002
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\MRT]
+"DontOfferThroughWUAU"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsUpdate]
+"TargetReleaseVersion"=dword:00000001
+"TargetReleaseVersionInfo"="25H2"
+
+
+;=================================================================================
+; PART 2: ϵͳ���������� (HKEY_LOCAL_MACHINE\SYSTEM & SOFTWARE)
+;=================================================================================
+
+;---------------------------------------------------------------------------------
+; �ؼ����״ε�¼���� (RunOnce)
+;---------------------------------------------------------------------------------
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce]
+"ApplyUserSettings"="reg.exe import C:\\Windows\\Setup\\Scripts\\CXT_User.reg"
+
+;---------------------------------------------------------------------------------
+; ϵͳ��������
+;---------------------------------------------------------------------------------
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\OOBE]
+"BypassNRO"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\SYSTEM\Setup\LabConfig]
+"BypassTPMCheck"=dword:00000001
+"BypassSecureBootCheck"=dword:00000001
+"BypassRAMCheck"=dword:00000001
+"BypassStorageCheck"=dword:00000001
+"BypassCPUCheck"=dword:00000001
+"BypassDiskCheck"=dword:00000001
+"BypassNetworkCheck"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\SYSTEM\Setup\MoSetup]
+"AllowUpgradesWithUnsupportedTPMOrCPU"=dword:00000001
+
+;---------------------------------------------------------------------------------
+; ��Դ������
+;---------------------------------------------------------------------------------
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power]
+"HibernateEnabled"=dword:00000000
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Power]
+"HiberbootEnabled"=dword:00000000
+"AwayModeEnabled"=dword:00000001
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes]
+"ActivePowerScheme"="e9a42b02-d5df-448d-aa00-03f14749eb61"
+; --- ��Դ�ƻ���ʱ���� ---
+; ƽ��
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes\381b4222-f694-41f0-9685-ff5bb260df2e\7516b95f-f776-4464-8c53-06167f40cc99\3c0bc021-c8a8-4e07-a973-6b14cbcb2b7e]
+"ACSettingIndex"=dword:0000012c
+"DCSettingIndex"=dword:0000003c
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes\381b4222-f694-41f0-9685-ff5bb260df2e\0012ee47-9041-4b5d-9b77-535fba8b1442\6738e2c4-e8a5-4a42-b16a-e040e769756e]
+"ACSettingIndex"=dword:00000000
+"DCSettingIndex"=dword:00000000
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes\381b4222-f694-41f0-9685-ff5bb260df2e\238c9fa8-0aad-41ed-83f4-97be242c8f20\29f6c1db-86da-48c5-9fdb-f2b67b1f44da]
+"ACSettingIndex"=dword:00000000
+"DCSettingIndex"=dword:00000000
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes\381b4222-f694-41f0-9685-ff5bb260df2e\238C9FA8-0AAD-41ED-83F4-97BE242C8F20\9d7815a6-7ee4-497e-8888-515a05f02364]
+"ACSettingIndex"=dword:00000000
+"DCSettingIndex"=dword:00000000
+; ������
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes\8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c\7516b95f-f776-4464-8c53-06167f40cc99\3c0bc021-c8a8-4e07-a973-6b14cbcb2b7e]
+"ACSettingIndex"=dword:0000012c
+"DCSettingIndex"=dword:0000003c
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes\8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c\0012ee47-9041-4b5d-9b77-535fba8b1442\6738e2c4-e8a5-4a42-b16a-e040e769756e]
+"ACSettingIndex"=dword:00000000
+"DCSettingIndex"=dword:00000000
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes\8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c\238C9FA8-0AAD-41ED-83F4-97BE242C8F20\29f6c1db-86da-48c5-9fdb-f2b67b1f44da]
+"ACSettingIndex"=dword:00000000
+"DCSettingIndex"=dword:00000000
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes\8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c\238C9FA8-0AAD-41ED-83F4-97BE242C8F20\9d7815a6-7ee4-497e-8888-515a05f02364]
+"ACSettingIndex"=dword:00000000
+"DCSettingIndex"=dword:00000000
+; ����
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes\a1841308-3541-4fab-bc81-f71556f20b4a\7516b95f-f776-4464-8c53-06167f40cc99\3c0bc021-c8a8-4e07-a973-6b14cbcb2b7e]
+"ACSettingIndex"=dword:0000012c
+"DCSettingIndex"=dword:0000003c
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes\a1841308-3541-4fab-bc81-f71556f20b4a\0012ee47-9041-4b5d-9b77-535fba8b1442\6738e2c4-e8a5-4a42-b16a-e040e769756e]
+"ACSettingIndex"=dword:00000000
+"DCSettingIndex"=dword:00000000
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes\a1841308-3541-4fab-bc81-f71556f20b4a\238C9FA8-0AAD-41ED-83F4-97BE242C8F20\29f6c1db-86da-48c5-9fdb-f2b67b1f44da]
+"ACSettingIndex"=dword:00000000
+"DCSettingIndex"=dword:00000000
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes\a1841308-3541-4fab-bc81-f71556f20b4a\238C9FA8-0AAD-41ED-83F4-97BE242C8F20\9d7815a6-7ee4-497e-8888-515a05f02364]
+"ACSettingIndex"=dword:00000000
+"DCSettingIndex"=dword:00000000
+; ׿Խ����
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes\e9a42b02-d5df-448d-aa00-03f14749eb61\7516b95f-f776-4464-8c53-06167f40cc99\3c0bc021-c8a8-4e07-a973-6b14cbcb2b7e]
+"ACSettingIndex"=dword:0000012c
+"DCSettingIndex"=dword:0000003c
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes\e9a42b02-d5df-448d-aa00-03f14749eb61\0012ee47-9041-4b5d-9b77-535fba8b1442\6738e2c4-e8a5-4a42-b16a-e040e769756e]
+"ACSettingIndex"=dword:00000000
+"DCSettingIndex"=dword:00000000
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes\e9a42b02-d5df-448d-aa00-03f14749eb61\238C9FA8-0AAD-41ED-83F4-97BE242C8F20\29f6c1db-86da-48c5-9fdb-f2b67b1f44da]
+"ACSettingIndex"=dword:00000000
+"DCSettingIndex"=dword:00000000
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes\e9a42b02-d5df-448d-aa00-03f14749eb61\238C9FA8-0AAD-41ED-83F4-97BE242C8F20\9d7815a6-7ee4-497e-8888-515a05f02364]
+"ACSettingIndex"=dword:00000000
+"DCSettingIndex"=dword:00000000
+; --- ��Դ��ť/�ϸǲ��� ---
+; ƽ��
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes\381b4222-f694-41f0-9685-ff5bb260df2e\4f971e89-eebd-4455-a8de-9e59040e7347\5ca83367-6e45-459f-a27b-476b1d01c936]
+"ACSettingIndex"=dword:00000000
+"DCSettingIndex"=dword:00000000
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes\381b4222-f694-41f0-9685-ff5bb260df2e\4f971e89-eebd-4455-a8de-9e59040e7347\7648efa3-dd9c-4e3e-b566-50f929386280]
+"ACSettingIndex"=dword:00000000
+"DCSettingIndex"=dword:00000000
+; ������
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes\8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c\4f971e89-eebd-4455-a8de-9e59040e7347\5ca83367-6e45-459f-a27b-476b1d01c936]
+"ACSettingIndex"=dword:00000000
+"DCSettingIndex"=dword:00000000
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes\8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c\4f971e89-eebd-4455-a8de-9e59040e7347\7648efa3-dd9c-4e3e-b566-50f929386280]
+"ACSettingIndex"=dword:00000000
+"DCSettingIndex"=dword:00000000
+; ����
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes\a1841308-3541-4fab-bc81-f71556f20b4a\4f971e89-eebd-4455-a8de-9e59040e7347\5ca83367-6e45-459f-a27b-476b1d01c936]
+"ACSettingIndex"=dword:00000000
+"DCSettingIndex"=dword:00000000
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes\a1841308-3541-4fab-bc81-f71556f20b4a\4f971e89-eebd-4455-a8de-9e59040e7347\7648efa3-dd9c-4e3e-b566-50f929386280]
+"ACSettingIndex"=dword:00000000
+"DCSettingIndex"=dword:00000000
+; ׿Խ����
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes\e9a42b02-d5df-448d-aa00-03f14749eb61\4f971e89-eebd-4455-a8de-9e59040e7347\5ca83367-6e45-459f-a27b-476b1d01c936]
+"ACSettingIndex"=dword:00000000
+"DCSettingIndex"=dword:00000000
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes\e9a42b02-d5df-448d-aa00-03f14749eb61\4f971e89-eebd-4455-a8de-9e59040e7347\7648efa3-dd9c-4e3e-b566-50f929386280]
+"ACSettingIndex"=dword:00000000
+"DCSettingIndex"=dword:00000000
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control]
+"WaitToKillServiceTimeout"="1000"
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management]
+"LargeSystemCache"=dword:00000001
+"IoPageLockLimit"=dword:10000000
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile]
+"SystemResponsiveness"=dword:00000000
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games]
+"GPU Priority"=dword:00000008
+"Priority"=dword:00000006
+"Scheduling Category"="High"
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\GraphicsDrivers]
+"HwSchMode"=dword:00000002
+
+;---------------------------------------------------------------------------------
+; 9. ��ȫ���ܵ���
+;---------------------------------------------------------------------------------
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\BitLocker]
+"PreventDeviceEncryption"=dword:00000001
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System]
+"ConsentPromptBehaviorAdmin"=dword:00000005
+"EnableLUA"=dword:00000001
+"PromptOnSecureDesktop"=dword:00000000
+"FilterAdministratorToken"=dword:00000001
+"DisableCAD"=dword:00000001
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters]
+"AutoShareServer"=dword:00000000
+"AutoShareWks"=dword:00000000
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Remote Assistance]
+"fAllowToGetHelp"=dword:00000000
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\wlansvc\Parameters\WlanVirtualization]
+"EnableVirtualization"=dword:00000001
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server]
+"fDenyTSConnections"=dword:00000000
+"MaxOutstandingConnections"=dword:0000ffff
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp]
+"UserAuthentication"=dword:00000000
+"PortNumber"=dword:00000d3d
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\Wds\rdpwd\Tds\tcp]
+"PortNumber"=dword:00000d3d
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\FirewallRules]
+"{338933891-3389-3389-3389-338933893389}"="v2.29|Action=Allow|Active=TRUE|Dir=In|Protocol=6|LPort=3389|Name=Remote Desktop(TCP-In)|"
+"{338933892-3389-3389-3389-338933893389}"="v2.29|Action=Allow|Active=TRUE|Dir=In|Protocol=17|LPort=3389|Name=Remote Desktop(UDP-In)|"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon]
+"DisableCAD"=dword:00000001
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations]
+"DWMFRAMEINTERVAL"=dword:00000008
+; --- ����: �������ûή�Ͱ�ȫ���Ի�ȡ���� ---
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity]
+"Enabled"=dword:00000000
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard]
+"HVCIMATRequired"=dword:00000000
+"LsaCfgFlags"=dword:00000000
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management]
+"FeatureSettingsOverride"=dword:00000003
+"FeatureSettingsOverrideMask"=dword:00000003
+"FeatureSettings"=dword:00000001
+
+;---------------------------------------------------------------------------------
+; 10. �߼�ϵͳ����
+;---------------------------------------------------------------------------------
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem]
+"NtfsMemoryUsage"=dword:00000002
+"RefsMemoryUsage"=dword:00000002
+"LongPathsEnabled"=dword:00000001
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\TimeZoneInformation]
+"RealTimeIsUniversal"=dword:00000001
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell]
+"ExecutionPolicy"="RemoteSigned"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Command Processor]
+"CompletionChar"=dword:00000009
+; --- ����ң����ط�����ƻ����� ---
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\UCPD]
+"Start"=dword:00000004
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree\Microsoft\Windows\Customer Experience Improvement Program\Uploader]
+"Disabled"=dword:00000001
+
+
+;=================================================================================
+; PART 4: �Ҽ��˵���չ (HKEY_LOCAL_MACHINE\SOFTWARE\Classes)
+;=================================================================================
+[-HKEY_CLASSES_ROOT\*\shell\TakeOwnership]
+[-HKEY_CLASSES_ROOT\*\shell\runas]
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\TakeOwnership]
+@="Take Ownership"
+"HasLUAShield"=""
+"NoWorkingDirectory"=""
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\TakeOwnership\command]
+@="powershell -windowstyle hidden -command \"Start-Process cmd -ArgumentList '/c takeown /f \\\"%1\\\" && icacls \\\"%1\\\" /grant *S-1-3-4:F /t /c /l & pause' -Verb runAs\""
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\TakeOwnership]
+@="Take Ownership"
+"AppliesTo"="NOT (System.ItemPathDisplay:=\"C:\\Users\" OR System.ItemPathDisplay:=\"C:\\ProgramData\" OR System.ItemPathDisplay:=\"C:\\Windows\" OR System.ItemPathDisplay:=\"C:\\Windows\\System32\" OR System.ItemPathDisplay:=\"C:\\Program Files\" OR System.ItemPathDisplay:=\"C:\\Program Files (x86)\")"
+"HasLUAShield"=""
+"NoWorkingDirectory"=""
+"Position"="middle"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\TakeOwnership\command]
+@="powershell -windowstyle hidden -command \"$Y = ($null | choice).Substring(1,1); Start-Process cmd -ArgumentList ('/c takeown /f \\\"%1\\\" /r /d ' + $Y + ' && icacls \\\"%1\\\" /grant *S-1-3-4:F /t /c /l /q & pause') -Verb runAs\""
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Drive\shell\runas]
+@="Take Ownership"
+"HasLUAShield"=""
+"NoWorkingDirectory"=""
+"Position"="middle"
+"AppliesTo"="NOT (System.ItemPathDisplay:=\"C:\\\")"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Drive\shell\runas\command]
+@="cmd.exe /c takeown /f \"%1\\\" /r /d y && icacls \"%1\\\" /grant *S-1-3-4:F /t /c & Pause"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash]
+"MUIVerb"="Hash Check"
+"SubCommands"=""
+"Icon"="PowerShell.exe"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\001menu]
+"MUIVerb"="SHA1"
+"Icon"="PowerShell.exe"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\001menu\command]
+@="powershell -noexit get-filehash -literalpath \\\"%1\\\" -algorithm SHA1 | format-list"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\002menu]
+"MUIVerb"="SHA256"
+"Icon"="PowerShell.exe"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\002menu\command]
+@="powershell -noexit get-filehash -literalpath \\\"%1\\\" -algorithm SHA256 | format-list"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\003menu]
+"MUIVerb"="SHA384"
+"Icon"="PowerShell.exe"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\003menu\command]
+@="powershell -noexit get-filehash -literalpath \\\"%1\\\" -algorithm SHA384 | format-list"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\004menu]
+"MUIVerb"="SHA512"
+"Icon"="PowerShell.exe"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\004menu\command]
+@="powershell -noexit get-filehash -literalpath \\\"%1\\\" -algorithm SHA512 | format-list"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\005menu]
+"MUIVerb"="MACTripleDES"
+"Icon"="PowerShell.exe"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\005menu\command]
+@="powershell -noexit get-filehash -literalpath \\\"%1\\\" -algorithm MACTripleDES | format-list"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\006menu]
+"MUIVerb"="MD5"
+"Icon"="PowerShell.exe"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\006menu\command]
+@="powershell -noexit get-filehash -literalpath \\\"%1\\\" -algorithm MD5 | format-list"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\007menu]
+"MUIVerb"="RIPEMD160"
+"Icon"="PowerShell.exe"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\007menu\command]
+@="powershell -noexit get-filehash -literalpath \\\"%1\\\" -algorithm RIPEMD160 | format-list"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\011menuouttxt]
+"CommandFlags"=dword:00000020
+"MUIVerb"="SHA1 (Save to .txt)"
+"Icon"="PowerShell.exe"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\011menuouttxt\command]
+@="powershell -noexit -command \"$filePath = '%1'; $fileName = [System.IO.Path]::GetFileNameWithoutExtension($filePath); $fullFileName = [System.IO.Path]::GetFileName($filePath); $currentTime = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'; Get-FileHash -LiteralPath $filePath -Algorithm SHA1 | Select-Object @{Name='Algorithm';Expression={$_.Algorithm}}, @{Name='Hash';Expression={$_.Hash}}, @{Name='FullFileName';Expression={$fullFileName}}, @{Name='CurrentTime';Expression={$currentTime}} -ExcludeProperty Path | Format-List | Out-File -FilePath (Join-Path (Split-Path -Parent $filePath) ('{0}_hash.txt' -f $fileName)) -Append\"; exit"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\012menuouttxt]
+"MUIVerb"="SHA256 (Save to .txt)"
+"Icon"="PowerShell.exe"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\012menuouttxt\command]
+@="powershell -noexit -command \"$filePath = '%1'; $fileName = [System.IO.Path]::GetFileNameWithoutExtension($filePath); $fullFileName = [System.IO.Path]::GetFileName($filePath); $currentTime = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'; Get-FileHash -LiteralPath $filePath -Algorithm SHA256 | Select-Object @{Name='Algorithm';Expression={$_.Algorithm}}, @{Name='Hash';Expression={$_.Hash}}, @{Name='FullFileName';Expression={$fullFileName}}, @{Name='CurrentTime';Expression={$currentTime}} -ExcludeProperty Path | Format-List | Out-File -FilePath (Join-Path (Split-Path -Parent $filePath) ('{0}_hash.txt' -f $fileName)) -Append\"; exit"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\013menuouttxt]
+"MUIVerb"="SHA384 (Save to .txt)"
+"Icon"="PowerShell.exe"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\013menuouttxt\command]
+@="powershell -noexit -command \"$filePath = '%1'; $fileName = [System.IO.Path]::GetFileNameWithoutExtension($filePath); $fullFileName = [System.IO.Path]::GetFileName($filePath); $currentTime = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'; Get-FileHash -LiteralPath $filePath -Algorithm SHA384 | Select-Object @{Name='Algorithm';Expression={$_.Algorithm}}, @{Name='Hash';Expression={$_.Hash}}, @{Name='FullFileName';Expression={$fullFileName}}, @{Name='CurrentTime';Expression={$currentTime}} -ExcludeProperty Path | Format-List | Out-File -FilePath (Join-Path (Split-Path -Parent $filePath) ('{0}_hash.txt' -f $fileName)) -Append\"; exit"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\014menuouttxt]
+"MUIVerb"="SHA512 (Save to .txt)"
+"Icon"="PowerShell.exe"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\014menuouttxt\command]
+@="powershell -noexit -command \"$filePath = '%1'; $fileName = [System.IO.Path]::GetFileNameWithoutExtension($filePath); $fullFileName = [System.IO.Path]::GetFileName($filePath); $currentTime = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'; Get-FileHash -LiteralPath $filePath -Algorithm SHA512 | Select-Object @{Name='Algorithm';Expression={$_.Algorithm}}, @{Name='Hash';Expression={$_.Hash}}, @{Name='FullFileName';Expression={$fullFileName}}, @{Name='CurrentTime';Expression={$currentTime}} -ExcludeProperty Path | Format-List | Out-File -FilePath (Join-Path (Split-Path -Parent $filePath) ('{0}_hash.txt' -f $fileName)) -Append\"; exit"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\015menuouttxt]
+"MUIVerb"="MACTripleDES (Save to .txt)"
+"Icon"="PowerShell.exe"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\015menuouttxt\command]
+@="powershell -noexit -command \"$filePath = '%1'; $fileName = [System.IO.Path]::GetFileNameWithoutExtension($filePath); $fullFileName = [System.IO.Path]::GetFileName($filePath); $currentTime = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'; Get-FileHash -LiteralPath $filePath -Algorithm MACTripleDES | Select-Object @{Name='Algorithm';Expression={$_.Algorithm}}, @{Name='Hash';Expression={$_.Hash}}, @{Name='FullFileName';Expression={$fullFileName}}, @{Name='CurrentTime';Expression={$currentTime}} -ExcludeProperty Path | Format-List | Out-File -FilePath (Join-Path (Split-Path -Parent $filePath) ('{0}_hash.txt' -f $fileName)) -Append\"; exit"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\016menuouttxt]
+"MUIVerb"="MD5 (Save to .txt)"
+"Icon"="PowerShell.exe"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\016menuouttxt\command]
+@="powershell -noexit -command \"$filePath = '%1'; $fileName = [System.IO.Path]::GetFileNameWithoutExtension($filePath); $fullFileName = [System.IO.Path]::GetFileName($filePath); $currentTime = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'; Get-FileHash -LiteralPath $filePath -Algorithm MD5 | Select-Object @{Name='Algorithm';Expression={$_.Algorithm}}, @{Name='Hash';Expression={$_.Hash}}, @{Name='FullFileName';Expression={$fullFileName}}, @{Name='CurrentTime';Expression={$currentTime}} -ExcludeProperty Path | Format-List | Out-File -FilePath (Join-Path (Split-Path -Parent $filePath) ('{0}_hash.txt' -f $fileName)) -Append\"; exit"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\017menuouttxt]
+"MUIVerb"="RIPEMD160 (Save to .txt)"
+"Icon"="PowerShell.exe"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\017menuouttxt\command]
+@="powershell -noexit -command \"$filePath = '%1'; $fileName = [System.IO.Path]::GetFileNameWithoutExtension($filePath); $fullFileName = [System.IO.Path]::GetFileName($filePath); $currentTime = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'; Get-FileHash -LiteralPath $filePath -Algorithm RIPEMD160 | Select-Object @{Name='Algorithm';Expression={$_.Algorithm}}, @{Name='Hash';Expression={$_.Hash}}, @{Name='FullFileName';Expression={$fullFileName}}, @{Name='CurrentTime';Expression={$currentTime}} -ExcludeProperty Path | Format-List | Out-File -FilePath (Join-Path (Split-Path -Parent $filePath) ('{0}_hash.txt' -f $fileName)) -Append\"; exit"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\018menu]
+"CommandFlags"=dword:00000020
+"MUIVerb"="Show all"
+"Icon"="PowerShell.exe"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\hash\shell\018menu\command]
+@="powershell -noexit get-filehash -literalpath \\\"%1\\\" -algorithm SHA1 | format-list;get-filehash -literalpath \\\"%1\\\" -algorithm SHA256 | format-list;get-filehash -literalpath \\\"%1\\\" -algorithm SHA384 | format-list;get-filehash -literalpath \\\"%1\\\" -algorithm SHA512 | format-list;get-filehash -literalpath \\\"%1\\\" -algorithm MACTripleDES | format-list;get-filehash -literalpath \\\"%1\\\" -algorithm MD5 | format-list;get-filehash -literalpath \\\"%1\\\" -algorithm RIPEMD160 | format-list"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\hashDirectory]
+"Icon"="PowerShell.exe"
+"SubCommands"=""
+"MUIVerb"="Hash All Files in Folder"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\hashDirectory\shell\001]
+"MUIVerb"="SHA1 (Save to .txt)"
+"Icon"="PowerShell.exe"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\hashDirectory\shell\001\command]
+@="powershell.exe -NoExit -Command \"$folderPath = '%1'; Get-ChildItem -Path $folderPath -Recurse -File | ForEach-Object { $filePath = $_.FullName; $fileNameWithoutExt = [System.IO.Path]::GetFileNameWithoutExtension($filePath); $fileNameWithExt = [System.IO.Path]::GetFileName($filePath); $currentTime = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'; $fileHash = Get-FileHash -LiteralPath $filePath -Algorithm SHA1; $fileHash | Add-Member -NotePropertyName 'OriginalFileName' -NotePropertyValue $fileNameWithExt -PassThru | Add-Member -NotePropertyName 'CurrentTime' -NotePropertyValue $currentTime -PassThru | Select-Object Algorithm, Hash, OriginalFileName, CurrentTime -ExcludeProperty Path | Format-List | Out-File -FilePath (Join-Path (Split-Path -Parent $filePath) ('{0}_hash.txt' -f $fileNameWithoutExt)) -Append }; Write-Host 'Hash check for all files in folder complete.'\""
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\hashDirectory\shell\002]
+"MUIVerb"="SHA256 (Save to .txt)"
+"Icon"="PowerShell.exe"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\hashDirectory\shell\002\command]
+@="powershell.exe -NoExit -Command \"$folderPath = '%1'; Get-ChildItem -Path $folderPath -Recurse -File | ForEach-Object { $filePath = $_.FullName; $fileNameWithoutExt = [System.IO.Path]::GetFileNameWithoutExtension($filePath); $fileNameWithExt = [System.IO.Path]::GetFileName($filePath); $currentTime = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'; $fileHash = Get-FileHash -LiteralPath $filePath -Algorithm SHA256; $fileHash | Add-Member -NotePropertyName 'OriginalFileName' -NotePropertyValue $fileNameWithExt -PassThru | Add-Member -NotePropertyName 'CurrentTime' -NotePropertyValue $currentTime -PassThru | Select-Object Algorithm, Hash, OriginalFileName, CurrentTime -ExcludeProperty Path | Format-List | Out-File -FilePath (Join-Path (Split-Path -Parent $filePath) ('{0}_hash.txt' -f $fileNameWithoutExt)) -Append }; Write-Host 'Hash check for all files in folder complete.'\""
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\hashDirectory\shell\003]
+"MUIVerb"="SHA384 (Save to .txt)"
+"Icon"="PowerShell.exe"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\hashDirectory\shell\003\command]
+@="powershell.exe -NoExit -Command \"$folderPath = '%1'; Get-ChildItem -Path $folderPath -Recurse -File | ForEach-Object { $filePath = $_.FullName; $fileNameWithoutExt = [System.IO.Path]::GetFileNameWithoutExtension($filePath); $fileNameWithExt = [System.IO.Path]::GetFileName($filePath); $currentTime = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'; $fileHash = Get-FileHash -LiteralPath $filePath -Algorithm SHA384; $fileHash | Add-Member -NotePropertyName 'OriginalFileName' -NotePropertyValue $fileNameWithExt -PassThru | Add-Member -NotePropertyName 'CurrentTime' -NotePropertyValue $currentTime -PassThru | Select-Object Algorithm, Hash, OriginalFileName, CurrentTime -ExcludeProperty Path | Format-List | Out-File -FilePath (Join-Path (Split-Path -Parent $filePath) ('{0}_hash.txt' -f $fileNameWithoutExt)) -Append }; Write-Host 'Hash check for all files in folder complete.'\""
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\hashDirectory\shell\004]
+"MUIVerb"="SHA512 (Save to .txt)"
+"Icon"="PowerShell.exe"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\hashDirectory\shell\004\command]
+@="powershell.exe -NoExit -Command \"$folderPath = '%1'; Get-ChildItem -Path $folderPath -Recurse -File | ForEach-Object { $filePath = $_.FullName; $fileNameWithoutExt = [System.IO.Path]::GetFileNameWithoutExtension($filePath); $fileNameWithExt = [System.IO.Path]::GetFileName($filePath); $currentTime = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'; $fileHash = Get-FileHash -LiteralPath $filePath -Algorithm SHA512; $fileHash | Add-Member -NotePropertyName 'OriginalFileName' -NotePropertyValue $fileNameWithExt -PassThru | Add-Member -NotePropertyName 'CurrentTime' -NotePropertyValue $currentTime -PassThru | Select-Object Algorithm, Hash, OriginalFileName, CurrentTime -ExcludeProperty Path | Format-List | Out-File -FilePath (Join-Path (Split-Path -Parent $filePath) ('{0}_hash.txt' -f $fileNameWithoutExt)) -Append }; Write-Host 'Hash check for all files in folder complete.'\""
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\hashDirectory\shell\005]
+"MUIVerb"="MACTripleDES (Save to .txt)"
+"Icon"="PowerShell.exe"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\hashDirectory\shell\005\command]
+@="powershell.exe -NoExit -Command \"$folderPath = '%1'; Get-ChildItem -Path $folderPath -Recurse -File | ForEach-Object { $filePath = $_.FullName; $fileNameWithoutExt = [System.IO.Path]::GetFileNameWithoutExtension($filePath); $fileNameWithExt = [System.IO.Path]::GetFileName($filePath); $currentTime = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'; $fileHash = Get-FileHash -LiteralPath $filePath -Algorithm MACTripleDES; $fileHash | Add-Member -NotePropertyName 'OriginalFileName' -NotePropertyValue $fileNameWithExt -PassThru | Add-Member -NotePropertyName 'CurrentTime' -NotePropertyValue $currentTime -PassThru | Select-Object Algorithm, Hash, OriginalFileName, CurrentTime -ExcludeProperty Path | Format-List | Out-File -FilePath (Join-Path (Split-Path -Parent $filePath) ('{0}_hash.txt' -f $fileNameWithoutExt)) -Append }; Write-Host 'Hash check for all files in folder complete.'\""
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\hashDirectory\shell\006]
+"MUIVerb"="MD5 (Save to .txt)"
+"Icon"="PowerShell.exe"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\hashDirectory\shell\006\command]
+@="powershell.exe -NoExit -Command \"$folderPath = '%1'; Get-ChildItem -Path $folderPath -Recurse -File | ForEach-Object { $filePath = $_.FullName; $fileNameWithoutExt = [System.IO.Path]::GetFileNameWithoutExtension($filePath); $fileNameWithExt = [System.IO.Path]::GetFileName($filePath); $currentTime = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'; $fileHash = Get-FileHash -LiteralPath $filePath -Algorithm MD5; $fileHash | Add-Member -NotePropertyName 'OriginalFileName' -NotePropertyValue $fileNameWithExt -PassThru | Add-Member -NotePropertyName 'CurrentTime' -NotePropertyValue $currentTime -PassThru | Select-Object Algorithm, Hash, OriginalFileName, CurrentTime -ExcludeProperty Path | Format-List | Out-File -FilePath (Join-Path (Split-Path -Parent $filePath) ('{0}_hash.txt' -f $fileNameWithoutExt)) -Append }; Write-Host 'Hash check for all files in folder complete.'\""
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\hashDirectory\shell\007]
+"MUIVerb"="RIPEMD160 (Save to .txt)"
+"Icon"="PowerShell.exe"
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\hashDirectory\shell\007\command]
+@="powershell.exe -NoExit -Command \"$folderPath = '%1'; Get-ChildItem -Path $folderPath -Recurse -File | ForEach-Object { $filePath = $_.FullName; $fileNameWithoutExt = [System.IO.Path]::GetFileNameWithoutExtension($filePath); $fileNameWithExt = [System.IO.Path]::GetFileName($filePath); $currentTime = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'; $fileHash = Get-FileHash -LiteralPath $filePath -Algorithm RIPEMD160; $fileHash | Add-Member -NotePropertyName 'OriginalFileName' -NotePropertyValue $fileNameWithExt -PassThru | Add-Member -NotePropertyName 'CurrentTime' -NotePropertyValue $currentTime -PassThru | Select-Object Algorithm, Hash, OriginalFileName, CurrentTime -ExcludeProperty Path | Format-List | Out-File -FilePath (Join-Path (Split-Path -Parent $filePath) ('{0}_hash.txt' -f $fileNameWithoutExt)) -Append }; Write-Host 'Hash check for all files in folder complete.'\""

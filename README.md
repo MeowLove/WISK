@@ -1,68 +1,81 @@
-# WISK
+# WISK 3.0
 
-WISK is a public catalog for the WISK Windows initializer and the repositories,
-software-store entries, and settings-store entries that belong to the project.
+WISK (Windows Init Setup Kit) is an open-source Windows 11 initialization and
+configuration workspace. It combines auditable system settings, registry-backed
+features, software actions, recovery evidence, and a safe Check -> Apply ->
+Verify execution model.
 
-This repository is intentionally metadata-only. It does not contain the
-initializer source code, installers, private configuration, credentials, or
-scripts that modify a computer. Release binaries remain in the application
-repository's release page; this repository publishes the stable links and
-machine-readable list information that clients can consume.
+WISK is the Windows member of the MeowLove Init Setup Kit family. The Linux
+counterpart is [LISK](https://github.com/MeowLove/LISK).
 
-The canonical catalog is [`catalog/index.json`](catalog/index.json). Consumers
-can read the published raw file at:
+## What is public
+
+This repository contains the application source, tests, public catalog data,
+schemas, packaging scripts, legacy migration material, and architecture docs.
+The local product requirements manual remains under the ignored `requirements/`
+directory and is never published.
+
+The public catalog is [`catalog/index.json`](catalog/index.json), validated by
+[`tools/validate-catalog.mjs`](tools/validate-catalog.mjs). It records WISK's
+repository, version, platform, runtime requirement, and software/settings-store
+placement without embedding private configuration or machine-changing scripts.
+
+## Repository layout
 
 ```text
-https://raw.githubusercontent.com/MeowLove/WISK/main/catalog/index.json
+src/                 WISK application layers and shared contracts
+tests/               Core, execution, bridge, catalog, and UI contract tests
+catalog/             Public software/settings catalog metadata
+schema/              Machine-readable catalog and profile schemas
+packaging/           Release and CLI publishing scripts
+tools/               Read-only UI smoke and catalog validation tools
+docs/                Public architecture and development documentation
+legacy/              Retained V1 PowerShell implementation for migration context
+requirements/        Local-only V3 requirements; ignored by Git
 ```
 
-## Current entry
+The internal `WindowsInitializer.*` project names are intentionally retained
+for compatibility during the V3 migration. The user-facing product, assembly
+metadata, title, and release version are WISK 3.0.0.
 
-The initial entry is **WISK**, the public name for the Windows Initializer
-preview. Its implementation remains in
-[`MeowLove/WindowsInitTools`](https://github.com/MeowLove/WindowsInitTools),
-while this repository records its version, platform, runtime requirement,
-repository link, release page, and store placement.
+## Build and test
 
-The catalog does not claim that a release asset is available until the
-application repository publishes one. The current entry is therefore marked
-`preview`.
+The repository pins .NET SDK `10.0.401` in `global.json`.
 
-## Repository shape
+```powershell
+.\Build-Dev.ps1 -Mode Build -Restore
+.\Build-Dev.ps1 -Mode Test
+node tools/validate-catalog.mjs
+```
 
-- `catalog/index.json` is the single source of truth for public entries.
-- `schema/catalog.schema.json` describes the data contract for consumers.
-- `tools/validate-catalog.mjs` performs dependency-free structural and
-  cross-reference checks.
-- `.github/workflows/validate.yml` validates every pull request and push.
+The first clean build may use `-Restore`; subsequent local builds can omit it.
+The default build targets the WPF application, while the full test mode runs
+the complete automated suite. No registry, software installation, or system
+setting changes are required by these checks.
 
-## Updating the catalog
+For a release artifact, use `packaging/Publish-Release.ps1`. The script creates
+a Windows x64 single-file package and a manifest with source commit, hashes,
+build time, and signature verification status. Published artifacts are kept in
+ignored `artifacts/` output and are not committed as source.
 
-1. Edit `catalog/index.json` only for a catalog change.
-2. Run `node tools/validate-catalog.mjs`.
-3. Keep repository and release URLs public and stable.
-4. Do not add secrets, local paths, user data, binaries, or machine-changing
-   scripts.
+## Safety boundary
 
-See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the entry requirements.
+WISK is an administrative tool. All catalog entries are unselected by default;
+elevated and high-risk actions require explicit authorization. Registry-backed
+actions snapshot original values before writes, preserve audit information, and
+use the existing Check/Apply/Verify pipeline. Real Apply/Verify validation must
+be performed only in an isolated Windows test environment.
 
-## Naming note
+## Contributing
 
-`WISK` is the current working product name. Before a broad public launch,
-review trademark, package-name, domain, and repository-name availability in
-the intended markets. A catalog entry can be renamed without moving the
-application source repository.
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) and the local
+development rules in [`AGENTS.md`](AGENTS.md). Do not submit local requirements,
+credentials, user data, signing keys, or generated build output.
 
-## License
+## License and names
 
-The repository uses the GNU General Public License v3.0 selected when the
-online repository was created. The catalog metadata and validation tooling are
-public; this license does not grant rights to third-party names, logos,
-software, or linked release assets.
-
-## 中文说明
-
-WISK 是公开的目录仓库，只维护 WISK Windows 初始化工具以及后续仓库、软件商店和设置商店所需的列表信息。主程序源码、安装包和私有配置仍保留在应用仓库；本仓库只发布结构化元数据、稳定链接和校验规则。
-
-当前条目把现有 Windows Initializer V2.3 作为 `preview` 发布。正式公开前仍需复核 WISK 的商标、软件包名、域名和仓库名可用性。
-
+The application lineage and catalog use the licenses recorded in their source
+files. Third-party names, logos, package identifiers, and linked release assets
+remain the property of their respective owners. WISK and LISK are project names
+used by MeowLove; trademark and package-name availability should be reviewed
+before broad commercial distribution.

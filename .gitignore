@@ -1,4 +1,13 @@
-# Local editor and operating-system files
+# Build and publish output
+**/bin/
+**/obj/
+publish/
+artifacts/
+
+# Internal product requirements and local planning material
+/requirements/
+
+# IDE and operating-system files
 .vs/
 .vscode/
 *.user
@@ -6,6 +15,8 @@
 Thumbs.db
 Desktop.ini
 
-# Generated validation output
+# Local runtime state and logs
+legacy/PowerShell/Windows-Initializer/logs/
+legacy/PowerShell/Windows-Initializer/runs/
 *.log
 

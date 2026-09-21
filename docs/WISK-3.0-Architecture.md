@@ -1,0 +1,130 @@
+﻿# WISK 3.0 Architecture
+
+## 1. Purpose
+
+WISK 3.0 is the public Windows implementation of the MeowLove Init Setup Kit
+family. It provides a Windows 11 x64 workspace for inspecting, configuring,
+planning, and safely executing system initialization tasks. The product remains
+auditable: a user can inspect the catalog, configure parameters, preview an
+immutable plan, run Check -> Apply -> Verify, and export evidence without
+depending on private service infrastructure.
+
+The public repository is the source of implementation and catalog truth. The
+local `requirements/` directory is the behavior authority for maintainers but
+is deliberately excluded from Git and release archives.
+
+## 2. Repository architecture
+
+```text
+WISK/
+  src/
+    WindowsInitializer.Contracts/       stable JSON and task contracts
+    WindowsInitializer.Core/             catalog, planning, validation
+    WindowsInitializer.Execution/        run state, history, diagnostics
+    WindowsInitializer.Platform.Windows/ fixed Windows capability adapters
+    WindowsInitializer.PowerShell/       bounded structured bridge
+    WindowsInitializer.App/              WPF workspaces and localization
+    WindowsInitializer.Cli/              unattended read-only/explicit CLI
+  tests/                                 automated contract and behavior tests
+  catalog/                               public software/settings index
+  schema/                                public machine-readable schemas
+  packaging/                            release and CLI packaging
+  tools/                                validation and UI smoke utilities
+  docs/                                 public architecture and verification boundary
+  legacy/                               V1 migration source, not default runtime
+  requirements/                         local-only maintainer manual
+```
+
+The project and namespace names under `src/` remain `WindowsInitializer.*` for
+the first WISK release so existing contracts and migration references remain
+stable. Product metadata, UI copy, release version, and documentation use WISK.
+
+## 3. Runtime layers
+
+```text
+WPF App / CLI
+    -> Contracts
+    -> Core (catalog, plan builder, templates, relations)
+    -> Execution (Check -> Apply -> Verify, state, history, reports)
+    -> Platform.Windows (registry, WinGet, Windows feature adapters)
+    -> PowerShell bridge (fixed operations and framed JSON responses)
+```
+
+- **Contracts** owns versioned task, plan, template, result, and compatibility
+  records. Machine-readable fields must remain stable or receive an explicit
+  compatibility change.
+- **Core** owns catalog descriptors, configuration validation, typed relations,
+  dependency closure, conflict detection, deterministic order, and plan hashes.
+- **Execution** owns immutable plans, atomic run state, cancellation, timeout,
+  retries, history retention, failure diagnostics, and self-test reports.
+- **Platform.Windows** maps allow-listed task IDs to Windows APIs, registry
+  targets, WinGet package IDs, and native settings entry points.
+- **PowerShell** runs only fixed bridge operations. Scripts and JSON requests are
+  framed through standard input so user content is not concatenated into code or
+  oversized process arguments.
+- **App** exposes the Home, Settings, Software, and Backup & recovery
+  workspaces, configuration dialogs, localization, theme resources, and the
+  persistent plan/execution pane.
+- **CLI** reuses the same contracts and execution boundaries. Its default mode
+  is read-only; Apply requires an explicit command and authorization.
+
+## 4. Configuration and safety
+
+All entries are unselected by default. Items needing input use a configure
+before add flow: validation completes first, cancellation does not enqueue an
+item, and an existing draft can be edited. Plan additions preserve explicit
+enabled, disabled, and default semantics; disabled never means restore default.
+
+Registry-backed tasks use a shared data-driven catalog for task ID, hive,
+subkey, value name, accepted states, risk, backup policy, and conflicts. Before
+the first write in a run, supported original values are snapshotted under the
+run ID. Check, Apply, Verify, template import/export, and rollback evidence use
+the same allow-listed mapping. Unsupported or version-dependent presets remain
+fixed and are not presented as invented reversible switches.
+
+The application never silently creates a restore point, changes a registry, or
+installs software during detection. A system restore point is an explicit
+separate task. Native management links open Windows settings without pretending
+that an external UI action was applied by WISK.
+
+## 5. Public catalog boundary
+
+`catalog/index.json` is public metadata only. It may contain repository links,
+release links, versions, supported platforms, runtime requirements, package IDs,
+categories, and store placement. It must not contain credentials, private URLs,
+user data, local filesystem paths, signing material, telemetry records, or
+scripts that mutate a machine.
+
+The catalog schema and dependency-free validator run in CI. The application
+repository can consume a pinned catalog revision or a reviewed release; runtime
+updates must not silently replace an executable or trust key.
+
+## 6. Versioning and release
+
+WISK 3.0.0 is the first public source migration from the Windows Initializer
+V2.3 line. The migration keeps stable task IDs, contract shapes, audit and
+backup semantics, and internal namespaces while changing the public product
+identity. Future breaking contract changes require a major version and a
+migration note.
+
+Release artifacts are Windows x64 single-file packages with a manifest recording
+source commit, UTC build time, SHA-256, and signature status. Local unsigned
+builds are clearly marked. Signing certificates, private keys, and store
+credentials remain outside the repository.
+
+## 7. Verification boundary
+
+Automated validation includes Core/Execution tests, template and history tests,
+catalog mapping, bridge framing, controlled WinGet responses, and WPF contract
+checks. Build and test commands are:
+
+```powershell
+.\Build-Dev.ps1 -Mode Build -Restore
+.\Build-Dev.ps1 -Mode Test
+node tools/validate-catalog.mjs
+```
+
+These checks do not prove real Windows Apply/Verify behavior. Actual registry,
+software, restore-point, reboot, UAC, and Authenticode acceptance tests belong
+in an isolated Windows 11 VM or dedicated test machine. Do not run them on a
+development host or report them as passed without evidence.

@@ -1,32 +1,54 @@
 # Contributing to WISK
 
-WISK is a catalog repository. Contributions should update public metadata and
-should not turn this repository into an application or installer repository.
+WISK 3.0 contains the Windows application, its automated tests, and the
+public catalog used by software and settings-store clients. Contributions are
+welcome when they preserve the repository's safety boundaries and stable task
+contracts.
 
-## Adding or updating an application
+## Before opening a pull request
 
-Every application entry must include:
+```powershell
+.\Build-Dev.ps1 -Mode Build
+.\Build-Dev.ps1 -Mode Test
+node tools/validate-catalog.mjs
+git diff --check
+```
 
-- a stable lowercase `id`;
-- a public repository reference;
-- a public release page or documented distribution endpoint;
-- supported operating system, architecture, and runtime information;
-- a clear lifecycle status such as `preview`, `stable`, or `retired`;
-- explicit software-store and settings-store placement.
+Use `-Restore` on a clean checkout or after changing a project file or
+dependency. Do not run registry Apply, software installation, restore-point,
+or reboot actions on a development host.
 
-Do not add local filesystem paths, credentials, telemetry data, unsigned
-executables, or scripts that modify a user's machine. Links must point to a
-public page that a reviewer can inspect.
+## Application changes
+
+- Keep task IDs, plan hashes, template compatibility, and Check/Apply/Verify
+  semantics stable unless the change includes an explicit migration note.
+- Add catalog entries with tests for validation, risk, relations, backup policy,
+  and localized labels where applicable.
+- Preserve configure-before-add behavior: cancellation must not enqueue a task,
+  and enabled, disabled, and default states must remain distinct.
+- Do not make version-dependent or unreliable registry behavior look like a
+  reversible switch. Keep those items as fixed presets with an honest note.
+- Never put credentials, user data, local paths, signing keys, or generated
+  `bin/`, `obj/`, and `artifacts/` output in a pull request.
+
+## Catalog changes
+
+`catalog/index.json` is public metadata. Entries require stable IDs, public
+repository and release links, platform/runtime information, lifecycle status,
+and explicit software/settings-store placement. The schema and validator must
+be updated together when the data contract changes.
+
+## Requirements boundary
+
+The authoritative WISK 3.0 requirements manual is local-only under the ignored
+`requirements/` directory. Do not commit it or copy it into a release. Public
+behavioral decisions belong in `docs/WISK-3.0-Architecture.md` and the relevant
+source-level tests.
 
 ## Pull requests
 
-Run the validator before opening a pull request:
-
-```powershell
-node tools/validate-catalog.mjs
-```
-
-Keep unrelated documentation, product source, and release assets in their
-own repositories. Changes to the schema should explain the compatibility
-impact for catalog consumers.
+Describe the user-visible behavior, safety impact, verification commands, and
+any environment-dependent checks that were not run. Keep unrelated legacy
+cleanup out of feature changes; the `legacy/` tree is retained for migration
+context and is not the default WISK runtime.
 
