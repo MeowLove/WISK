@@ -55,8 +55,9 @@ application source repository.
 
 ## License
 
-The catalog metadata and validation tooling are released under the MIT
-License. This license does not grant rights to third-party names, logos,
+The repository uses the GNU General Public License v3.0 selected when the
+online repository was created. The catalog metadata and validation tooling are
+public; this license does not grant rights to third-party names, logos,
 software, or linked release assets.
 
 ## 中文说明
