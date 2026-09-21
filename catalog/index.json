@@ -1,0 +1,86 @@
+{
+  "$schema": "../schema/catalog.schema.json",
+  "schemaVersion": 1,
+  "catalogVersion": "0.1.0",
+  "updatedAt": "2026-09-21",
+  "publisher": {
+    "id": "meowlove",
+    "name": "MeowLove",
+    "website": "https://github.com/MeowLove"
+  },
+  "repositories": [
+    {
+      "id": "wisk",
+      "name": "WISK Catalog",
+      "kind": "catalog",
+      "visibility": "public",
+      "url": "https://github.com/MeowLove/WISK",
+      "license": "MIT"
+    },
+    {
+      "id": "windows-initializer",
+      "name": "Windows Initializer",
+      "kind": "application",
+      "visibility": "public",
+      "url": "https://github.com/MeowLove/WindowsInitTools",
+      "license": "See repository"
+    }
+  ],
+  "applications": [
+    {
+      "id": "wisk",
+      "name": "WISK",
+      "description": "A Windows 11 initialization and configuration tool with auditable plans, software actions, and registry-backed settings.",
+      "status": "preview",
+      "version": "2.3.0",
+      "repositoryId": "windows-initializer",
+      "releasePage": "https://github.com/MeowLove/WindowsInitTools/releases",
+      "platforms": [
+        {
+          "os": "windows",
+          "architecture": "x64",
+          "runtime": ".NET 10 Windows Desktop Runtime",
+          "distribution": "framework-dependent-single-file"
+        }
+      ],
+      "runtimeRequirements": [
+        ".NET 10 Windows Desktop Runtime x64"
+      ],
+      "storeEntries": {
+        "software": true,
+        "settings": true
+      },
+      "tags": [
+        "windows",
+        "initializer",
+        "configuration",
+        "desktop",
+        "explorer",
+        "privacy"
+      ]
+    }
+  ],
+  "stores": {
+    "software": [
+      {
+        "applicationId": "wisk",
+        "enabled": true,
+        "order": 100
+      }
+    ],
+    "settings": [
+      {
+        "applicationId": "wisk",
+        "enabled": true,
+        "order": 100,
+        "categories": [
+          "desktop",
+          "explorer",
+          "privacy",
+          "registry"
+        ]
+      }
+    ]
+  }
+}
+

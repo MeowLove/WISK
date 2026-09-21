@@ -1,0 +1,11 @@
+# Local editor and operating-system files
+.vs/
+.vscode/
+*.user
+*.suo
+Thumbs.db
+Desktop.ini
+
+# Generated validation output
+*.log
+
