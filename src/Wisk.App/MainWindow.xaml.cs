@@ -670,7 +670,7 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
         {
             Title = Localization.Get("exportSelectedRollback"),
             Filter = Localization.Get("registryFileFilter"),
-            FileName = $"WISK wisk-rollback-{selected.RunId[..Math.Min(8, selected.RunId.Length)]}.reg",
+            FileName = $"WISK-rollback-{selected.RunId[..Math.Min(8, selected.RunId.Length)]}.reg",
             AddExtension = true,
             DefaultExt = ".reg"
         };

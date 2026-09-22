@@ -330,7 +330,7 @@ internal static class Program
             Console.WriteLine($"- {result.TaskId}: {result.Disposition} ({result.Code}) {SensitiveDataRedactor.Redact(result.Message)}");
     }
 
-    private static void PrintUsage() => Console.Error.WriteLine("Wisk.Cli status|catalog|self-test|plan|apply|resume|history|diagnostics|extensions|install-extension [--profile path] [--run-id id] [--output path] [--package path] [--allow-elevated] [--allow-high-risk] [--json]");
+    private static void PrintUsage() => Console.Error.WriteLine("WISK.Cli status|catalog|self-test|plan|apply|resume|history|diagnostics|extensions|install-extension [--profile path] [--run-id id] [--output path] [--package path] [--allow-elevated] [--allow-high-risk] [--json]");
 
     private sealed record CliOptions
     {

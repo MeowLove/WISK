@@ -36,7 +36,7 @@ $buildScript = Join-Path $repoRoot "Build-Wisk.ps1"
 if ($LASTEXITCODE -ne 0) { throw "WISK CLI publish failed." }
 
 $payload = @(Get-ChildItem -LiteralPath $output -File | Where-Object Name -ne "release-manifest.json")
-if ($payload.Count -ne 1 -or $payload[0].Name -ne "Wisk.Cli.exe") { throw "CLI publish output must contain exactly Wisk.Cli.exe." }
+if ($payload.Count -ne 1 -or $payload[0].Name -ne "WISK.Cli.exe") { throw "CLI publish output must contain exactly WISK.Cli.exe." }
 $signatureStatus = "NotSignedInLocalBuild"
 if ($normalizedThumbprint) {
     $certificates = @(Get-ChildItem Cert:\CurrentUser\My, Cert:\LocalMachine\My -CodeSigningCert |

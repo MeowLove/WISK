@@ -39,10 +39,10 @@ $buildScript = Join-Path $repoRoot 'Build-Wisk.ps1'
 & $buildScript -Target Publish -Profile Release -RuntimeMode SelfContained -Component App -Runtime $Runtime -Version $Version -SignatureStatus $embeddedSignatureStatus
 if ($LASTEXITCODE -ne 0) { throw "WISK publish failed with exit code $LASTEXITCODE" }
 
-$exe = @(Get-ChildItem -LiteralPath $outputRoot -Filter 'Wisk.exe' -File)
-if ($exe.Count -ne 1) { throw "Expected exactly one Wisk.exe, found $($exe.Count)" }
+$exe = @(Get-ChildItem -LiteralPath $outputRoot -Filter 'WISK.exe' -File)
+if ($exe.Count -ne 1) { throw "Expected exactly one WISK.exe, found $($exe.Count)" }
 $payloadFiles = @(Get-ChildItem -LiteralPath $outputRoot -File | Where-Object Name -ne 'release-manifest.json')
-if ($payloadFiles.Count -ne 1 -or $payloadFiles[0].Name -ne 'Wisk.exe') { throw "Single-file publish contains unexpected payload files: $($payloadFiles.Name -join ', ')" }
+if ($payloadFiles.Count -ne 1 -or $payloadFiles[0].Name -ne 'WISK.exe') { throw "Single-file publish contains unexpected payload files: $($payloadFiles.Name -join ', ')" }
 $signatureStatus = 'NotSignedInLocalBuild'
 if ($normalizedThumbprint) {
     $certificates = @(Get-ChildItem Cert:\CurrentUser\My, Cert:\LocalMachine\My -CodeSigningCert |
