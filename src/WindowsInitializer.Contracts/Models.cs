@@ -142,7 +142,8 @@ public sealed record PlannedTask(
     string? ExtensionManifestHash = null, string? ExtensionExecutablePath = null,
     string? ExtensionExecutableHash = null, string? ExtensionProtocol = null,
     ImmutableArray<TaskRelation>? Relations = null, ImmutableArray<string>? ResourceLocks = null,
-    RollbackSupport Rollback = RollbackSupport.Manual, ExecutionBoundary Boundary = ExecutionBoundary.None);
+    RollbackSupport Rollback = RollbackSupport.Manual, ExecutionBoundary Boundary = ExecutionBoundary.None,
+    string? Proxy = null);
 
 public sealed record ImmutablePlan(
     string PlanId, string ProfileId, string CatalogVersion, DateTimeOffset CreatedAt,

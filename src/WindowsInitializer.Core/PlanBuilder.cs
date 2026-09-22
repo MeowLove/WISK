@@ -47,7 +47,8 @@ public sealed class PlanBuilder(Catalog catalog)
                 Relations: task.Relations ?? ImmutableArray<TaskRelation>.Empty,
                 ResourceLocks: task.ResourceLocks ?? ImmutableArray<string>.Empty,
                 Rollback: task.Rollback,
-                Boundary: task.Boundary))
+                Boundary: task.Boundary,
+                Proxy: profile.Proxy))
             .ToImmutableArray();
 
         var maximumRisk = planned.Length == 0 ? RiskLevel.Standard : planned.Max(task => task.Risk);
@@ -88,6 +89,7 @@ public sealed class PlanBuilder(Catalog catalog)
                 task.ExtensionExecutablePath,
                 task.ExtensionExecutableHash,
                 task.ExtensionProtocol,
+                task.Proxy,
                 Relations = (task.Relations ?? ImmutableArray<TaskRelation>.Empty)
                     .OrderBy(relation => relation.Kind).ThenBy(relation => relation.TargetTaskId, StringComparer.Ordinal)
                     .Select(relation => new { relation.TargetTaskId, Kind = relation.Kind.ToString(), relation.ReasonKey }).ToArray(),

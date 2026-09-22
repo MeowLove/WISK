@@ -94,7 +94,7 @@ public sealed class WinGetTaskExecutor(Catalog catalog, IWinGetProcessRunner run
         try
         {
             var installed = await runner.RunAsync(
-                ["list", "--id", descriptor.PackageId, "--exact", "--source", source, "--accept-source-agreements"],
+                WithProxy(["list", "--id", descriptor.PackageId, "--exact", "--source", source, "--accept-source-agreements"], task.Proxy),
                 TimeSpan.FromMinutes(2), cancellationToken).ConfigureAwait(false);
             var installedOutput = Truncate(installed.Stdout);
             if (installed.ExitCode != 0 && installed.ExitCode != NoApplicationsFoundExitCode)
@@ -113,7 +113,7 @@ public sealed class WinGetTaskExecutor(Catalog catalog, IWinGetProcessRunner run
                 return new TaskCheckResult(task.TaskId, TaskState.Skipped, ErrorCode.None, "The package is already installed.", AlreadyComplete: true, CanApply: true);
 
             var upgrade = await runner.RunAsync(
-                ["list", "--id", descriptor.PackageId, "--exact", "--upgrade-available", "--source", source, "--accept-source-agreements"],
+                WithProxy(["list", "--id", descriptor.PackageId, "--exact", "--upgrade-available", "--source", source, "--accept-source-agreements"], task.Proxy),
                 TimeSpan.FromMinutes(2), cancellationToken).ConfigureAwait(false);
             var upgradeOutput = Truncate(upgrade.Stdout);
             if (upgrade.ExitCode == NoApplicationsFoundExitCode || (upgrade.ExitCode == 0 && !ContainsExactPackageId(upgradeOutput, descriptor.PackageId)))
@@ -142,7 +142,8 @@ public sealed class WinGetTaskExecutor(Catalog catalog, IWinGetProcessRunner run
         try
         {
             var command = action == WinGetAction.Upgrade ? "upgrade" : "install";
-            var result = await runner.RunAsync([command, "--id", descriptor.PackageId, "--exact", "--source", source, "--accept-source-agreements", "--accept-package-agreements", "--silent", "--disable-interactivity"], context.Timeout, context.CancellationToken).ConfigureAwait(false);
+            var proxy = task.Proxy ?? context.Plan.Tasks.FirstOrDefault(item => item.TaskId.Equals(task.TaskId, StringComparison.OrdinalIgnoreCase))?.Proxy;
+            var result = await runner.RunAsync(WithProxy([command, "--id", descriptor.PackageId, "--exact", "--source", source, "--accept-source-agreements", "--accept-package-agreements", "--silent", "--disable-interactivity"], proxy), context.Timeout, context.CancellationToken).ConfigureAwait(false);
             if (result.ExitCode == 0)
                 return new ExecutionResult(task.TaskId, TaskState.Succeeded, ErrorCode.None.ToString(), $"WinGet {command} completed.", true, task.RequiresReboot);
             var code = MapProcessError(result.ExitCode);
@@ -163,6 +164,9 @@ public sealed class WinGetTaskExecutor(Catalog catalog, IWinGetProcessRunner run
     }
 
     private static string Truncate(string value) => value.Length <= MaxOutputCharacters ? value : value[..MaxOutputCharacters];
+
+    private static IReadOnlyList<string> WithProxy(IReadOnlyList<string> arguments, string? proxy) =>
+        string.IsNullOrWhiteSpace(proxy) ? arguments : [.. arguments, "--proxy", proxy];
 
     private static bool TryResolveAction(string? summary, out WinGetAction action)
     {

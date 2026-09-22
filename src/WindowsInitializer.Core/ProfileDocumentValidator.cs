@@ -42,8 +42,10 @@ public static class ProfileDocumentValidator
         if (profile.Proxy is not null)
         {
             if (profile.Proxy.Length > 2048 || !Uri.TryCreate(profile.Proxy, UriKind.Absolute, out var proxyUri) ||
-                proxyUri.Scheme is not ("http" or "https"))
-                return Invalid("proxy must be an absolute HTTP or HTTPS URI no longer than 2048 characters.");
+                proxyUri.Scheme is not ("http" or "https") || string.IsNullOrWhiteSpace(proxyUri.Host) ||
+                !string.IsNullOrEmpty(proxyUri.UserInfo) || !string.IsNullOrEmpty(proxyUri.Query) ||
+                !string.IsNullOrEmpty(proxyUri.Fragment))
+                return Invalid("proxy must be an HTTP or HTTPS URI without credentials, query, or fragment.");
         }
 
         if (profile.Parameters is { Count: > MaximumParameterCount })

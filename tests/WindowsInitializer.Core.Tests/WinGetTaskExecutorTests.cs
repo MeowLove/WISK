@@ -39,6 +39,21 @@ public sealed class WinGetTaskExecutorTests
     }
 
     [Fact]
+    public async Task ApplyPassesProfileProxyToWinGet()
+    {
+        var runner = new FakeRunner(0, string.Empty, string.Empty);
+        var executor = new WinGetTaskExecutor(new Catalog(), runner);
+        var task = new PlannedTask("app-vscode", "3.0.0", RiskLevel.Standard, TaskSource.BuiltIn, [], false, string.Empty);
+        var plan = new PlanBuilder(new Catalog()).Build(new ProfileDocument("2.0", "proxy", ["app-vscode"], new ProfileTarget(), new ExecutionPolicy(), false, false, Proxy: "http://127.0.0.1:7890"));
+
+        var result = await executor.ApplyAsync(task, new ApplyContext("run", plan, CancellationToken.None, TimeSpan.FromSeconds(1), true));
+
+        Assert.Equal(TaskState.Succeeded, result.State);
+        Assert.Contains("--proxy", runner.Arguments);
+        Assert.Contains("http://127.0.0.1:7890", runner.Arguments);
+    }
+
+    [Fact]
     public async Task UpgradeCheckRequiresInstalledPackageAndUsesReadOnlyUpgradeListing()
     {
         var runner = new FakeRunner(

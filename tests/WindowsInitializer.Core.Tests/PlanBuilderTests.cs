@@ -78,6 +78,30 @@ public sealed class PlanBuilderTests
     }
 
     [Fact]
+    public void ProfileProxyIsPinnedToPlanTasksAndSemanticHash()
+    {
+        var builder = new PlanBuilder(new Catalog());
+        var profile = new ProfileDocument("2.0", "proxy", ["app-vscode"], new ProfileTarget(), new ExecutionPolicy(), false, false, Proxy: "http://127.0.0.1:7890");
+
+        var plan = builder.Build(profile);
+
+        Assert.Equal(profile.Proxy, Assert.Single(plan.Tasks).Proxy);
+        Assert.Equal(plan.SemanticHash, PlanBuilder.ComputeSemanticHash(plan));
+    }
+
+    [Theory]
+    [InlineData("http://user:password@127.0.0.1:7890")]
+    [InlineData("http://127.0.0.1:7890/?token=secret")]
+    public void ProfileProxyRejectsCredentialsAndQueryData(string proxy)
+    {
+        var profile = new ProfileDocument("2.0", "proxy-invalid", ["app-vscode"], new ProfileTarget(), new ExecutionPolicy(), false, false, Proxy: proxy);
+
+        var error = Assert.Throws<PlanValidationException>(() => new PlanBuilder(new Catalog()).Build(profile));
+
+        Assert.Equal(ErrorCode.InvalidProfile, error.Code);
+    }
+
+    [Fact]
     public void FastStartupCanBePlannedWithoutSeparateHibernationTask()
     {
         var builder = new PlanBuilder(new Catalog());
