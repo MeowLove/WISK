@@ -214,6 +214,11 @@ public sealed class ExecutionEngine
             {
                 return Cancelled(task.TaskId, started);
             }
+            catch (OperationCanceledException) when (timeout.IsCancellationRequested)
+            {
+                applied = new ExecutionResult(task.TaskId, TaskState.Failed, ErrorCode.Timeout.ToString(),
+                    "Task timed out.", false, task.RequiresReboot, true, FailureStage: "Apply");
+            }
             catch (TimeoutException)
             {
                 applied = new ExecutionResult(task.TaskId, TaskState.Failed, ErrorCode.Timeout.ToString(),
