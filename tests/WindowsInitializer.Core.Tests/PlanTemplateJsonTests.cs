@@ -49,6 +49,8 @@ public sealed class PlanTemplateJsonTests
     [InlineData("app-vscode", "upgrade")]
     [InlineData("app-vscode", "install")]
     [InlineData("setting-fast-startup", "disabled")]
+    [InlineData("language-ui-preference", "language=en-US;currentUser=true;system=false;welcome=false")]
+    [InlineData("font-supplements-cjk-indic-europe", "japanese,korean")]
     public void RetainsExplicitActionThroughTemplateAndPlan(string taskId, string value)
     {
         var catalog = new Catalog();

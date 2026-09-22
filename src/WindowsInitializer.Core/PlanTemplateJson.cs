@@ -80,7 +80,8 @@ public static class PlanTemplateJson
         {
             "computer-name" => Regex.IsMatch(item.Value, "^[A-Za-z0-9-]{1,15}$"),
             "device-setup-region" => Regex.IsMatch(item.Value, "^\\d{1,4}$"),
-            "language-ui-preference" => Regex.IsMatch(item.Value, "^[a-zA-Z]{2,3}(-[a-zA-Z]{2,4})?$"),
+            "language-ui-preference" => LanguagePreferenceCatalog.IsValid(item.Value),
+            "font-supplements-cjk-indic-europe" => FontSupplementCatalog.IsValidSelection(item.Value),
             "setting-windows-update-mode" => item.Value is "default" or "notify-download" or "auto-notify-install",
             "setting-power-plan" => item.Value is "balanced" or "high-performance" or "power-saver" or "ultimate-performance",
             "setting-sleep-timeouts" => IsTimeoutTemplateValue(item.Value),

@@ -48,7 +48,7 @@ public partial class ConfigurationDialog : Window
             foreach (var account in existing.Accounts ?? []) _accounts.Add(AccountDraft.From(account));
             if (existing.Parameters.TryGetValue("computer-name", out var computerName)) ComputerNameBox.Text = computerName;
             if (existing.Parameters.TryGetValue("device-setup-region", out var region)) DeviceRegionBox.Text = region;
-            if (existing.Parameters.TryGetValue("language-ui-preference", out var language)) LanguageUiBox.Text = language;
+            if (existing.Parameters.TryGetValue(LanguagePreferenceCatalog.TaskId, out var language)) LoadLanguagePreference(language);
             if (existing.Parameters.TryGetValue(FontSupplementCatalog.TaskId, out var fonts)) LoadFontSelection(fonts);
             if (existing.Parameters.TryGetValue("setting-windows-update-mode", out var updateMode)) SelectTag(WindowsUpdateModeBox, updateMode);
             if (existing.Parameters.TryGetValue("setting-power-plan", out var powerPlan)) SelectTag(PowerPlanBox, powerPlan);
@@ -84,9 +84,17 @@ public partial class ConfigurationDialog : Window
         }
         if (Has("language-ui-preference"))
         {
-            var value = LanguageUiBox.Text.Trim();
-            if (!Regex.IsMatch(value, "^[a-zA-Z]{2,3}(-[a-zA-Z]{2,4})?$")) { ShowInvalid("invalidLanguageTag"); return; }
-            parameters = parameters.Add("language-ui-preference", value);
+            if (!LanguagePreferenceCatalog.TryNormalizeComponents(
+                    LanguageUiBox.Text,
+                    LanguageCurrentUserBox.IsChecked == true,
+                    LanguageSystemBox.IsChecked == true,
+                    LanguageWelcomeBox.IsChecked == true,
+                    out var normalizedLanguagePreference))
+            {
+                ShowInvalid("languageScopeRequired");
+                return;
+            }
+            parameters = parameters.Add(LanguagePreferenceCatalog.TaskId, normalizedLanguagePreference);
         }
         if (Has(FontSupplementCatalog.TaskId))
         {
@@ -161,6 +169,15 @@ public partial class ConfigurationDialog : Window
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
         foreach (var box in new[] { JapaneseFontsBox, KoreanFontsBox, EuropeanFontsBox, IndicFontsBox })
             box.IsChecked = selected.Contains(box.Tag?.ToString() ?? string.Empty);
+    }
+
+    private void LoadLanguagePreference(string value)
+    {
+        if (!LanguagePreferenceCatalog.TryParse(value, out var selection)) return;
+        LanguageUiBox.Text = selection.TargetLanguage;
+        LanguageCurrentUserBox.IsChecked = selection.ApplyToCurrentUser;
+        LanguageSystemBox.IsChecked = selection.ApplyToSystem;
+        LanguageWelcomeBox.IsChecked = selection.SyncToWelcomeAndNewUsers;
     }
 
     private static bool TryMinutes(string value, out int minutes) => int.TryParse(value.Trim(), out minutes) && minutes is >= 0 and <= 1440;

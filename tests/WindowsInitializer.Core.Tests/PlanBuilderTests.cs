@@ -124,6 +124,35 @@ public sealed class PlanBuilderTests
     }
 
     [Fact]
+    public void LanguagePreferenceRequiresScopeAndPinsCanonicalSelection()
+    {
+        var missing = new ProfileDocument("2.0", "language-missing", [LanguagePreferenceCatalog.TaskId], new ProfileTarget(),
+            new ExecutionPolicy(), true, false);
+        var invalid = missing with
+        {
+            ProfileId = "language-invalid",
+            Parameters = ImmutableDictionary<string, string>.Empty.Add(LanguagePreferenceCatalog.TaskId, "language=en-US;currentUser=false;system=false;welcome=false")
+        };
+        var legacy = missing with
+        {
+            ProfileId = "language-legacy",
+            Parameters = ImmutableDictionary<string, string>.Empty.Add(LanguagePreferenceCatalog.TaskId, "en-US")
+        };
+        var scoped = missing with
+        {
+            ProfileId = "language-scoped",
+            Parameters = ImmutableDictionary<string, string>.Empty.Add(LanguagePreferenceCatalog.TaskId, "language=en-US;currentUser=true;system=true;welcome=true")
+        };
+
+        Assert.Equal(ErrorCode.InvalidProfile, Assert.Throws<PlanValidationException>(() => new PlanBuilder(new Catalog()).Build(missing)).Code);
+        Assert.Equal(ErrorCode.InvalidProfile, Assert.Throws<PlanValidationException>(() => new PlanBuilder(new Catalog()).Build(invalid)).Code);
+        Assert.Equal("language=en-US;currentUser=true;system=false;welcome=false",
+            Assert.Single(new PlanBuilder(new Catalog()).Build(legacy).Tasks).ParameterSummary);
+        Assert.Equal("language=en-US;currentUser=true;system=true;welcome=true",
+            Assert.Single(new PlanBuilder(new Catalog()).Build(scoped).Tasks).ParameterSummary);
+    }
+
+    [Fact]
     public void FastStartupCanBePlannedWithoutSeparateHibernationTask()
     {
         var builder = new PlanBuilder(new Catalog());

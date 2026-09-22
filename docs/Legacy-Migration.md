@@ -12,6 +12,11 @@ only an audit source and is not a runtime dependency.
   configuration dialog requires at least one Japanese, Korean, European, or
   Indic group, the plan stores canonical selection IDs, and the bridge
   validates only the selected Windows capabilities.
+- Display language preferences preserve the legacy target-scope options. The
+  plan can target the current user, the system UI language, and welcome/new
+  users after the target language pack is installed. Windows has no supported
+  readback for the last synchronization scope, so Verify reports manual
+  review after confirming the readable current-user and system scopes.
 - WinGet software and runtime entries use the public catalog and fixed package
   IDs. Legacy machine-scoped entries pin `machine` in the plan and pass it to
   Check, Apply, and Verify; an explicit profile proxy is carried into the same

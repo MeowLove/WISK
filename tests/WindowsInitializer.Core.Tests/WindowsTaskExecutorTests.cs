@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using WindowsInitializer.Contracts;
 using WindowsInitializer.Platform.Windows;
 using WindowsInitializer.PowerShell;
@@ -68,7 +69,8 @@ public sealed class WindowsTaskExecutorTests
         var bridge = new FakeBridge();
         var executor = new WindowsTaskExecutor(bridge, new WindowsInitializer.Core.Catalog());
         var task = new PlannedTask("language-ui-preference", "2.0.0", RiskLevel.Elevated, TaskSource.BuiltIn, [], true, "en-US");
-        var plan = new WindowsInitializer.Core.PlanBuilder(new WindowsInitializer.Core.Catalog()).Build(new ProfileDocument("2.0", "p", ["language-ui-preference"], new ProfileTarget(), new ExecutionPolicy(), true, false));
+        var plan = new WindowsInitializer.Core.PlanBuilder(new WindowsInitializer.Core.Catalog()).Build(new ProfileDocument("2.0", "p", ["language-ui-preference"], new ProfileTarget(), new ExecutionPolicy(), true, false,
+            Parameters: ImmutableDictionary<string, string>.Empty.Add("language-ui-preference", "en-US")));
         var context = new ApplyContext("run", plan, CancellationToken.None, TimeSpan.FromSeconds(1), true,
             [new ProfileAccount("initializer", null, null, null, false, false, false, "placeholder")]);
 

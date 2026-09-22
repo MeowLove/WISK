@@ -211,6 +211,9 @@ public sealed class PlanBuilder(Catalog catalog)
         if (taskId.Equals(FontSupplementCatalog.TaskId, StringComparison.OrdinalIgnoreCase) &&
             FontSupplementCatalog.TryNormalizeSelection(value, out var normalizedSelection))
             value = normalizedSelection;
+        if (taskId.Equals(LanguagePreferenceCatalog.TaskId, StringComparison.OrdinalIgnoreCase) &&
+            LanguagePreferenceCatalog.TryNormalize(value, out var normalizedLanguagePreference))
+            value = normalizedLanguagePreference;
         return IsSecretKey(taskId) || IsSecretValue(value) ? "[REDACTED]" : value.Length > 256 ? value[..256] : value;
     }
 

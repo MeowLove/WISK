@@ -75,6 +75,13 @@ public static class ProfileDocumentValidator
                 return Invalid("The supplemental font task requires at least one valid font selection.");
         }
 
+        if (profile.Tasks.Contains(LanguagePreferenceCatalog.TaskId, StringComparer.OrdinalIgnoreCase))
+        {
+            var value = profile.Parameters?.FirstOrDefault(pair => pair.Key.Equals(LanguagePreferenceCatalog.TaskId, StringComparison.OrdinalIgnoreCase)).Value;
+            if (!LanguagePreferenceCatalog.IsValid(value))
+                return Invalid("The display language task requires a valid language and at least one target scope.");
+        }
+
         if (profile.Accounts is { } accounts)
         {
             if (accounts.Length > MaximumAccountCount)

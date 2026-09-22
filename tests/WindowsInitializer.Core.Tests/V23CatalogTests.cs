@@ -52,6 +52,17 @@ public sealed class V23CatalogTests
     }
 
     [Fact]
+    public void LanguagePreferenceCatalogPreservesLegacyAndScopedForms()
+    {
+        Assert.True(LanguagePreferenceCatalog.TryNormalize("en-US", out var legacy));
+        Assert.Equal("language=en-US;currentUser=true;system=false;welcome=false", legacy);
+        Assert.True(LanguagePreferenceCatalog.TryNormalizeComponents("en-US", true, true, true, out var scoped));
+        Assert.Equal("language=en-US;currentUser=true;system=true;welcome=true", scoped);
+        Assert.False(LanguagePreferenceCatalog.TryNormalize("language=en-US;currentUser=false;system=false;welcome=false", out _));
+        Assert.False(LanguagePreferenceCatalog.TryNormalize("language=en-US;currentUser=false;system=true;welcome=true", out _));
+    }
+
+    [Fact]
     public void CatalogNeverSelectsTasksByDefault()
     {
         Assert.All(new Catalog().GetTasks(), task => Assert.False(task.DefaultSelected, task.Id));

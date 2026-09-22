@@ -23,6 +23,10 @@
         <StackPanel x:Name="LanguageUiPanel" Margin="0,0,0,14">
           <TextBlock Text="{local:Loc windowsLanguageTag}" FontWeight="SemiBold" />
           <TextBox x:Name="LanguageUiBox" Margin="0,6,0,0" ToolTip="{local:Loc languageTagExample}" />
+          <TextBlock Text="{local:Loc languageScopeHint}" Foreground="{DynamicResource AppMutedTextBrush}" Margin="0,4,0,6" TextWrapping="Wrap" />
+          <CheckBox x:Name="LanguageCurrentUserBox" Content="{local:Loc languageApplyCurrentUser}" IsChecked="True" Margin="0,3,0,0" />
+          <CheckBox x:Name="LanguageSystemBox" Content="{local:Loc languageApplySystem}" Margin="0,3,0,0" />
+          <CheckBox x:Name="LanguageWelcomeBox" Content="{local:Loc languageSyncWelcome}" Margin="0,3,0,0" />
         </StackPanel>
         <StackPanel x:Name="FontSupplementPanel" Margin="0,0,0,14">
           <TextBlock Text="{local:Loc supplementalFonts}" FontWeight="SemiBold" />

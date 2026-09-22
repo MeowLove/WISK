@@ -121,6 +121,63 @@ function Install-BridgeLanguageCapabilities([string]$languageTag) {
   }
   return $changedAny
 }
+function ConvertFrom-BridgeLanguagePreference([string]$value) {
+  if ([string]::IsNullOrWhiteSpace($value)) { throw 'Display language preference is required.' }
+  $trimmed = $value.Trim()
+  if ($trimmed -notmatch '=') {
+    if ($trimmed -notmatch '^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})?$') { throw 'Display language tag is invalid.' }
+    return [pscustomobject]@{ TargetLanguage = $trimmed; ApplyToCurrentUser = $true; ApplyToSystem = $false; SyncToWelcomeAndNewUsers = $false }
+  }
+  $fields = @{}
+  foreach ($part in @($trimmed -split ';')) {
+    $pair = $part -split '=', 2
+    if ($pair.Count -ne 2 -or [string]::IsNullOrWhiteSpace($pair[0]) -or $fields.ContainsKey($pair[0])) { throw 'Display language preference format is invalid.' }
+    $fields[$pair[0].Trim()] = $pair[1].Trim()
+  }
+  if ($fields.Count -ne 4 -or -not $fields.ContainsKey('language') -or -not $fields.ContainsKey('currentUser') -or
+      -not $fields.ContainsKey('system') -or -not $fields.ContainsKey('welcome')) { throw 'Display language preference fields are incomplete.' }
+  if ($fields.language -notmatch '^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})?$') { throw 'Display language tag is invalid.' }
+  try {
+    $currentUser = [bool]::Parse($fields.currentUser)
+    $system = [bool]::Parse($fields.system)
+    $welcome = [bool]::Parse($fields.welcome)
+  } catch { throw 'Display language preference scope is invalid.' }
+  if (-not $currentUser -and -not $system) { throw 'At least one display language target scope is required.' }
+  if ($welcome -and -not $currentUser) { throw 'Welcome screen synchronization requires the current user scope.' }
+  return [pscustomobject]@{ TargetLanguage = $fields.language; ApplyToCurrentUser = $currentUser; ApplyToSystem = $system; SyncToWelcomeAndNewUsers = $welcome }
+}
+function Get-BridgeLanguageCommandValue([string]$commandName) {
+  if (-not (Get-Command -Name $commandName -ErrorAction SilentlyContinue)) { return $null }
+  $value = if ($commandName -eq 'Get-WinUILanguageOverride') { Get-WinUILanguageOverride -ErrorAction Stop | Select-Object -First 1 } else { Get-SystemPreferredUILanguage -ErrorAction Stop | Select-Object -First 1 }
+  if ($null -eq $value) { return '' }
+  if ($value.PSObject.Properties.Name -contains 'Name') { return [string]$value.Name }
+  return [string]$value
+}
+function Get-BridgeLanguagePreferenceState($preference) {
+  $installed = @(Get-BridgeInstalledLanguageIds) -contains [string]$preference.TargetLanguage
+  $currentAvailable = $true; $currentConfigured = $true
+  if ([bool]$preference.ApplyToCurrentUser) {
+    $currentValue = Get-BridgeLanguageCommandValue 'Get-WinUILanguageOverride'
+    $currentAvailable = $null -ne $currentValue
+    $currentConfigured = $currentAvailable -and $currentValue -ieq [string]$preference.TargetLanguage
+  }
+  $systemAvailable = $true; $systemConfigured = $true
+  if ([bool]$preference.ApplyToSystem) {
+    $systemValue = Get-BridgeLanguageCommandValue 'Get-SystemPreferredUILanguage'
+    $systemAvailable = $null -ne $systemValue
+    $systemConfigured = $systemAvailable -and $systemValue -ieq [string]$preference.TargetLanguage
+  }
+  $welcomeAvailable = $true
+  if ([bool]$preference.SyncToWelcomeAndNewUsers) { $welcomeAvailable = $null -ne (Get-Command -Name Copy-UserInternationalSettingsToSystem -ErrorAction SilentlyContinue) }
+  return @{
+    Installed = $installed
+    CurrentAvailable = $currentAvailable
+    CurrentConfigured = $currentConfigured
+    SystemAvailable = $systemAvailable
+    SystemConfigured = $systemConfigured
+    WelcomeAvailable = $welcomeAvailable
+  }
+}
 function Get-BridgeSupplementalFontCapabilities {
   param([string]$selection)
   $patterns = @{
@@ -313,10 +370,14 @@ switch ([string]$request.operation) {
       if ($accountNames.Count -eq 0) { $status = 'Failed'; $code = 'InvalidProfile'; $message = 'At least one account is required.' }
       else { $message = 'Local account changes are ready; account policy cannot be inferred from the account name alone.' }
     } elseif ($taskId -eq 'language-ui-preference') {
-      if ($parameterValue -notmatch '^[a-zA-Z]{2,3}(-[a-zA-Z]{2,4})?$') { $status = 'Failed'; $code = 'InvalidProfile'; $message = 'Display language tag is invalid.' }
-      elseif (-not (Get-Command -Name Get-WinUILanguageOverride -ErrorAction SilentlyContinue)) { $status = 'Failed'; $code = 'UnsupportedPrerequisite'; $message = 'Windows display language override is unavailable on this edition.' }
-      elseif (((Get-WinUILanguageOverride) | ForEach-Object { $_.Name }) -ieq $parameterValue) { $status = 'Skipped'; $message = 'Display language is already configured.' }
-      else { $message = 'Display language preference change is ready.' }
+      try {
+        $preference = ConvertFrom-BridgeLanguagePreference $parameterValue
+        $state = Get-BridgeLanguagePreferenceState $preference
+        if (-not $state.Installed) { $status = 'Failed'; $code = 'InvalidProfile'; $message = 'The target language pack is not installed.' }
+        elseif (-not $state.CurrentAvailable -or -not $state.SystemAvailable -or -not $state.WelcomeAvailable) { $status = 'UnsupportedPrerequisite'; $code = 'UnsupportedOperatingSystem'; $message = 'One of the requested display language scopes is unavailable on this Windows edition.' }
+        elseif ($state.CurrentConfigured -and $state.SystemConfigured -and -not $preference.SyncToWelcomeAndNewUsers) { $status = 'Skipped'; $message = 'Display language scopes are already configured.' }
+        else { $message = 'Display language preference change is ready.' }
+      } catch { $status = 'Failed'; $code = 'InvalidProfile'; $message = $_.Exception.Message }
     } elseif ($taskId -eq 'device-setup-region') {
       if ($parameterValue -notmatch '^\d{1,4}$') { $status = 'Failed'; $code = 'InvalidProfile'; $message = 'Device setup region GeoID is invalid.' }
       elseif ([int](Get-ItemPropertyValue -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Control Panel\DeviceRegion' -Name 'DeviceRegion' -ErrorAction SilentlyContinue) -eq [int]$parameterValue) { $status = 'Skipped'; $message = 'Device setup region is already configured.' }
@@ -442,13 +503,25 @@ switch ([string]$request.operation) {
       if ($parameterValue -notmatch '^[A-Za-z0-9-]{1,15}$') { $status = 'Failed'; $code = 'InvalidProfile'; $message = 'Computer name must be 1-15 ASCII letters, digits, or hyphens.' }
       else { Rename-Computer -NewName $parameterValue -Force -ErrorAction Stop | Out-Null; $changed = $true; $reboot = $true; $message = 'Computer name change completed.' }
     } elseif ($taskId -eq 'language-ui-preference') {
-      if ($parameterValue -notmatch '^[a-zA-Z]{2,3}(-[a-zA-Z]{2,4})?$') { $status = 'Failed'; $code = 'InvalidProfile'; $message = 'Display language tag is invalid.' }
-      else {
+      $preference = ConvertFrom-BridgeLanguagePreference $parameterValue
+      if (@(Get-BridgeInstalledLanguageIds) -notcontains [string]$preference.TargetLanguage) { throw 'The target language pack is not installed.' }
+      if ([bool]$preference.ApplyToCurrentUser) {
         if (-not (Get-Command -Name Set-WinUILanguageOverride -ErrorAction SilentlyContinue)) { throw 'Set-WinUILanguageOverride is unavailable on this Windows edition.' }
-        $culture = [System.Globalization.CultureInfo]::GetCultureInfo($parameterValue)
+        $culture = [System.Globalization.CultureInfo]::GetCultureInfo($preference.TargetLanguage)
         Set-WinUILanguageOverride -Language $culture -ErrorAction Stop | Out-Null
-        $changed = $true; $reboot = $true; $message = 'Display language preference configured for ' + $culture.Name + '.'
+        $changed = $true
       }
+      if ([bool]$preference.ApplyToSystem) {
+        if (-not (Get-Command -Name Set-SystemPreferredUILanguage -ErrorAction SilentlyContinue)) { throw 'Set-SystemPreferredUILanguage is unavailable on this Windows edition.' }
+        Set-SystemPreferredUILanguage -Language $preference.TargetLanguage -ErrorAction Stop | Out-Null
+        $changed = $true
+      }
+      if ([bool]$preference.SyncToWelcomeAndNewUsers) {
+        if (-not (Get-Command -Name Copy-UserInternationalSettingsToSystem -ErrorAction SilentlyContinue)) { throw 'Copy-UserInternationalSettingsToSystem is unavailable on this Windows edition.' }
+        Copy-UserInternationalSettingsToSystem -WelcomeScreen $true -NewUser $true -ErrorAction Stop
+        $changed = $true
+      }
+      $reboot = $changed; $message = 'Display language preference configured for ' + $preference.TargetLanguage + '.'
     } elseif ($taskId -eq 'device-setup-region') {
       if ($parameterValue -notmatch '^\d{1,4}$') { $status = 'Failed'; $code = 'InvalidProfile'; $message = 'Device setup region GeoID is invalid.' }
       else { New-Item -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Control Panel\DeviceRegion' -Force | Out-Null; Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Control Panel\DeviceRegion' -Name 'DeviceRegion' -Type DWord -Value ([int]$parameterValue); $changed = $true; $reboot = $true; $message = 'Device setup region configured.' }
@@ -473,7 +546,15 @@ switch ([string]$request.operation) {
     } elseif ($taskId -eq 'font-supplements-cjk-indic-europe') { $fonts = @(Get-BridgeSupplementalFontCapabilities $parameterValue); $status = if ($fonts.Count -gt 0 -and @($fonts | Where-Object State -ne 'Installed').Count -eq 0) { 'Succeeded' } else { 'Failed' }; $code = if ($status -eq 'Failed') { 'VerificationFailed' } else { 'None' }; $message = 'Supplemental font verification completed.'
     } elseif ($taskId -eq 'accounts-local') { $status = if ($accountNames.Count -gt 0 -and @($accountNames | Where-Object { $null -eq (Get-LocalUser -Name $_ -ErrorAction SilentlyContinue) }).Count -eq 0) { 'Succeeded' } else { 'Failed' }; $code = if ($status -eq 'Failed') { 'VerificationFailed' } else { 'None' }; $message = 'Local account verification completed.'
     } elseif ($taskId -eq 'computer-name') { $status = if ($parameterValue -and ([Environment]::MachineName -ieq $parameterValue)) { 'Succeeded' } else { 'Failed' }; $code = if ($status -eq 'Failed') { 'VerificationFailed' } else { 'None' }; $message = 'Computer name verification completed.'
-    } elseif ($taskId -eq 'language-ui-preference') { $status = if ((Get-Command -Name Get-WinUILanguageOverride -ErrorAction SilentlyContinue) -and $parameterValue -and (((Get-WinUILanguageOverride) | ForEach-Object { $_.Name }) -ieq $parameterValue)) { 'Succeeded' } else { 'Failed' }; $code = if ($status -eq 'Failed') { 'VerificationFailed' } else { 'None' }; $message = 'Display language verification completed.'
+    } elseif ($taskId -eq 'language-ui-preference') {
+      try {
+        $preference = ConvertFrom-BridgeLanguagePreference $parameterValue
+        $state = Get-BridgeLanguagePreferenceState $preference
+        $scopesConfigured = $state.Installed -and $state.CurrentAvailable -and $state.CurrentConfigured -and $state.SystemAvailable -and $state.SystemConfigured
+        if (-not $scopesConfigured) { $status = 'Failed'; $code = 'VerificationFailed'; $message = 'Display language verification failed.' }
+        elseif ($preference.SyncToWelcomeAndNewUsers) { $status = 'NeedsManualReview'; $code = 'ManualReviewRequired'; $message = 'Current and system display language scopes are verified; Windows provides no supported readback for welcome screen and new-user synchronization.' }
+        else { $status = 'Succeeded'; $code = 'None'; $message = 'Display language verification completed.' }
+      } catch { $status = 'Failed'; $code = 'InvalidProfile'; $message = $_.Exception.Message }
     } elseif ($taskId -eq 'device-setup-region') { $status = if ($parameterValue -and ([int](Get-ItemPropertyValue -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Control Panel\DeviceRegion' -Name 'DeviceRegion' -ErrorAction SilentlyContinue) -eq [int]$parameterValue)) { 'Succeeded' } else { 'Failed' }; $code = if ($status -eq 'Failed') { 'VerificationFailed' } else { 'None' }; $message = 'Device setup region verification completed.'
     } elseif ($taskId -eq 'legacy-god-mode') { $status = if (Test-Path -LiteralPath $godModePath) { 'Succeeded' } else { 'Failed' }; $message = 'God Mode verification completed.'
     } else { $status = 'NeedsManualReview'; $code = 'ManualReviewRequired'; $message = 'No fixed Windows adapter is enabled for this operation.' }

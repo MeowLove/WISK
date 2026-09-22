@@ -77,7 +77,11 @@ public sealed class BridgeClientTests
         Assert.Contains("DeviceRegion", runner.FixedCommand, StringComparison.Ordinal);
         Assert.Contains("CultureInfo]::GetCultureInfo", runner.FixedCommand, StringComparison.Ordinal);
         Assert.Contains("Set-WinUILanguageOverride -Language $culture", runner.FixedCommand, StringComparison.Ordinal);
-        Assert.Contains("Get-Command -Name Get-WinUILanguageOverride", runner.FixedCommand, StringComparison.Ordinal);
+        Assert.Contains("ConvertFrom-BridgeLanguagePreference", runner.FixedCommand, StringComparison.Ordinal);
+        Assert.Contains("Set-SystemPreferredUILanguage", runner.FixedCommand, StringComparison.Ordinal);
+        Assert.Contains("Copy-UserInternationalSettingsToSystem", runner.FixedCommand, StringComparison.Ordinal);
+        Assert.Contains("ManualReviewRequired", runner.FixedCommand, StringComparison.Ordinal);
+        Assert.Contains("Get-Command -Name $commandName", runner.FixedCommand, StringComparison.Ordinal);
         Assert.Contains("Microsoft-Windows-Subsystem-Linux", runner.FixedCommand, StringComparison.Ordinal);
         Assert.Contains("Containers-DisposableClientVM", runner.FixedCommand, StringComparison.Ordinal);
         Assert.Contains("Microsoft-Hyper-V-All", runner.FixedCommand, StringComparison.Ordinal);
