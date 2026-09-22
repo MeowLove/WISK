@@ -1,7 +1,8 @@
 # Legacy Migration Boundary
 
-WISK 3.0 is the canonical implementation. The ignored legacy directory is
-only an audit source and is not a runtime dependency.
+WISK 3.0 is the canonical implementation. The superseded V1 archive was
+removed from this workspace; `/legacy/` remains ignored as a guardrail and is
+not a runtime dependency.
 
 ## Migrated behavior
 

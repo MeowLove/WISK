@@ -12,8 +12,9 @@ depending on private service infrastructure.
 The public repository is the source of implementation and catalog truth. The
 local `requirements/` directory is the behavior authority for maintainers but
 is deliberately excluded from Git and release archives.
-The superseded V1 source archive is also local-only under ignored `legacy/`;
-`src/` is the canonical WISK 3.0 implementation.
+The superseded V1 source archive was removed from this workspace. `/legacy/`
+remains ignored as a guardrail; `src/` is the canonical WISK 3.0
+implementation.
 
 ## 2. Repository architecture
 

@@ -44,7 +44,7 @@
 # Internal product requirements and local planning material
 /requirements/
 
-# Superseded V1 source archive
+# Reserved path for the removed V1 source archive
 /legacy/
 
 # IDE and operating-system files

@@ -52,6 +52,7 @@ included in pull requests or release archives.
 ## Pull requests
 
 Describe the user-visible behavior, safety impact, verification commands, and
-any environment-dependent checks that were not run. The local `legacy/` archive
-contains superseded V1 material, is ignored by Git, and must not receive new
-code or release content; use the WISK 3.0 source under `src/`.
+any environment-dependent checks that were not run. The superseded V1 archive
+was removed from this workspace; `/legacy/` remains ignored to prevent its
+accidental reintroduction. Use the WISK 3.0 source under `src/` for code and
+release content.
