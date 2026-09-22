@@ -501,7 +501,7 @@ switch ([string]$request.operation) {
       }
     } elseif ($taskId -eq 'computer-name') {
       if ($parameterValue -notmatch '^[A-Za-z0-9-]{1,15}$') { $status = 'Failed'; $code = 'InvalidProfile'; $message = 'Computer name must be 1-15 ASCII letters, digits, or hyphens.' }
-      else { Rename-Computer -NewName $parameterValue -Force -ErrorAction Stop | Out-Null; $changed = $true; $reboot = $true; $message = 'Computer name change completed.' }
+      else { Rename-Computer -NewName $parameterValue -Force -ErrorAction Stop | Out-Null; $status = 'Succeeded'; $changed = $true; $reboot = $true; $message = 'Computer name change completed.' }
     } elseif ($taskId -eq 'language-ui-preference') {
       $preference = ConvertFrom-BridgeLanguagePreference $parameterValue
       if (@(Get-BridgeInstalledLanguageIds) -notcontains [string]$preference.TargetLanguage) { throw 'The target language pack is not installed.' }
@@ -561,6 +561,7 @@ switch ([string]$request.operation) {
   }
   default { $status = 'Failed'; $code = 'InvalidProfile'; $message = 'Unsupported bridge operation.'; $changed = $false; $reboot = $false }
 }
+if ($request.operation -eq 'Apply' -and $changed -and $status -eq 'Ready') { $status = 'Succeeded' }
 if ($status -eq 'Failed' -and $code -eq 'None') { $code = 'VerificationFailed' }
 $responseJson = [pscustomobject]@{ protocolVersion = '1.0'; runId = [string]$request.runId; taskId = [string]$request.taskId; status = $status; code = $code; message = $message; changed = $changed; rebootRequired = $reboot; summary = $message } | ConvertTo-Json -Compress
 [Console]::Out.WriteLine('__WISK_RESPONSE__' + $responseJson)

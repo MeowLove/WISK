@@ -7,7 +7,5 @@
 - `requirements/` at the repository root is intentionally local-only and is
   ignored by Git. The local WISK 3.0 requirements manual is the product
   behavior authority during development.
-- `/legacy/` remains ignored and is not part of the public WISK 3.0 source or
-  release archives.
 - WISK 3.0 documentation describes the current product contract; superseded
-  implementation notes are not runtime inputs.
+  implementation notes and compatibility paths are not runtime inputs.

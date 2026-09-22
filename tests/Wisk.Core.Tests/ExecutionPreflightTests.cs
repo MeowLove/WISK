@@ -43,7 +43,7 @@ public sealed class ExecutionPreflightTests
     [InlineData(SimulationOutcome.ApplyFailure, TaskState.Failed, "ProcessFailed")]
     [InlineData(SimulationOutcome.VerifyFailure, TaskState.Failed, "VerificationFailed")]
     [InlineData(SimulationOutcome.Timeout, TaskState.Failed, "Timeout")]
-    [InlineData(SimulationOutcome.NeedsReboot, TaskState.NeedsReboot, "None")]
+    [InlineData(SimulationOutcome.NeedsReboot, TaskState.Succeeded, "None")]
     public async Task SimulationRunsThroughTheRealExecutionPipeline(
         SimulationOutcome outcome, TaskState expectedRunState, string expectedCode)
     {
@@ -55,6 +55,8 @@ public sealed class ExecutionPreflightTests
 
         Assert.Equal(expectedRunState, snapshot.State);
         Assert.Equal(expectedCode, snapshot.Results.Single().Code);
+        if (outcome == SimulationOutcome.NeedsReboot)
+            Assert.Equal(VerificationStatus.PendingRestart, snapshot.Results.Single().VerificationStatus);
     }
 
     private static ImmutablePlan BuildPlan(TaskDescriptor task)

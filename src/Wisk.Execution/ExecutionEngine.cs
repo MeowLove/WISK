@@ -111,7 +111,8 @@ public sealed class ExecutionEngine
             }
             if (check.AlreadyComplete)
             {
-                results.Add(new ExecutionResult(task.TaskId, TaskState.Skipped, check.Code.ToString(), check.Message, false, check.RequiresReboot));
+                results.Add(new ExecutionResult(task.TaskId, TaskState.Skipped, check.Code.ToString(), check.Message, false, check.RequiresReboot,
+                    VerificationStatus: check.RequiresReboot ? VerificationStatus.PendingRestart : VerificationStatus.NotRequired));
                 progress?.Report(new ExecutionProgress(effectiveRunId, task.TaskId, TaskState.Skipped, results.Count, plan.Tasks.Length, check.Message));
                 await PersistAsync(effectiveRunId, plan, results, TaskState.Running, cancellationToken).ConfigureAwait(false);
                 continue;
@@ -155,7 +156,6 @@ public sealed class ExecutionEngine
         var finalState = results.Any(result => result.State is TaskState.Failed or TaskState.NeedsManualReview or TaskState.UnsupportedPrerequisite or TaskState.UnavailableExtension)
             ? TaskState.Failed
             : results.Any(result => result.State == TaskState.Cancelled) ? TaskState.Cancelled
-            : results.Any(result => result.RebootRequired) ? TaskState.NeedsReboot
             : TaskState.Succeeded;
         return await PersistAsync(effectiveRunId, plan, results, finalState, CancellationToken.None).ConfigureAwait(false);
     }
@@ -179,6 +179,7 @@ public sealed class ExecutionEngine
             throw new PlanValidationException("Run state does not match the immutable plan.", ErrorCode.PlanTampered);
         var completed = snapshot.Results
             .Where(result => result.State == TaskState.Succeeded ||
+                             result.State == TaskState.NeedsReboot ||
                              result.State == TaskState.Skipped && result.Code.Equals(ErrorCode.None.ToString(), StringComparison.OrdinalIgnoreCase))
             .ToDictionary(result => result.TaskId, StringComparer.OrdinalIgnoreCase);
         return await ExecuteAsync(plan, policy, isElevated, cancellationToken, runId, completed, accounts, progress).ConfigureAwait(false);
@@ -224,10 +225,30 @@ public sealed class ExecutionEngine
                     exception.Message, false, task.RequiresReboot, true, FailureStage: "Apply");
             }
 
+            if (applied.State == TaskState.NeedsReboot)
+            {
+                applied = applied with
+                {
+                    State = TaskState.Succeeded,
+                    RebootRequired = true,
+                    VerificationStatus = VerificationStatus.PendingRestart,
+                    Message = RestartPendingMessage(applied.Message)
+                };
+            }
+
             if (applied.State is TaskState.Cancelled or TaskState.NeedsManualReview or TaskState.UnsupportedPrerequisite or TaskState.UnavailableExtension)
                 return Complete(applied, started);
             if (applied.State == TaskState.Succeeded)
             {
+                var rebootRequired = applied.RebootRequired || task.RequiresReboot;
+                if (rebootRequired)
+                    return Complete(applied with
+                    {
+                        RebootRequired = true,
+                        VerificationStatus = VerificationStatus.PendingRestart,
+                        Message = RestartPendingMessage(applied.Message)
+                    }, started);
+
                 VerifyResult verification;
                 try
                 {
@@ -241,8 +262,14 @@ public sealed class ExecutionEngine
                         applied.RebootRequired, false, started, DateTimeOffset.UtcNow);
                 }
                 if (verification.Succeeded)
+                {
+                    var verificationStatus = verification.RebootRequired
+                        ? VerificationStatus.PendingRestart
+                        : VerificationStatus.Verified;
                     return new ExecutionResult(task.TaskId, TaskState.Succeeded, verification.Code.ToString(), verification.Message,
-                        applied.Changed, verification.RebootRequired || applied.RebootRequired, false, started, DateTimeOffset.UtcNow);
+                        applied.Changed, verification.RebootRequired, false, started, DateTimeOffset.UtcNow,
+                        VerificationStatus: verificationStatus);
+                }
                 applied = new ExecutionResult(task.TaskId, TaskState.Failed, verification.Code.ToString(), verification.Message,
                     applied.Changed, verification.RebootRequired || applied.RebootRequired, false,
                     FailureStage: "Verify", ProcessExitCode: applied.ProcessExitCode);
@@ -278,6 +305,11 @@ public sealed class ExecutionEngine
 
     private static ExecutionResult Cancelled(string taskId, DateTimeOffset? started = null) =>
         new(taskId, TaskState.Cancelled, ErrorCode.Cancelled.ToString(), "Task was cancelled before completion.", false, false, false, started, DateTimeOffset.UtcNow);
+
+    private static string RestartPendingMessage(string message) =>
+        string.IsNullOrWhiteSpace(message)
+            ? "Restart is required before verification."
+            : $"{message} Restart is required before verification.";
 
     private static bool AllowsAutomaticRetry(PlannedTask task) =>
         task.Risk != RiskLevel.High &&

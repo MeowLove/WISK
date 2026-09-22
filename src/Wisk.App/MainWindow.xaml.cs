@@ -829,9 +829,13 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
     {
         var stateRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WISK", "state");
         var history = await new AtomicJsonStateStore(stateRoot).ListAsync(CancellationToken.None);
+        var historyVerifier = new ExecutionHistoryVerifier(new WindowsTaskExecutor(new BridgeClient(), _catalog));
         _completedRuns.Clear();
         foreach (var snapshot in history)
-            _completedRuns.Add(new CompletedRunRow(snapshot));
+        {
+            var verification = await historyVerifier.VerifyAsync(snapshot, CancellationToken.None);
+            _completedRuns.Add(new CompletedRunRow(snapshot, verification));
+        }
         CompletedViewButton.Content = Localization.Format("completedRunsCount", _completedRuns.Count);
         _completedTaskRows.Clear();
         CompletedTaskDetailsText.Text = Localization.Get("selectCompletedTask");
@@ -841,7 +845,7 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
     {
         _completedTaskRows.Clear();
         if (CompletedRunsGrid.SelectedItem is CompletedRunRow run)
-            foreach (var result in run.Snapshot.Results) _completedTaskRows.Add(new CompletedTaskRow(result, _catalog));
+            foreach (var result in run.Snapshot.Results) _completedTaskRows.Add(new CompletedTaskRow(run.ResultFor(result), _catalog));
         CompletedTaskDetailsText.Text = Localization.Get("selectCompletedTask");
     }
 
@@ -897,7 +901,10 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
 
         var text = new StringBuilder($"{row.Title}\n{row.RunId}\n\n");
         foreach (var result in row.Snapshot.Results)
-            text.AppendLine($"{CatalogLocalization.TaskName(result.TaskId, _catalog.Find(result.TaskId)?.DisplayName ?? result.TaskId)}  ·  {LocalizedState(result.State)}\n{result.Code} · {SensitiveDataRedactor.Redact(result.Message)}\n{result.StartedAt?.ToLocalTime():g} - {result.CompletedAt?.ToLocalTime():g}\n");
+        {
+            var displayResult = row.ResultFor(result);
+            text.AppendLine($"{CatalogLocalization.TaskName(displayResult.TaskId, _catalog.Find(displayResult.TaskId)?.DisplayName ?? displayResult.TaskId)}  ·  {LocalizedState(displayResult.State)}\n{displayResult.Code} · {SensitiveDataRedactor.Redact(displayResult.Message)}\n{Localization.Get("verificationStatus")}: {LocalizedVerification(displayResult.VerificationStatus)} · {Localization.Get("rebootRequired")}: {Localization.Get(displayResult.RebootRequired ? "yes" : "no")}\n{displayResult.StartedAt?.ToLocalTime():g} - {displayResult.CompletedAt?.ToLocalTime():g}\n");
+        }
         MessageBox.Show(text.ToString(), Localization.Get("completedBatch"), MessageBoxButton.OK,
             row.Snapshot.State == TaskState.Failed ? MessageBoxImage.Warning : MessageBoxImage.Information);
     }
@@ -1541,6 +1548,14 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
 
     private static string LocalizedState(TaskState state) => Localization.Get("state" + state);
 
+    private static string LocalizedVerification(VerificationStatus status) => Localization.Get(status switch
+    {
+        VerificationStatus.NotRequired => "verificationNotRequired",
+        VerificationStatus.PendingRestart => "verificationPendingRestart",
+        VerificationStatus.Verified => "verificationVerified",
+        _ => "verificationUnknown"
+    });
+
     private ProfileDocument? BuildInteractiveProfile(IReadOnlyCollection<string> ids)
     {
         var profile = new ProfileDocument("3.0", "interactive", ids.ToImmutableArray(), new ProfileTarget(), _draftPolicy,
@@ -1680,21 +1695,24 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
         public event PropertyChangedEventHandler? PropertyChanged;
     }
 
-    private sealed class CompletedRunRow(RunStateSnapshot snapshot) : INotifyPropertyChanged
+    private sealed class CompletedRunRow(RunStateSnapshot snapshot, ExecutionHistoryVerification verification) : INotifyPropertyChanged
     {
         public RunStateSnapshot Snapshot => snapshot;
         public string RunId => snapshot.RunId;
         public string Title => snapshot.UpdatedAt.ToLocalTime().ToString("g", CultureInfo.CurrentCulture);
-        public string Summary => Localization.Format("completedRunSummary", snapshot.Results.Length, ShortRunId(snapshot.RunId));
-        public string StateDisplay => LocalizedState(snapshot.State);
-        public string StatusGlyph => snapshot.State switch
+        public string Summary => Localization.Format("completedRunSummary", snapshot.Results.Length, ShortRunId(snapshot.RunId)) +
+            (verification.Status == VerificationStatus.NotRequired ? string.Empty : $" · {LocalizedVerification(verification.Status)}");
+        public string StateDisplay => LocalizedState(DisplayState);
+        public VerificationStatus VerificationStatus => verification.Status;
+        private TaskState DisplayState => snapshot.State == TaskState.NeedsReboot ? TaskState.Succeeded : snapshot.State;
+        public string StatusGlyph => DisplayState switch
         {
             TaskState.Succeeded or TaskState.NeedsReboot => "✓",
             TaskState.Failed => "×",
             TaskState.Cancelled => "!",
             _ => "•"
         };
-        public Brush StatusBrush => snapshot.State switch
+        public Brush StatusBrush => DisplayState switch
         {
             TaskState.Succeeded or TaskState.NeedsReboot => Brushes.SeaGreen,
             TaskState.Failed or TaskState.Cancelled => Brushes.IndianRed,
@@ -1702,6 +1720,13 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
         };
         public void RefreshLocalization() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
         public event PropertyChangedEventHandler? PropertyChanged;
+        public ExecutionResult ResultFor(ExecutionResult result)
+        {
+            var normalized = result.State == TaskState.NeedsReboot ? result with { State = TaskState.Succeeded } : result;
+            return verification.TaskStatuses.TryGetValue(result.TaskId, out var status)
+                ? normalized with { VerificationStatus = status }
+                : normalized;
+        }
         private static string ShortRunId(string value) => value.Length <= 8 ? value : value[..8];
     }
 
@@ -1715,6 +1740,7 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
         public string Details => $"{DisplayName}\n{Localization.Get("state")}: {StateDisplay} · {Localization.Get("code")}: {result.Code}" +
             $"\n{Localization.Get("failureStage")}: {result.FailureStage ?? Localization.Get("notAvailable")}" +
             $" · {Localization.Get("processExitCode")}: {(result.ProcessExitCode?.ToString(CultureInfo.InvariantCulture) ?? Localization.Get("notAvailable"))}" +
+            $"\n{Localization.Get("verificationStatus")}: {LocalizedVerification(result.VerificationStatus)} · {Localization.Get("rebootRequired")}: {Localization.Get(result.RebootRequired ? "yes" : "no")}" +
             $"\n{Localization.Get("message")}: {SensitiveDataRedactor.Redact(result.Message)}" +
             $"\n{Localization.Get("suggestedAction")}: {FailureAdvice(result.Code)}" +
             $"\n{result.StartedAt?.ToLocalTime():g} - {result.CompletedAt?.ToLocalTime():g}";

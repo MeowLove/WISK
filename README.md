@@ -13,9 +13,8 @@ counterpart is [LISK](https://github.com/MeowLove/LISK).
 This repository contains the application source, tests, public catalog data,
 schemas, packaging scripts, and architecture docs.
 The local product requirements manual remains under the ignored `requirements/`
-directory and is never published. The superseded V1 archive was removed from
-this workspace; `/legacy/` remains ignored to prevent accidental
-reintroduction. `src/` is the canonical WISK 3.0 implementation.
+directory and is never published. Superseded source and compatibility paths are
+not part of this workspace. `src/` is the only WISK 3.0 implementation.
 
 The public catalog is [`catalog/index.json`](catalog/index.json), validated by
 [`tools/validate-catalog.mjs`](tools/validate-catalog.mjs). It records WISK's

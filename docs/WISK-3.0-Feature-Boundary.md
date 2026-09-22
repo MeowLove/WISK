@@ -1,7 +1,7 @@
 # WISK 3.0 Feature Boundary
 
-WISK 3.0 is the canonical implementation. `/legacy/` is ignored and is not a
-runtime dependency.
+WISK 3.0 is the only implementation. Superseded source and compatibility paths
+are not runtime dependencies.
 
 ## Implemented behavior
 
@@ -29,6 +29,9 @@ runtime dependency.
 - Registry presets use tracked resources and the shared registry catalog,
   preserving Check -> Apply -> Verify, original-value evidence, and conflict
   rules.
+- Apply results that require a restart remain completed. The audit keeps
+  `RebootRequired`, while a later read-only Verify produces a derived
+  `VerificationStatus` without rewriting the original snapshot.
 - The Windows Terminal PowerShell switcher is maintained as
   tools/Manage-WindowsTerminalPowerShell.ps1. It keeps its JSON backup and
   JSONC refusal behavior and remains an explicit helper rather than an

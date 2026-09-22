@@ -20,9 +20,27 @@ public sealed class ExecutionEngineTests
 
         Assert.Equal(TaskState.Succeeded, snapshot.State);
         Assert.Equal(TaskState.Succeeded, snapshot.Results.Single().State);
+        Assert.Equal(VerificationStatus.Verified, snapshot.Results.Single().VerificationStatus);
         Assert.Equal(1, executor.ApplyCount);
         Assert.NotNull(store.Last);
         Assert.Contains(plan.PlanId, store.Last!.SerializedPlan, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task RestartRequiredApplyIsCompletedAndVerificationWaitsForRestart()
+    {
+        var executor = new FakeExecutor { ApplyRequiresReboot = true };
+
+        var snapshot = await new ExecutionEngine(executor).ExecuteAsync(
+            BuildPlan("runtime-webview2"), new ExecutionPolicy(), true);
+
+        Assert.Equal(TaskState.Succeeded, snapshot.State);
+        var result = snapshot.Results.Single();
+        Assert.Equal(TaskState.Succeeded, result.State);
+        Assert.True(result.RebootRequired);
+        Assert.Equal(VerificationStatus.PendingRestart, result.VerificationStatus);
+        Assert.Contains("restart", result.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(0, executor.VerifyCount);
     }
 
     [Fact]
@@ -355,8 +373,10 @@ public sealed class ExecutionEngineTests
     private sealed class FakeExecutor : IInitializerTaskExecutor
     {
         public int ApplyCount { get; private set; }
+        public int VerifyCount { get; private set; }
         public bool FailApply { get; init; }
         public bool BlockApply { get; init; }
+        public bool ApplyRequiresReboot { get; init; }
         public int FailuresBeforeSuccess { get; init; }
         public string Message { get; init; } = "applied";
         public Action? CheckAction { get; init; }
@@ -376,11 +396,12 @@ public sealed class ExecutionEngineTests
                 return new ExecutionResult(task.TaskId, TaskState.Failed, ErrorCode.ProcessFailed.ToString(), "retryable failure", false, false, true);
             return FailApply
                 ? new ExecutionResult(task.TaskId, TaskState.Failed, ErrorCode.ProcessFailed.ToString(), "failed", false, false)
-                : new ExecutionResult(task.TaskId, TaskState.Succeeded, ErrorCode.None.ToString(), Message, true, false);
+                : new ExecutionResult(task.TaskId, TaskState.Succeeded, ErrorCode.None.ToString(), Message, true, ApplyRequiresReboot);
         }
 
         public Task<VerifyResult> VerifyAsync(PlannedTask task, CancellationToken cancellationToken)
         {
+            VerifyCount++;
             VerifyAction?.Invoke();
             cancellationToken.ThrowIfCancellationRequested();
             return Task.FromResult(new VerifyResult(task.TaskId, true, ErrorCode.None, Message));

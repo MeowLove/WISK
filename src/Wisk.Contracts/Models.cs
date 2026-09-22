@@ -18,6 +18,8 @@ public enum RollbackSupport { Exact, Conditional, Manual }
 
 public enum ExecutionBoundary { None, Reboot, SignOut }
 
+public enum VerificationStatus { NotRequired, PendingRestart, Verified, Unknown }
+
 public sealed record TaskRelation(string TargetTaskId, TaskRelationKind Kind, string ReasonKey);
 
 public enum TaskKind
@@ -167,7 +169,8 @@ public sealed record VerifyResult(string TaskId, bool Succeeded, ErrorCode Code,
 public sealed record ExecutionResult(
     string TaskId, TaskState State, string Code, string Message, bool Changed, bool RebootRequired,
     bool Retryable = false, DateTimeOffset? StartedAt = null, DateTimeOffset? CompletedAt = null,
-    string? FailureStage = null, int? ProcessExitCode = null);
+    string? FailureStage = null, int? ProcessExitCode = null,
+    VerificationStatus VerificationStatus = VerificationStatus.NotRequired);
 
 public sealed record RunStateSnapshot(
     string RunId,

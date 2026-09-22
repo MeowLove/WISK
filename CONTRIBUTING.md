@@ -53,7 +53,5 @@ included in pull requests or release archives.
 ## Pull requests
 
 Describe the user-visible behavior, safety impact, verification commands, and
-any environment-dependent checks that were not run. The ignored `/legacy/`
-was removed from this workspace; `/legacy/` remains ignored to prevent its
-accidental reintroduction. Use the WISK 3.0 source under `src/` for code and
-release content.
+any environment-dependent checks that were not run. Use the WISK 3.0 source
+under `src/` for code and release content.

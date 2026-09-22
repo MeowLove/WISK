@@ -12,8 +12,8 @@ depending on private service infrastructure.
 The public repository is the source of implementation and catalog truth. The
 local `requirements/` directory is the behavior authority for maintainers but
 is deliberately excluded from Git and release archives.
-`src/` is the canonical WISK 3.0 implementation. `/legacy/` is ignored as a
-guardrail and is not a runtime or build input.
+`src/` is the only WISK 3.0 implementation. Superseded source and compatibility
+paths are not runtime or build inputs.
 
 ## 2. Repository architecture
 
@@ -57,7 +57,10 @@ WPF App / CLI
 - **Core** owns catalog descriptors, configuration validation, typed relations,
   dependency closure, conflict detection, deterministic order, and plan hashes.
 - **Execution** owns immutable plans, atomic run state, cancellation, timeout,
-  retries, history retention, failure diagnostics, and self-test reports.
+  retries, history retention, failure diagnostics, and self-test reports. Apply
+  completion is separate from a reboot boundary: `RebootRequired` remains an
+  audit fact, while `VerificationStatus` records whether read-only confirmation
+  is pending, verified, or unavailable.
 - **Platform.Windows** maps allow-listed task IDs to Windows APIs, registry
   targets, WinGet package IDs, and native settings entry points.
 - **PowerShell** runs only fixed bridge operations. Scripts and JSON requests are
@@ -87,6 +90,12 @@ The application never silently creates a restore point, changes a registry, or
 installs software during detection. A system restore point is an explicit
 separate task. Native management links open Windows settings without pretending
 that an external UI action was applied by WISK.
+
+Apply results that require a restart remain completed instead of being shown as
+an unfinished run. On startup or history refresh, WISK may call Verify for those
+tasks through the fixed read-only adapter. The original run snapshot is
+immutable; post-restart verification is a derived view and never rewrites the
+Apply audit fact.
 
 ## 5. Public catalog boundary
 

@@ -6,7 +6,7 @@
 - `catalog/` and `schema/` contain public machine-readable metadata.
 - `docs/` contains public design and development documentation.
 - `packaging/` contains release wrappers; `tools/` contains validation and
-  smoke utilities. `/legacy/` remains ignored and is not a runtime dependency.
+  smoke utilities.
 - `requirements/` is the local product manual and is ignored by Git.
 - `artifacts/` is generated output and is ignored by Git.
 - `handoff/`, `work/`, and other task-state directories are local-only and

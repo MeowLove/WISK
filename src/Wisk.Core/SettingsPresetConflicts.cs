@@ -3,7 +3,7 @@ using Wisk.Contracts;
 
 namespace Wisk.Core;
 
-/// <summary>Prevents a legacy preset from silently replacing an explicitly configured setting.</summary>
+/// <summary>Prevents a fixed preset from silently replacing an explicitly configured setting.</summary>
 public static class SettingsPresetConflicts
 {
     private static readonly (string TaskId, string Hive, string Path, string Name)[] AdditionalTargets =
