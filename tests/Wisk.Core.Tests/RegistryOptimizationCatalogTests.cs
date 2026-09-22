@@ -11,8 +11,8 @@ public sealed class RegistryOptimizationCatalogTests
     {
         var entries = RegistryOptimizationCatalog.GetEntries();
 
-        Assert.Equal(79, entries.Count(entry => entry.SourceFile == "CXT_User.reg" && entry.Operation != RegistryOperationKind.DeleteKey));
-        Assert.Equal(224, entries.Count(entry => entry.SourceFile == "CXT_System.reg" && entry.Operation != RegistryOperationKind.DeleteKey));
+        Assert.Equal(79, entries.Count(entry => entry.SourceFile == RegistrySourceFiles.User && entry.Operation != RegistryOperationKind.DeleteKey));
+        Assert.Equal(224, entries.Count(entry => entry.SourceFile == RegistrySourceFiles.System && entry.Operation != RegistryOperationKind.DeleteKey));
         Assert.Equal(2, entries.Count(entry => entry.Operation == RegistryOperationKind.DeleteKey));
         Assert.Equal(entries.Count, entries.Select(entry => entry.TaskId).Distinct(StringComparer.OrdinalIgnoreCase).Count());
     }
@@ -94,5 +94,18 @@ public sealed class RegistryOptimizationCatalogTests
         Assert.True(tasks.Length < 70, $"Expected fewer than 70 feature cards, found {tasks.Length}.");
         Assert.All(groups, group => Assert.True(group.Members.Length >= 2));
         Assert.All(groups, group => Assert.True(group.IsSupported));
+    }
+
+    [Fact]
+    public void RegistrySourcesAreCanonicalAcrossDefinitionsAndEmbeddedEntries()
+    {
+        Assert.Equal(2, RegistrySourceFiles.All.Count);
+        Assert.Equal(RegistrySourceFiles.All.Order(StringComparer.OrdinalIgnoreCase),
+            RegistryOptimizationCatalog.GetEntries().Select(entry => entry.SourceFile)
+                .Distinct(StringComparer.OrdinalIgnoreCase).Order(StringComparer.OrdinalIgnoreCase));
+        Assert.All(ConfigurableRegistrySettingCatalog.All, setting =>
+            Assert.Contains(setting.SourceFile, RegistrySourceFiles.All, StringComparer.OrdinalIgnoreCase));
+        Assert.Contains(ConfigurableRegistrySettingCatalog.All, setting => setting.SourceFile == RegistrySourceFiles.User);
+        Assert.Contains(ConfigurableRegistrySettingCatalog.All, setting => setting.SourceFile == RegistrySourceFiles.System);
     }
 }

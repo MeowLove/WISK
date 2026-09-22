@@ -79,12 +79,15 @@ before add flow: validation completes first, cancellation does not enqueue an
 item, and an existing draft can be edited. Plan additions preserve explicit
 enabled, disabled, and default semantics; disabled never means restore default.
 
-Registry-backed tasks use a shared data-driven catalog for task ID, hive,
-subkey, value name, accepted states, risk, backup policy, and conflicts. Before
-the first write in a run, supported original values are snapshotted under the
-run ID. Check, Apply, Verify, template import/export, and rollback evidence use
-the same allow-listed mapping. Unsupported or version-dependent presets remain
-fixed and are not presented as invented reversible switches.
+Registry-backed tasks use shared data-driven catalogs for source resources,
+task ID, hive, subkey, value name, accepted states, risk, backup policy, and
+conflicts. Before the first write in a run, supported original values are
+snapshotted under the run ID. Check, Apply, Verify, template import/export,
+and rollback evidence use the same allow-listed mapping. Unsupported or
+version-dependent presets remain fixed and are not presented as invented
+reversible switches. The current configurable registry set contains eighteen
+low-risk desktop, Explorer, and privacy settings, including Meet Now, Copilot,
+and Windows Search web results.
 
 The application never silently creates a restore point, changes a registry, or
 installs software during detection. A system restore point is an explicit

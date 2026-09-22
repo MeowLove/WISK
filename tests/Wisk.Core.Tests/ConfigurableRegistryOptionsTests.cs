@@ -13,6 +13,8 @@ public sealed class ConfigurableRegistryOptionsTests
         { "setting-taskbar-seconds", "HKCU", @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "ShowSecondsInSystemClock" },
         { "setting-taskbar-end-task", "HKCU", @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\TaskbarDeveloperSettings", "TaskbarEndTask" },
         { "setting-taskbar-widgets", "HKCU", @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "TaskbarDa" },
+        { "setting-taskbar-meet-now", "HKCU", @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "TaskbarMn" },
+        { "setting-taskbar-copilot-button", "HKCU", @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "ShowCopilotButton" },
         { "setting-notification-banners", "HKCU", @"Software\Microsoft\Windows\CurrentVersion\PushNotifications", "ToastEnabled" },
         { "setting-lock-screen-notifications", "HKCU", @"Software\Microsoft\Windows\CurrentVersion\PushNotifications", "LockScreenToastEnabled" },
         { "setting-explorer-this-pc", "HKCU", @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "LaunchTo" },
@@ -20,7 +22,8 @@ public sealed class ConfigurableRegistryOptionsTests
         { "setting-explorer-separate-process", "HKCU", @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "SeparateProcess" },
         { "setting-recent-documents-tracking", "HKCU", @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "Start_TrackDocs" },
         { "setting-advertising-id", "HKCU", @"SOFTWARE\Microsoft\Windows\CurrentVersion\AdvertisingInfo", "Enabled" },
-        { "setting-tailored-experiences", "HKCU", @"SOFTWARE\Microsoft\Windows\CurrentVersion\Privacy", "TailoredExperiencesWithDiagnosticDataEnabled" }
+        { "setting-tailored-experiences", "HKCU", @"SOFTWARE\Microsoft\Windows\CurrentVersion\Privacy", "TailoredExperiencesWithDiagnosticDataEnabled" },
+        { "setting-search-web-results", "HKCU", @"Software\Microsoft\Windows\CurrentVersion\Search", "BingSearchEnabled" }
     };
 
     [Theory]
@@ -82,6 +85,11 @@ public sealed class ConfigurableRegistryOptionsTests
             relation.TargetTaskId == "registry-group-user-notifications" && relation.Kind == TaskRelationKind.ConflictsWith);
         Assert.Contains(endTaskRelations, relation =>
             relation.TargetTaskId == "registry-group-user-developer" && relation.Kind == TaskRelationKind.ConflictsWith);
+        foreach (var taskId in new[] { "setting-taskbar-meet-now", "setting-taskbar-copilot-button" })
+            Assert.Contains(catalog.Find(taskId)!.Relations.GetValueOrDefault(), relation =>
+                relation.TargetTaskId == "registry-group-user-desktop-start" && relation.Kind == TaskRelationKind.ConflictsWith);
+        Assert.Contains(catalog.Find("setting-search-web-results")!.Relations.GetValueOrDefault(), relation =>
+            relation.TargetTaskId == "registry-group-user-search-privacy" && relation.Kind == TaskRelationKind.ConflictsWith);
 
         foreach (var taskId in new[] { "setting-explorer-full-path", "setting-explorer-separate-process" })
             Assert.Contains(catalog.Find(taskId)!.Relations.GetValueOrDefault(), relation =>
@@ -102,5 +110,15 @@ public sealed class ConfigurableRegistryOptionsTests
         Assert.Equal(0, setting.ResolveValue(ConfigurableRegistrySettingCatalog.DisabledState));
         Assert.NotEqual(setting.ResolveValue(ConfigurableRegistrySettingCatalog.DisabledState),
             setting.ResolveValue(ConfigurableRegistrySettingCatalog.DefaultState));
+    }
+
+    [Fact]
+    public void RegistryTargetCatalogHasNoDuplicateTargets()
+    {
+        var targets = RegistryTargetCatalog.All;
+        Assert.Equal(targets.Count, targets.Select(target => $"{target.TaskId}|{target.Hive}|{target.Path}|{target.ValueName}")
+            .Distinct(StringComparer.OrdinalIgnoreCase).Count());
+        Assert.Contains(targets, target => target.TaskId == "setting-windows-update-mode" && target.ValueName == "AUOptions");
+        Assert.Contains(targets, target => target.TaskId == "setting-taskbar-meet-now" && target.ValueName == "TaskbarMn");
     }
 }

@@ -310,7 +310,7 @@ public static partial class RegistryOptimizationCatalog
     {
         var assembly = typeof(RegistryOptimizationCatalog).Assembly;
         var result = ImmutableArray.CreateBuilder<RegistryOptimizationEntry>();
-        foreach (var sourceFile in new[] { "CXT_User.reg", "CXT_System.reg" })
+        foreach (var sourceFile in RegistrySourceFiles.All)
         {
             var resourceName = assembly.GetManifestResourceNames().Single(name => name.EndsWith(sourceFile, StringComparison.OrdinalIgnoreCase));
             using var stream = assembly.GetManifestResourceStream(resourceName) ?? throw new InvalidOperationException($"Missing resource {sourceFile}.");

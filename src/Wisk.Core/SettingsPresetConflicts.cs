@@ -6,13 +6,6 @@ namespace Wisk.Core;
 /// <summary>Prevents a fixed preset from silently replacing an explicitly configured setting.</summary>
 public static class SettingsPresetConflicts
 {
-    private static readonly (string TaskId, string Hive, string Path, string Name)[] AdditionalTargets =
-    [
-        ("setting-taskbar-end-task", "HKCU", @"Software\Microsoft\Windows\CurrentVersion\DeveloperSettings", "TaskbarEndTask"),
-        ("setting-windows-update-mode", "HKLM", @"SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU", "NoAutoUpdate"),
-        ("setting-windows-update-mode", "HKLM", @"SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU", "AUOptions")
-    ];
-
     public static ImmutableArray<TaskDescriptor> Apply(ImmutableArray<TaskDescriptor> tasks)
     {
         var conflicts = tasks.ToDictionary(task => task.Id, _ => new HashSet<string>(StringComparer.OrdinalIgnoreCase), StringComparer.OrdinalIgnoreCase);
@@ -26,14 +19,12 @@ public static class SettingsPresetConflicts
                         conflicts[taskId].Add(preset.Id);
                     }
             var entries = RegistryOptimizationCatalog.GetTaskEntries(preset.Id);
-            var targets = ConfigurableRegistrySettingCatalog.All
-                .Select(setting => (setting.TaskId, setting.Hive, setting.Path, Name: setting.ValueName))
-                .Concat(AdditionalTargets);
+            var targets = RegistryTargetCatalog.All;
             foreach (var target in targets.Where(target => conflicts.ContainsKey(target.TaskId)))
             {
                 if (!entries.Any(entry => entry.Hive.Equals(target.Hive, StringComparison.OrdinalIgnoreCase) &&
                     entry.Path.Equals(target.Path, StringComparison.OrdinalIgnoreCase) &&
-                    entry.ValueName.Equals(target.Name, StringComparison.OrdinalIgnoreCase))) continue;
+                    entry.ValueName.Equals(target.ValueName, StringComparison.OrdinalIgnoreCase))) continue;
                 conflicts[preset.Id].Add(target.TaskId);
                 conflicts[target.TaskId].Add(preset.Id);
             }

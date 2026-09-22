@@ -5,7 +5,7 @@ Windows Registry Editor Version 5.00
 ;
 ; ˵��:
 ; - ���ļ���������ϵͳ��(HKLM)���á�
-; - ����һ�� RunOnce ����������û��״ε�¼ʱ���� CXT_User.reg��
+; - ����һ�� RunOnce ����������û��״ε�¼ʱ���� WISK_User.reg��
 ; - ����ؽ����ļ��� ANSI ���뱣�档
 ;=================================================================================
 
@@ -100,7 +100,7 @@ Windows Registry Editor Version 5.00
 ; �ؼ����״ε�¼���� (RunOnce)
 ;---------------------------------------------------------------------------------
 [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce]
-"ApplyUserSettings"="reg.exe import C:\\Windows\\Setup\\Scripts\\CXT_User.reg"
+"ApplyUserSettings"="reg.exe import C:\\Windows\\Setup\\Scripts\\WISK_User.reg"
 
 ;---------------------------------------------------------------------------------
 ; ϵͳ��������

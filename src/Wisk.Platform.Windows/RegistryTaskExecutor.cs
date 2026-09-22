@@ -25,7 +25,7 @@ public static class SystemRegistryBackupCatalog
     private static readonly ImmutableDictionary<string, RegistryOptimizationEntry> Entries =
         ConfigurableRegistrySettingCatalog.All
             .Select(Entry)
-            .Concat([Entry("setting-windows-update-mode", "CXT_System.reg", "HKLM", @"SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU", "AUOptions", "dword:00000000", "Windows Update", RiskLevel.Elevated, true)])
+            .Concat([Entry("setting-windows-update-mode", RegistrySourceFiles.System, "HKLM", @"SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU", "AUOptions", "dword:00000000", "Windows Update", RiskLevel.Elevated, true)])
             .ToImmutableDictionary(entry => entry.TaskId, StringComparer.OrdinalIgnoreCase);
 
     public static ImmutableArray<RegistryOptimizationEntry> GetEntries(string taskId) =>

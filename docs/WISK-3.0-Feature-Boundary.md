@@ -29,6 +29,13 @@ are not runtime dependencies.
 - Registry presets use tracked resources and the shared registry catalog,
   preserving Check -> Apply -> Verify, original-value evidence, and conflict
   rules.
+- Eighteen low-risk registry settings are configurable with explicit
+  `enabled`, `disabled`, and `default` states. The current desktop, Explorer,
+  and privacy additions include Meet Now, Copilot, and Windows Search web
+  results. Each uses the shared WISK registry source and target catalogs.
+- Fixed presets remain grouped by user purpose. A configurable setting that
+  overlaps a fixed preset receives an explicit conflict relation; unsupported
+  or version-dependent entries are not exposed as reversible switches.
 - Apply results that require a restart remain completed. The audit keeps
   `RebootRequired`, while a later read-only Verify produces a derived
   `VerificationStatus` without rewriting the original snapshot.
