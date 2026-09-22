@@ -120,6 +120,36 @@ switch ($Target) {
             '-p:PublishAot=false'
         )
         Invoke-Dotnet $arguments
+        $payloadName = if ($Component -eq 'Cli') { 'WISK.Cli.exe' } else { 'WISK.exe' }
+        $payloadFiles = @(Get-ChildItem -LiteralPath $publishRoot -File | Where-Object Name -ne 'release-manifest.json')
+        if ($payloadFiles.Count -ne 1 -or $payloadFiles[0].Name -ne $payloadName) {
+            throw "Single-file publish output must contain exactly $payloadName."
+        }
+        $manifestPath = Join-Path $publishRoot 'release-manifest.json'
+        $manifest = [ordered]@{
+            product = if ($Component -eq 'Cli') { 'WISK CLI' } else { 'WISK' }
+            version = $Version
+            sourceCommit = $sourceCommit
+            runtime = (dotnet --version).Trim()
+            rid = $Runtime
+            architecture = 'x64'
+            selfContained = $selfContained
+            publishSingleFile = $true
+            publishTrimmed = $false
+            publishAot = $false
+            signatureStatus = 'NotSignedInLocalBuild'
+            certificateThumbprint = ''
+            timestampServer = ''
+            files = @([ordered]@{
+                path = $payloadFiles[0].Name
+                length = $payloadFiles[0].Length
+                sha256 = (Get-FileHash -LiteralPath $payloadFiles[0].FullName -Algorithm SHA256).Hash
+            })
+            generatedAt = $buildTimestamp
+        }
+        $temporaryManifest = "$manifestPath.tmp"
+        $manifest | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $temporaryManifest -Encoding utf8
+        Move-Item -LiteralPath $temporaryManifest -Destination $manifestPath -Force
         Write-Host "Published $publishRoot"
     }
     'Run' {

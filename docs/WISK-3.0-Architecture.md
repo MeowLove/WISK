@@ -139,8 +139,11 @@ explicit:
 All MSBuild `bin` and `obj` output is redirected below
 `artifacts/build/<profile>/<runtime-mode>/<rid>/`; test evidence is below
 `artifacts/test-results/<profile>/<runtime-mode>/<rid>/`; publish payloads are
-below `artifacts/publish/<profile>/<runtime-mode>/<rid>/`. The root `.gitignore`
-also blocks project-local `bin/` and `obj/` output as a drift guard.
+below `artifacts/publish/<profile>/<runtime-mode>/<rid>/`. Every single-file
+publish writes a sibling `release-manifest.json` containing the source commit,
+payload length, SHA-256, runtime mode, and signature status. Release wrappers
+may replace that manifest after signing. The root `.gitignore` also blocks
+project-local `bin/` and `obj/` output as a drift guard.
 
 ## 8. Verification boundary
 
