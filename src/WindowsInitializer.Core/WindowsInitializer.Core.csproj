@@ -11,7 +11,7 @@
     <EmbeddedResource Include="Resources\profile.schema.json" />
     <EmbeddedResource Include="Resources\extension-manifest.schema.json" />
     <EmbeddedResource Include="Resources\trusted-publishers.v2.json" />
-    <EmbeddedResource Include="..\..\legacy\RegFile\CXT_User.reg" Link="Resources\CXT_User.reg" />
-    <EmbeddedResource Include="..\..\legacy\RegFile\CXT_System.reg" Link="Resources\CXT_System.reg" />
+    <EmbeddedResource Include="Resources\CXT_User.reg" />
+    <EmbeddedResource Include="Resources\CXT_System.reg" />
   </ItemGroup>
 </Project>
