@@ -1,4 +1,4 @@
-﻿# WISK 3.0 Architecture
+# WISK 3.0 Architecture
 
 ## 1. Purpose
 
@@ -12,22 +12,21 @@ depending on private service infrastructure.
 The public repository is the source of implementation and catalog truth. The
 local `requirements/` directory is the behavior authority for maintainers but
 is deliberately excluded from Git and release archives.
-The superseded V1 source archive was removed from this workspace. `/legacy/`
-remains ignored as a guardrail; `src/` is the canonical WISK 3.0
-implementation.
+`src/` is the canonical WISK 3.0 implementation. `/legacy/` is ignored as a
+guardrail and is not a runtime or build input.
 
 ## 2. Repository architecture
 
 ```text
 WISK/
   src/
-    WindowsInitializer.Contracts/       stable JSON and task contracts
-    WindowsInitializer.Core/             catalog, planning, validation
-    WindowsInitializer.Execution/        run state, history, diagnostics
-    WindowsInitializer.Platform.Windows/ fixed Windows capability adapters
-    WindowsInitializer.PowerShell/       bounded structured bridge
-    WindowsInitializer.App/              WPF workspaces and localization
-    WindowsInitializer.Cli/              unattended read-only/explicit CLI
+    Wisk.Contracts/       stable JSON and task contracts
+    Wisk.Core/             catalog, planning, validation
+    Wisk.Execution/        run state, history, diagnostics
+    Wisk.Platform.Windows/ fixed Windows capability adapters
+    Wisk.PowerShell/       bounded structured bridge
+    Wisk.App/              WPF workspaces and localization
+    Wisk.Cli/              unattended read-only/explicit CLI
   tests/                                 automated contract and behavior tests
   catalog/                               public software/settings index
   schema/                                public machine-readable schemas
@@ -38,9 +37,8 @@ WISK/
   artifacts/                            ignored build, test, and publish output
 ```
 
-The project and namespace names under `src/` remain `WindowsInitializer.*` for
-the first WISK release so existing contracts and migration references remain
-stable. Product metadata, UI copy, release version, and documentation use WISK.
+The project and namespace names under `src/` use `Wisk.*`. Product metadata,
+UI copy, executable names, release version, and documentation use WISK.
 
 ## 3. Runtime layers
 
@@ -53,9 +51,9 @@ WPF App / CLI
     -> PowerShell bridge (fixed operations and framed JSON responses)
 ```
 
-- **Contracts** owns versioned task, plan, template, result, and compatibility
-  records. Machine-readable fields must remain stable or receive an explicit
-  compatibility change.
+- **Contracts** owns WISK 3.0 task, plan, template, result, and boundary
+  records. Machine-readable fields change only with an explicit WISK contract
+  decision.
 - **Core** owns catalog descriptors, configuration validation, typed relations,
   dependency closure, conflict detection, deterministic order, and plan hashes.
 - **Execution** owns immutable plans, atomic run state, cancellation, timeout,
@@ -104,11 +102,9 @@ updates must not silently replace an executable or trust key.
 
 ## 6. Versioning and release
 
-WISK 3.0.0 is the first public source migration from the Windows Initializer
-V2.3 line. The migration keeps stable task IDs, contract shapes, audit and
-backup semantics, and internal namespaces while changing the public product
-identity. Future breaking contract changes require a major version and a
-migration note.
+WISK 3.0.0 is a new public source baseline. It owns its task IDs, contracts,
+audit semantics, backup semantics, namespaces, and user-data roots. Future
+breaking contract changes require a major version and a release note.
 
 Release artifacts are Windows x64 single-file packages with a manifest recording
 source commit, UTC build time, SHA-256, and signature status. Local unsigned
@@ -117,9 +113,8 @@ credentials remain outside the repository.
 
 ## 7. Build and output boundary
 
-`Build-Wisk.ps1` is the single build entry point. `Build-Dev.ps1` only preserves
-the previous command-line shape and delegates to it. The profile/runtime matrix
-is explicit:
+`Build-Wisk.ps1` is the single build entry point. The profile/runtime matrix is
+explicit:
 
 | Profile | Configuration | Runtime mode |
 | --- | --- | --- |

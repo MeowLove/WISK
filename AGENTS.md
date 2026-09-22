@@ -6,15 +6,13 @@
 - `catalog/` and `schema/` contain public machine-readable metadata.
 - `docs/` contains public design and development documentation.
 - `packaging/` contains release wrappers; `tools/` contains validation and
-  smoke utilities; the superseded V1 archive was removed from this workspace.
-  `/legacy/` remains ignored to prevent accidental reintroduction and is not a
-  runtime dependency.
+  smoke utilities. `/legacy/` remains ignored and is not a runtime dependency.
 - `requirements/` is the local product manual and is ignored by Git.
 - `artifacts/` is generated output and is ignored by Git.
 - `handoff/`, `work/`, and other task-state directories are local-only and
   ignored by Git; never publish their contents.
-- Keep the `WindowsInitializer.*` project and namespace names stable during
-  the WISK 3.0 migration.
+- Use `Wisk.*` namespaces and project paths, with `WISK` as the product and
+  executable identity. Do not reintroduce superseded product names or paths.
 
 ## Build contract
 
@@ -22,7 +20,6 @@
 - Use `./Build-Wisk.ps1` for application/solution build, test, run, and publish
   operations. `packaging/Publish-*.ps1` are release wrappers that delegate
   compilation to it before signing and writing manifests.
-- `Build-Dev.ps1` is a compatibility wrapper only.
 - Build profiles are `Test`, `Development`, and `Release`; runtime modes are
   `FrameworkDependent` and `SelfContained`.
 - All intermediate output belongs under
@@ -44,8 +41,8 @@ Examples:
 
 ## Safety and verification
 
-- Preserve stable task IDs, JSON contracts, backup semantics, and explicit
-  Check/Apply/Verify boundaries.
+- Preserve task IDs, JSON contracts, backup semantics, and explicit
+  Check/Apply/Verify boundaries within the WISK 3.0 contract.
 - Do not apply registry changes, install software, create restore points, or
   change system settings on the development host.
 - Shared-code changes require build and relevant tests; run `git diff --check`

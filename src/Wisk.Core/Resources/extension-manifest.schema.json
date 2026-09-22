@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://Wisk.local/schemas/extension-manifest.v1.json",
+  "title": "WISK controlled extension manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["packageId", "version", "publisher", "architecture", "minimumBuild", "maximumBuild", "manifestVersion", "files", "permissions"],
+  "properties": {
+    "packageId": { "type": "string", "pattern": "^[A-Za-z0-9._-]{1,128}$" },
+    "version": { "type": "string", "minLength": 1, "maxLength": 64 },
+    "publisher": { "type": "string", "minLength": 1, "maxLength": 256 },
+    "architecture": { "const": "x64" },
+    "minimumBuild": { "type": "integer", "minimum": 0 },
+    "maximumBuild": { "type": "integer", "minimum": 0 },
+    "manifestVersion": { "const": "1.0" },
+    "files": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "sha256"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1, "maxLength": 1024 },
+          "sha256": { "type": "string", "pattern": "^[A-Fa-f0-9]{64}$" },
+          "executable": { "type": "boolean" },
+          "signature": { "type": ["string", "null"], "pattern": "^[A-Za-z0-9+/]+={0,2}$" }
+        }
+      }
+    },
+    "permissions": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "enum": ["process.execute", "filesystem.package-read", "network.access", "machine.modify", "user-profile.modify", "reboot.request"] }
+    },
+    "tasks": {
+      "type": ["array", "null"],
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["taskId", "executablePath"],
+        "properties": {
+          "taskId": { "type": "string", "pattern": "^[A-Za-z0-9._-]{1,128}$" },
+          "executablePath": { "type": "string", "pattern": "^[^:/\\\\]+(?:[/\\\\][^:/\\\\]+)*\\.exe$" },
+          "protocol": { "const": "stdio-json-v1" }
+        }
+      }
+    }
+  }
+}

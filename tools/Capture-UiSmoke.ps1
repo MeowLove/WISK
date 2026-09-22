@@ -9,7 +9,7 @@ $ErrorActionPreference = 'Stop'
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $profile = if ($Configuration -eq 'Release') { 'Release' } else { 'Development' }
 $configurationFolder = $Configuration.ToLowerInvariant()
-$dll = Join-Path $repoRoot "artifacts/build/$profile/FrameworkDependent/win-x64/bin/WindowsInitializer.App/$configurationFolder/WindowsInitializer.dll"
+$dll = Join-Path $repoRoot "artifacts/build/$profile/FrameworkDependent/win-x64/bin/Wisk.App/$configurationFolder/Wisk.dll"
 $output = Join-Path $repoRoot 'artifacts/ui-smoke'
 
 if ($Build) {

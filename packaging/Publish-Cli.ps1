@@ -9,7 +9,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
-$project = Join-Path $repoRoot "src\WindowsInitializer.Cli\WindowsInitializer.Cli.csproj"
+$project = Join-Path $repoRoot "src\Wisk.Cli\Wisk.Cli.csproj"
 $output = Join-Path $repoRoot "artifacts\publish\Release\SelfContained\cli\$Runtime"
 $manifestPath = Join-Path $output "release-manifest.json"
 
@@ -36,7 +36,7 @@ $buildScript = Join-Path $repoRoot "Build-Wisk.ps1"
 if ($LASTEXITCODE -ne 0) { throw "WISK CLI publish failed." }
 
 $payload = @(Get-ChildItem -LiteralPath $output -File | Where-Object Name -ne "release-manifest.json")
-if ($payload.Count -ne 1 -or $payload[0].Name -ne "WindowsInitializer.Cli.exe") { throw "CLI publish output must contain exactly WindowsInitializer.Cli.exe." }
+if ($payload.Count -ne 1 -or $payload[0].Name -ne "Wisk.Cli.exe") { throw "CLI publish output must contain exactly Wisk.Cli.exe." }
 $signatureStatus = "NotSignedInLocalBuild"
 if ($normalizedThumbprint) {
     $certificates = @(Get-ChildItem Cert:\CurrentUser\My, Cert:\LocalMachine\My -CodeSigningCert |

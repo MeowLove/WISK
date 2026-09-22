@@ -36,9 +36,8 @@ docs/                Public architecture and development documentation
 requirements/        Local-only V3 requirements; ignored by Git
 ```
 
-The internal `WindowsInitializer.*` project names are intentionally retained
-for compatibility during the V3 migration. The user-facing product, assembly
-metadata, title, and release version are WISK 3.0.0.
+The source namespaces and project paths use `Wisk.*`; the product, assembly
+metadata, executable names, title, and release version use WISK 3.0.0.
 
 ## Build and test
 
@@ -53,7 +52,6 @@ The repository pins .NET SDK `10.0.401` in `global.json`.
 node tools/validate-catalog.mjs
 ```
 
-`Build-Dev.ps1` remains a compatibility wrapper for the old `-Mode` syntax.
 The script matrix keeps all intermediate output in
 `artifacts/build/<profile>/<runtime-mode>/<rid>/`, test evidence in
 `artifacts/test-results/<profile>/<runtime-mode>/<rid>/`, and publish payloads

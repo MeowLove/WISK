@@ -14,15 +14,16 @@ node tools/validate-catalog.mjs
 git diff --check
 ```
 
-`Build-Dev.ps1` remains a compatibility wrapper. All build and test output
-must remain under the canonical `artifacts/` subdirectories. Do not run
+All build and test output must remain under the canonical `artifacts/`
+subdirectories. Do not run
 registry Apply, software installation, restore-point, or reboot actions on a
 development host.
 
 ## Application changes
 
-- Keep task IDs, plan hashes, template compatibility, and Check/Apply/Verify
-  semantics stable unless the change includes an explicit migration note.
+- Keep task IDs, plan hashes, template fields, and Check/Apply/Verify semantics
+  within the WISK 3.0 contract unless the change includes an explicit release
+  note.
 - Add catalog entries with tests for validation, risk, relations, backup policy,
   and localized labels where applicable.
 - Preserve configure-before-add behavior: cancellation must not enqueue a task,
@@ -52,7 +53,7 @@ included in pull requests or release archives.
 ## Pull requests
 
 Describe the user-visible behavior, safety impact, verification commands, and
-any environment-dependent checks that were not run. The superseded V1 archive
+any environment-dependent checks that were not run. The ignored `/legacy/`
 was removed from this workspace; `/legacy/` remains ignored to prevent its
 accidental reintroduction. Use the WISK 3.0 source under `src/` for code and
 release content.

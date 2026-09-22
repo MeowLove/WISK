@@ -1,4 +1,4 @@
-﻿# WISK Documentation
+# WISK Documentation
 
 - [WISK 3.0 architecture](WISK-3.0-Architecture.md) is the public design
   authority for repository boundaries, runtime layers, safety, and verification.
@@ -7,10 +7,7 @@
 - `requirements/` at the repository root is intentionally local-only and is
   ignored by Git. The local WISK 3.0 requirements manual is the product
   behavior authority during development.
-- The superseded V1 source archive was removed from this workspace. `/legacy/`
-  remains ignored as a guardrail and is not part of the public WISK 3.0 source
-  or release archives.
-
-Historical Windows Initializer V2 documents are not copied into the public
-WISK repository as current requirements. Their behavior was used as migration
-input for the WISK 3.0 manual.
+- `/legacy/` remains ignored and is not part of the public WISK 3.0 source or
+  release archives.
+- WISK 3.0 documentation describes the current product contract; superseded
+  implementation notes are not runtime inputs.

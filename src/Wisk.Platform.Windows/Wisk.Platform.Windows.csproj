@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <AssemblyName>Wisk.Platform.Windows</AssemblyName>
+    <RootNamespace>Wisk.Platform.Windows</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Wisk.Contracts\Wisk.Contracts.csproj" />
+    <ProjectReference Include="..\Wisk.Core\Wisk.Core.csproj" />
+    <ProjectReference Include="..\Wisk.Execution\Wisk.Execution.csproj" />
+    <ProjectReference Include="..\Wisk.PowerShell\Wisk.PowerShell.csproj" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.1" />
+  </ItemGroup>
+</Project>

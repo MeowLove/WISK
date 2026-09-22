@@ -20,9 +20,9 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = (Resolve-Path $PSScriptRoot).Path
-$solution = Join-Path $repoRoot 'WindowsInitializer.sln'
-$appProject = Join-Path $repoRoot 'src/WindowsInitializer.App/WindowsInitializer.App.csproj'
-$cliProject = Join-Path $repoRoot 'src/WindowsInitializer.Cli/WindowsInitializer.Cli.csproj'
+$solution = Join-Path $repoRoot 'Wisk.sln'
+$appProject = Join-Path $repoRoot 'src/Wisk.App/Wisk.App.csproj'
+$cliProject = Join-Path $repoRoot 'src/Wisk.Cli/Wisk.Cli.csproj'
 
 if (-not (Test-Path -LiteralPath $solution -PathType Leaf)) { throw "Solution not found: $solution" }
 if (-not (Test-Path -LiteralPath $appProject -PathType Leaf)) { throw "App project not found: $appProject" }
@@ -38,7 +38,7 @@ $testRoot = Join-Path $artifactRoot "test-results/$Profile/$RuntimeMode/$Runtime
 $publishComponent = if ($Component -eq 'Cli') { 'cli/' } else { '' }
 $publishRoot = Join-Path $artifactRoot "publish/$Profile/$RuntimeMode/$publishComponent$Runtime"
 $publishProject = if ($Component -eq 'Cli') { $cliProject } else { $appProject }
-$appOutput = Join-Path $binRoot "WindowsInitializer.App/$configurationFolder/WindowsInitializer.exe"
+$appOutput = Join-Path $binRoot "Wisk.App/$configurationFolder/WISK.exe"
 $selfContained = $RuntimeMode -eq 'SelfContained'
 
 function Assert-ArtifactPath {

@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <AssemblyName>Wisk.Execution</AssemblyName>
+    <RootNamespace>Wisk.Execution</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Wisk.Contracts\Wisk.Contracts.csproj" />
+    <ProjectReference Include="..\Wisk.Core\Wisk.Core.csproj" />
+  </ItemGroup>
+</Project>

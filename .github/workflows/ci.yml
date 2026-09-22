@@ -46,7 +46,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: windows-initializer-test-results
+          name: WISK wisk-test-results
           path: artifacts/test-results/Test/FrameworkDependent/win-x64
           if-no-files-found: error
           retention-days: 14

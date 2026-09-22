@@ -9,15 +9,9 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
-$project = Join-Path $repoRoot 'src/WindowsInitializer.App/WindowsInitializer.App.csproj'
+$project = Join-Path $repoRoot 'src/Wisk.App/Wisk.App.csproj'
 $outputRoot = Join-Path $repoRoot "artifacts/publish/Release/SelfContained/$Runtime"
 $manifestPath = Join-Path $outputRoot 'release-manifest.json'
-$settingsPath = Join-Path $outputRoot 'WindowsInitializer.json'
-$preservedSettings = if (Test-Path -LiteralPath $settingsPath -PathType Leaf) {
-    [IO.File]::ReadAllBytes($settingsPath)
-} else {
-    $null
-}
 
 if (-not (Test-Path $project -PathType Leaf)) { throw "App project not found: $project" }
 if ($Configuration -ne 'Release') { throw 'WISK release publishing requires Release configuration.' }
@@ -45,10 +39,10 @@ $buildScript = Join-Path $repoRoot 'Build-Wisk.ps1'
 & $buildScript -Target Publish -Profile Release -RuntimeMode SelfContained -Component App -Runtime $Runtime -Version $Version -SignatureStatus $embeddedSignatureStatus
 if ($LASTEXITCODE -ne 0) { throw "WISK publish failed with exit code $LASTEXITCODE" }
 
-$exe = @(Get-ChildItem -LiteralPath $outputRoot -Filter 'WindowsInitializer.exe' -File)
-if ($exe.Count -ne 1) { throw "Expected exactly one WindowsInitializer.exe, found $($exe.Count)" }
+$exe = @(Get-ChildItem -LiteralPath $outputRoot -Filter 'Wisk.exe' -File)
+if ($exe.Count -ne 1) { throw "Expected exactly one Wisk.exe, found $($exe.Count)" }
 $payloadFiles = @(Get-ChildItem -LiteralPath $outputRoot -File | Where-Object Name -ne 'release-manifest.json')
-if ($payloadFiles.Count -ne 1 -or $payloadFiles[0].Name -ne 'WindowsInitializer.exe') { throw "Single-file publish contains unexpected payload files: $($payloadFiles.Name -join ', ')" }
+if ($payloadFiles.Count -ne 1 -or $payloadFiles[0].Name -ne 'Wisk.exe') { throw "Single-file publish contains unexpected payload files: $($payloadFiles.Name -join ', ')" }
 $signatureStatus = 'NotSignedInLocalBuild'
 if ($normalizedThumbprint) {
     $certificates = @(Get-ChildItem Cert:\CurrentUser\My, Cert:\LocalMachine\My -CodeSigningCert |
@@ -88,8 +82,5 @@ $manifest = [ordered]@{
 $tempManifest = "$manifestPath.tmp"
 $manifest | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $tempManifest -Encoding utf8
 Move-Item -LiteralPath $tempManifest -Destination $manifestPath -Force
-if ($null -ne $preservedSettings) {
-    [IO.File]::WriteAllBytes($settingsPath, $preservedSettings)
-}
 Write-Host "Published $($exe.FullName)"
 Write-Host "Manifest $manifestPath"
