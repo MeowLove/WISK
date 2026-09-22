@@ -48,13 +48,13 @@ public sealed class ControlledExtensionTaskExecutorTests
         var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N") + ".exe");
         File.WriteAllBytes(path, [1, 2, 3]);
         var hash = Convert.ToHexString(SHA256.HashData([1, 2, 3]));
-        return (new PlannedTask("runtime-ms-bundle", "2.0.0", RiskLevel.High, TaskSource.ControlledExtension,
+        return (new PlannedTask("runtime-ms-bundle", "3.0.0", RiskLevel.High, TaskSource.ControlledExtension,
             [], false, string.Empty, RequiresAdministrator: true, ExtensionPackageId: "demo",
             ExtensionPackageVersion: "1.0.0", ExtensionManifestHash: new string('A', 64),
             ExtensionExecutablePath: path, ExtensionExecutableHash: hash, ExtensionProtocol: "stdio-json-v1"), path);
     }
 
-    private static ImmutablePlan Plan(PlannedTask task) => new ImmutablePlan("plan", "profile", "2.0.0", DateTimeOffset.UtcNow,
+    private static ImmutablePlan Plan(PlannedTask task) => new ImmutablePlan("plan", "profile", "3.0.0", DateTimeOffset.UtcNow,
         [task], RiskLevel.High, false, string.Empty);
 
     private sealed class FakeRunner(string output) : IControlledExtensionProcessRunner

@@ -10,7 +10,7 @@ public sealed record ExtensionTrustDocument(string SchemaVersion, ImmutableArray
 
 public static class ExtensionTrustPolicy
 {
-    private const string ResourceSuffix = "Resources.trusted-publishers.v2.json";
+    private const string ResourceSuffix = "Resources.trusted-publishers.v3.json";
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
     {
         PropertyNameCaseInsensitive = false,
@@ -32,7 +32,7 @@ public static class ExtensionTrustPolicy
         StrictJson.ValidateNoAmbiguousProperties(json);
         var document = JsonSerializer.Deserialize<ExtensionTrustDocument>(json.Span, JsonOptions)
             ?? throw new InvalidOperationException("Embedded extension trust policy is empty.");
-        if (document.SchemaVersion != "2.0" || document.Publishers.IsDefault)
+        if (document.SchemaVersion != "3.0" || document.Publishers.IsDefault)
             throw new InvalidOperationException("Embedded extension trust policy has an unsupported schema.");
         var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         foreach (var publisher in document.Publishers)

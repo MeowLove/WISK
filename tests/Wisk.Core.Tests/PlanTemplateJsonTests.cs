@@ -56,7 +56,7 @@ public sealed class PlanTemplateJsonTests
         var catalog = new Catalog();
         var restored = PlanTemplateJson.Deserialize(PlanTemplateJson.Serialize(Template([new(taskId, value)]), catalog), catalog);
         Assert.Equal(value, Assert.Single(restored.Items).Value);
-        var profile = new ProfileDocument("2.0", "action", [taskId], new ProfileTarget(), new ExecutionPolicy(), true, false,
+        var profile = new ProfileDocument("3.0", "action", [taskId], new ProfileTarget(), new ExecutionPolicy(), true, false,
             Parameters: ImmutableDictionary<string, string>.Empty.Add(taskId, value));
         Assert.Equal(value, Assert.Single(new PlanBuilder(catalog).Build(profile).Tasks).ParameterSummary);
     }

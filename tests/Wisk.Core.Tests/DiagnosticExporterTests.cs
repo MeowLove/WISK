@@ -36,9 +36,9 @@ public sealed class DiagnosticExporterTests
         var root = Path.Combine(Path.GetTempPath(), "WISK wisk-diagnostics-path-" + Guid.NewGuid().ToString("N"));
         var path = Path.Combine(root, "run.json");
         var localPath = Path.Combine(root, "extensions", "worker.exe");
-        var task = new PlannedTask("runtime-ms-bundle", "2.0.0", RiskLevel.High, TaskSource.ControlledExtension,
+        var task = new PlannedTask("runtime-ms-bundle", "3.0.0", RiskLevel.High, TaskSource.ControlledExtension,
             [], false, string.Empty, ExtensionExecutablePath: localPath);
-        var plan = new ImmutablePlan("plan", "profile", "2.0.0", DateTimeOffset.UtcNow, [task], RiskLevel.High, false, "hash");
+        var plan = new ImmutablePlan("plan", "profile", "3.0.0", DateTimeOffset.UtcNow, [task], RiskLevel.High, false, "hash");
         var snapshot = new RunStateSnapshot("run", "plan", "hash", TaskState.Failed, [], DateTimeOffset.UtcNow,
             SerializedPlan: System.Text.Json.JsonSerializer.Serialize(plan, new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web)));
         try

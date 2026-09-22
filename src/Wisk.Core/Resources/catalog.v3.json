@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "schemaVersion": "2.0",
+  "schemaVersion": "3.0",
   "catalogVersion": "3.0.0",
   "source": "built-in",
   "defaultTaskIds": ["runtime-dotnet-8", "runtime-webview2", "app-vscode", "app-peazip", "app-localsend", "app-syncthing", "app-syncthingtray"]

@@ -15,7 +15,7 @@ public sealed class PlanBuilderTests
             DateTimeOffset.UtcNow, [new ExtensionFileEntry("worker.exe", new string('B', 64), true)],
             [new ExtensionTaskEntry("runtime-ms-bundle", "worker.exe")]);
         var catalog = new Catalog([installed]);
-        var profile = new ProfileDocument("2.0", "extension", ["runtime-ms-bundle"], new ProfileTarget(),
+        var profile = new ProfileDocument("3.0", "extension", ["runtime-ms-bundle"], new ProfileTarget(),
             new ExecutionPolicy(), false, true);
 
         var plan = new PlanBuilder(catalog).Build(profile);
@@ -66,7 +66,7 @@ public sealed class PlanBuilderTests
         var catalog = new Catalog();
         var builder = new PlanBuilder(catalog);
         var profile = new ProfileDocument(
-            "2.0", "test-profile", ["runtime-dotnet-8", "runtime-webview2"],
+            "3.0", "test-profile", ["runtime-dotnet-8", "runtime-webview2"],
             new ProfileTarget(), new ExecutionPolicy(), false, false,
             Parameters: ImmutableDictionary<string, string>.Empty.Add("runtime-dotnet-8", "install"));
 
@@ -81,7 +81,7 @@ public sealed class PlanBuilderTests
     public void ProfileProxyIsPinnedToPlanTasksAndSemanticHash()
     {
         var builder = new PlanBuilder(new Catalog());
-        var profile = new ProfileDocument("2.0", "proxy", ["app-vscode"], new ProfileTarget(), new ExecutionPolicy(), false, false, Proxy: "http://127.0.0.1:7890");
+        var profile = new ProfileDocument("3.0", "proxy", ["app-vscode"], new ProfileTarget(), new ExecutionPolicy(), false, false, Proxy: "http://127.0.0.1:7890");
 
         var plan = builder.Build(profile);
 
@@ -95,7 +95,7 @@ public sealed class PlanBuilderTests
     [InlineData("http://127.0.0.1:7890/?token=secret")]
     public void ProfileProxyRejectsCredentialsAndQueryData(string proxy)
     {
-        var profile = new ProfileDocument("2.0", "proxy-invalid", ["app-vscode"], new ProfileTarget(), new ExecutionPolicy(), false, false, Proxy: proxy);
+        var profile = new ProfileDocument("3.0", "proxy-invalid", ["app-vscode"], new ProfileTarget(), new ExecutionPolicy(), false, false, Proxy: proxy);
 
         var error = Assert.Throws<PlanValidationException>(() => new PlanBuilder(new Catalog()).Build(profile));
 
@@ -105,7 +105,7 @@ public sealed class PlanBuilderTests
     [Fact]
     public void SupplementalFontsRequireExplicitValidSelection()
     {
-        var missing = new ProfileDocument("2.0", "fonts-missing", [FontSupplementCatalog.TaskId], new ProfileTarget(),
+        var missing = new ProfileDocument("3.0", "fonts-missing", [FontSupplementCatalog.TaskId], new ProfileTarget(),
             new ExecutionPolicy(), false, false);
         var invalid = missing with
         {
@@ -126,7 +126,7 @@ public sealed class PlanBuilderTests
     [Fact]
     public void LanguagePreferenceRequiresScopeAndPinsCanonicalSelection()
     {
-        var missing = new ProfileDocument("2.0", "language-missing", [LanguagePreferenceCatalog.TaskId], new ProfileTarget(),
+        var missing = new ProfileDocument("3.0", "language-missing", [LanguagePreferenceCatalog.TaskId], new ProfileTarget(),
             new ExecutionPolicy(), true, false);
         var invalid = missing with
         {
@@ -156,7 +156,7 @@ public sealed class PlanBuilderTests
     public void FastStartupCanBePlannedWithoutSeparateHibernationTask()
     {
         var builder = new PlanBuilder(new Catalog());
-        var profile = new ProfileDocument("2.0", "fast-startup", ["setting-fast-startup"], new ProfileTarget(),
+        var profile = new ProfileDocument("3.0", "fast-startup", ["setting-fast-startup"], new ProfileTarget(),
             new ExecutionPolicy(), true, false,
             Parameters: ImmutableDictionary<string, string>.Empty.Add("setting-fast-startup", "enabled"));
 
@@ -170,7 +170,7 @@ public sealed class PlanBuilderTests
     [Fact]
     public void SoftwareActionMustBeExplicitlySupported()
     {
-        var profile = new ProfileDocument("2.0", "invalid-action", ["app-vscode"], new ProfileTarget(),
+        var profile = new ProfileDocument("3.0", "invalid-action", ["app-vscode"], new ProfileTarget(),
             new ExecutionPolicy(), true, false,
             Parameters: ImmutableDictionary<string, string>.Empty.Add("app-vscode", "uninstall"));
         var error = Assert.Throws<PlanValidationException>(() => new PlanBuilder(new Catalog()).Build(profile));
@@ -194,7 +194,7 @@ public sealed class PlanBuilderTests
     [Fact]
     public void ExecutionPolicyIsPartOfImmutablePlanIntegrity()
     {
-        var profile = new ProfileDocument("2.0", "policy", ["runtime-webview2"], new ProfileTarget(),
+        var profile = new ProfileDocument("3.0", "policy", ["runtime-webview2"], new ProfileTarget(),
             new ExecutionPolicy(StopOnError: false, MaxRetries: 2, DefaultTimeout: TimeSpan.FromMinutes(4)), false, false);
         var plan = new PlanBuilder(new Catalog()).Build(profile);
 
@@ -208,7 +208,7 @@ public sealed class PlanBuilderTests
     [Fact]
     public void ProgrammaticProfileCannotBypassExecutionPolicyBounds()
     {
-        var profile = new ProfileDocument("2.0", "policy", ["runtime-webview2"], new ProfileTarget(),
+        var profile = new ProfileDocument("3.0", "policy", ["runtime-webview2"], new ProfileTarget(),
             new ExecutionPolicy(DefaultTimeout: TimeSpan.FromDays(1)), false, false);
 
         var exception = Assert.Throws<PlanValidationException>(() => new PlanBuilder(new Catalog()).Build(profile));
@@ -220,7 +220,7 @@ public sealed class PlanBuilderTests
     public void HighRiskTaskRequiresExplicitAuthorization()
     {
         var builder = new PlanBuilder(new Catalog());
-        var profile = new ProfileDocument("2.0", "high", ["system-rdp-wrapper"], new ProfileTarget(), new ExecutionPolicy(), false, false);
+        var profile = new ProfileDocument("3.0", "high", ["system-rdp-wrapper"], new ProfileTarget(), new ExecutionPolicy(), false, false);
 
         var exception = Assert.Throws<PlanValidationException>(() => builder.Build(profile));
 
@@ -231,7 +231,7 @@ public sealed class PlanBuilderTests
     public void ExclusiveRegionalFormatsCannotBeSelectedTogether()
     {
         var builder = new PlanBuilder(new Catalog());
-        var profile = new ProfileDocument("2.0", "regional", ["language-zh-sg", "language-zh-hk"], new ProfileTarget(), new ExecutionPolicy(), false, false);
+        var profile = new ProfileDocument("3.0", "regional", ["language-zh-sg", "language-zh-hk"], new ProfileTarget(), new ExecutionPolicy(), false, false);
 
         var exception = Assert.Throws<PlanValidationException>(() => builder.Build(profile));
 
@@ -243,7 +243,7 @@ public sealed class PlanBuilderTests
     {
         var builder = new PlanBuilder(new Catalog());
         var parameters = ImmutableDictionary<string, string>.Empty.Add("accounts-local", "password=never-log-this");
-        var profile = new ProfileDocument("2.0", "redaction", ["accounts-local"], new ProfileTarget(), new ExecutionPolicy(), true, false, Parameters: parameters);
+        var profile = new ProfileDocument("3.0", "redaction", ["accounts-local"], new ProfileTarget(), new ExecutionPolicy(), true, false, Parameters: parameters);
 
         var plan = builder.Build(profile);
 
@@ -254,7 +254,7 @@ public sealed class PlanBuilderTests
     public void UnavailableExtensionTaskCannotEnterPlan()
     {
         var builder = new PlanBuilder(new Catalog());
-        var profile = new ProfileDocument("2.0", "offline", ["runtime-ms-bundle"], new ProfileTarget(), new ExecutionPolicy(), false, true);
+        var profile = new ProfileDocument("3.0", "offline", ["runtime-ms-bundle"], new ProfileTarget(), new ExecutionPolicy(), false, true);
 
         var exception = Assert.Throws<PlanValidationException>(() => builder.Build(profile));
 
@@ -264,7 +264,7 @@ public sealed class PlanBuilderTests
     [Fact]
     public void BuiltInGodModeTaskCanEnterAStandardPlan()
     {
-        var profile = new ProfileDocument("2.0", "god-mode", ["legacy-god-mode"], new ProfileTarget(),
+        var profile = new ProfileDocument("3.0", "god-mode", ["legacy-god-mode"], new ProfileTarget(),
             new ExecutionPolicy(), false, false);
 
         var plan = new PlanBuilder(new Catalog()).Build(profile);
@@ -278,7 +278,7 @@ public sealed class PlanBuilderTests
     public void AccountPlanContainsNamesButNeverPasswords()
     {
         var account = new ProfileAccount("initializer", "Initializer", null, "S-1-5-32-545", false, false, false, "placeholder");
-        var profile = new ProfileDocument("2.0", "accounts", ["accounts-local"], new ProfileTarget(), new ExecutionPolicy(), true, false, Accounts: [account]);
+        var profile = new ProfileDocument("3.0", "accounts", ["accounts-local"], new ProfileTarget(), new ExecutionPolicy(), true, false, Accounts: [account]);
 
         var plan = new PlanBuilder(new Catalog()).Build(profile);
 

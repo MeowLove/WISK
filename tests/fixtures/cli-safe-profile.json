@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "2.0",
+  "schemaVersion": "3.0",
   "profileId": "cli-smoke",
   "tasks": ["runtime-dotnet-8"],
   "target": {

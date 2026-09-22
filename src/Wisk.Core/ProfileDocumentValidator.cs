@@ -17,9 +17,9 @@ public static class ProfileDocumentValidator
         Catalog? catalog = null,
         CompatibilitySnapshot? compatibility = null)
     {
-        if (profile is null || profile.SchemaVersion != "2.0" ||
+        if (profile is null || profile.SchemaVersion != "3.0" ||
             string.IsNullOrWhiteSpace(profile.ProfileId) || profile.ProfileId.Length > 128)
-            return Invalid("schemaVersion 2.0 and a profileId of at most 128 characters are required.");
+            return Invalid("schemaVersion 3.0 and a profileId of at most 128 characters are required.");
 
         if (profile.Tasks.IsDefaultOrEmpty || profile.Tasks.Length > MaximumTaskCount ||
             profile.Tasks.Any(id => string.IsNullOrWhiteSpace(id) || id.Length > 128))

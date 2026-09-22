@@ -17,7 +17,7 @@ public sealed class SettingsPresetConflictTests
         Assert.Contains(TaskRelationPlanner.Conflicts(preset, [setting.Id]), relation => relation.TargetTaskId == setting.Id);
         foreach (var ids in new[] { new[] { setting.Id, preset.Id }, new[] { preset.Id, setting.Id } })
         {
-            var profile = new ProfileDocument("2.0", "conflict", [.. ids], new ProfileTarget(), new ExecutionPolicy(), true, true,
+            var profile = new ProfileDocument("3.0", "conflict", [.. ids], new ProfileTarget(), new ExecutionPolicy(), true, true,
                 Parameters: ImmutableDictionary<string, string>.Empty.Add(setting.Id, ConfigurableRegistrySettingCatalog.EnabledState));
             var error = Assert.Throws<PlanValidationException>(() => new PlanBuilder(catalog).Build(profile));
             Assert.Equal(ErrorCode.MutualExclusion, error.Code);

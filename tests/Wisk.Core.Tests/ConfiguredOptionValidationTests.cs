@@ -16,7 +16,7 @@ public sealed class ConfiguredOptionValidationTests
         foreach (var id in new[] { "setting-taskbar-seconds", "setting-taskbar-end-task", "setting-taskbar-widgets",
             "setting-notification-banners", "setting-lock-screen-notifications", "setting-explorer-this-pc" })
         {
-            var profile = new ProfileDocument("2.0", "test", [id], new ProfileTarget(), new ExecutionPolicy(), false, false,
+            var profile = new ProfileDocument("3.0", "test", [id], new ProfileTarget(), new ExecutionPolicy(), false, false,
                 Parameters: value is null ? null : ImmutableDictionary<string, string>.Empty.Add(id, value));
             Assert.Equal(ErrorCode.InvalidProfile, ProfileDocumentValidator.Validate(profile)!.Code);
         }
@@ -27,7 +27,7 @@ public sealed class ConfiguredOptionValidationTests
     {
         foreach (var definition in ConfigurableRegistrySettingCatalog.All)
         {
-            var profile = new ProfileDocument("2.0", "test", [definition.TaskId], new ProfileTarget(), new ExecutionPolicy(), false, false,
+            var profile = new ProfileDocument("3.0", "test", [definition.TaskId], new ProfileTarget(), new ExecutionPolicy(), false, false,
                 Parameters: ImmutableDictionary<string, string>.Empty.Add(definition.TaskId, ConfigurableRegistrySettingCatalog.DefaultState));
 
             Assert.Null(ProfileDocumentValidator.Validate(profile));

@@ -11,7 +11,7 @@ public sealed class UacPlanHandoffTests
     public void PlanSurvivesUacEnvelopeRoundTrip()
     {
         var plan = new PlanBuilder(new Catalog()).Build(new Wisk.Contracts.ProfileDocument(
-            "2.0", "uac", ["runtime-webview2"], new Wisk.Contracts.ProfileTarget(), new Wisk.Contracts.ExecutionPolicy(), false, false));
+            "3.0", "uac", ["runtime-webview2"], new Wisk.Contracts.ProfileTarget(), new Wisk.Contracts.ExecutionPolicy(), false, false));
 
         var restored = UacPlanHandoff.Validate(UacPlanHandoff.Create(plan));
 
@@ -23,7 +23,7 @@ public sealed class UacPlanHandoffTests
     public void TamperedEnvelopeIsRejected()
     {
         var plan = new PlanBuilder(new Catalog()).Build(new Wisk.Contracts.ProfileDocument(
-            "2.0", "uac", ["runtime-webview2"], new Wisk.Contracts.ProfileTarget(), new Wisk.Contracts.ExecutionPolicy(), false, false));
+            "3.0", "uac", ["runtime-webview2"], new Wisk.Contracts.ProfileTarget(), new Wisk.Contracts.ExecutionPolicy(), false, false));
         var envelope = UacPlanHandoff.Create(plan) with { SemanticHash = "tampered" };
 
         Assert.Throws<InvalidOperationException>(() => UacPlanHandoff.Validate(envelope));
@@ -33,7 +33,7 @@ public sealed class UacPlanHandoffTests
     public void ApplyEnvelopePersistsAndRestoresPlanAndPolicy()
     {
         var plan = new PlanBuilder(new Catalog()).Build(new Wisk.Contracts.ProfileDocument(
-            "2.0", "uac", ["runtime-webview2"], new Wisk.Contracts.ProfileTarget(),
+            "3.0", "uac", ["runtime-webview2"], new Wisk.Contracts.ProfileTarget(),
             new Wisk.Contracts.ExecutionPolicy(MaxRetries: 2, DefaultTimeout: TimeSpan.FromMinutes(3)), false, false));
         var root = Path.Combine(Path.GetTempPath(), "WiskTests", Guid.NewGuid().ToString("N"));
 
@@ -67,7 +67,7 @@ public sealed class UacPlanHandoffTests
     public void ApplyEnvelopeOutsideControlledRootIsRejected()
     {
         var plan = new PlanBuilder(new Catalog()).Build(new Wisk.Contracts.ProfileDocument(
-            "2.0", "uac", ["runtime-webview2"], new Wisk.Contracts.ProfileTarget(), new Wisk.Contracts.ExecutionPolicy(), false, false));
+            "3.0", "uac", ["runtime-webview2"], new Wisk.Contracts.ProfileTarget(), new Wisk.Contracts.ExecutionPolicy(), false, false));
         var root = Path.Combine(Path.GetTempPath(), "WiskTests", Guid.NewGuid().ToString("N"));
         var outside = Path.Combine(Path.GetTempPath(), "WiskTests", Guid.NewGuid().ToString("N"));
         try

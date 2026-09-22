@@ -18,7 +18,7 @@ public sealed class ExtensionTrustPolicyTests
     public void AmbiguousPublisherPolicyIsRejected()
     {
         var json = Encoding.UTF8.GetBytes("""
-            {"schemaVersion":"2.0","publishers":[],"Publishers":[]}
+            {"schemaVersion":"3.0","publishers":[],"Publishers":[]}
             """);
 
         Assert.Throws<System.Text.Json.JsonException>(() => ExtensionTrustPolicy.Deserialize(json));
@@ -28,7 +28,7 @@ public sealed class ExtensionTrustPolicyTests
     public void NullPublisherIsRejectedWithStablePolicyError()
     {
         var json = Encoding.UTF8.GetBytes("""
-            {"schemaVersion":"2.0","publishers":[null]}
+            {"schemaVersion":"3.0","publishers":[null]}
             """);
 
         var exception = Assert.Throws<InvalidOperationException>(() => ExtensionTrustPolicy.Deserialize(json));

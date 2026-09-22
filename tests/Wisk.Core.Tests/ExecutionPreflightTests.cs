@@ -62,7 +62,7 @@ public sealed class ExecutionPreflightTests
         var parameters = ConfigurableRegistrySettingCatalog.Find(task.Id) is not null
             ? ImmutableDictionary<string, string>.Empty.Add(task.Id, ConfigurableRegistrySettingCatalog.DisabledState)
             : null;
-        var profile = new ProfileDocument("2.0", "preflight", [task.Id], new ProfileTarget(), new ExecutionPolicy(),
+        var profile = new ProfileDocument("3.0", "preflight", [task.Id], new ProfileTarget(), new ExecutionPolicy(),
             task.Risk == RiskLevel.Elevated, task.Risk == RiskLevel.High, Parameters: parameters);
         return new PlanBuilder(new Catalog()).Build(profile);
     }

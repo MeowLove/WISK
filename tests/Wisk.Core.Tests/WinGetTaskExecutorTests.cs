@@ -14,7 +14,7 @@ public sealed class WinGetTaskExecutorTests
     {
         var runner = new FakeRunner(0, "Name  Microsoft.EdgeWebView2Runtime  1.0", string.Empty);
         var executor = new WinGetTaskExecutor(new Catalog(), runner);
-        var task = new PlannedTask("runtime-webview2", "2.0.0", RiskLevel.Standard, TaskSource.BuiltIn, [], false, string.Empty);
+        var task = new PlannedTask("runtime-webview2", "3.0.0", RiskLevel.Standard, TaskSource.BuiltIn, [], false, string.Empty);
 
         var result = await executor.CheckAsync(task, CancellationToken.None);
 
@@ -27,8 +27,8 @@ public sealed class WinGetTaskExecutorTests
     {
         var runner = new FakeRunner(0, "", "");
         var executor = new WinGetTaskExecutor(new Catalog(), runner);
-        var task = new PlannedTask("app-vscode", "2.0.0", RiskLevel.Standard, TaskSource.BuiltIn, [], false, string.Empty);
-        var plan = new PlanBuilder(new Catalog()).Build(new ProfileDocument("2.0", "p", ["app-vscode"], new ProfileTarget(), new ExecutionPolicy(), false, false));
+        var task = new PlannedTask("app-vscode", "3.0.0", RiskLevel.Standard, TaskSource.BuiltIn, [], false, string.Empty);
+        var plan = new PlanBuilder(new Catalog()).Build(new ProfileDocument("3.0", "p", ["app-vscode"], new ProfileTarget(), new ExecutionPolicy(), false, false));
 
         var result = await executor.ApplyAsync(task, new ApplyContext("run", plan, CancellationToken.None, TimeSpan.FromSeconds(1), true));
 
@@ -47,7 +47,7 @@ public sealed class WinGetTaskExecutorTests
         var runner = new FakeRunner(0, string.Empty, string.Empty);
         var executor = new WinGetTaskExecutor(new Catalog(), runner);
         var task = new PlannedTask("app-vscode", "3.0.0", RiskLevel.Standard, TaskSource.BuiltIn, [], false, string.Empty);
-        var plan = new PlanBuilder(new Catalog()).Build(new ProfileDocument("2.0", "proxy", ["app-vscode"], new ProfileTarget(), new ExecutionPolicy(), false, false, Proxy: "http://127.0.0.1:7890"));
+        var plan = new PlanBuilder(new Catalog()).Build(new ProfileDocument("3.0", "proxy", ["app-vscode"], new ProfileTarget(), new ExecutionPolicy(), false, false, Proxy: "http://127.0.0.1:7890"));
 
         var result = await executor.ApplyAsync(task, new ApplyContext("run", plan, CancellationToken.None, TimeSpan.FromSeconds(1), true));
 
@@ -63,7 +63,7 @@ public sealed class WinGetTaskExecutorTests
             (0, "Name  Id  Version\nPowerShell  9MZ1SNWT0N5D  7.5.0", string.Empty),
             (NoApplicationsFoundExitCode, string.Empty, "No installed package found matching input criteria."));
         var executor = new WinGetTaskExecutor(new Catalog(), runner);
-        var task = new PlannedTask("terminal-powershell7", "2.0.0", RiskLevel.Standard, TaskSource.BuiltIn, [], false, "upgrade");
+        var task = new PlannedTask("terminal-powershell7", "3.0.0", RiskLevel.Standard, TaskSource.BuiltIn, [], false, "upgrade");
 
         var result = await executor.CheckAsync(task, CancellationToken.None);
 
@@ -80,7 +80,7 @@ public sealed class WinGetTaskExecutorTests
             (0, "Name  Id  Version\nVisual Studio Code  Microsoft.VisualStudioCode  1.0", string.Empty),
             (0, "Name  Id  Version  Available\nVisual Studio Code  Microsoft.VisualStudioCode  1.0  1.1", string.Empty));
         var executor = new WinGetTaskExecutor(new Catalog(), runner);
-        var task = new PlannedTask("app-vscode", "2.0.0", RiskLevel.Standard, TaskSource.BuiltIn, [], false, "upgrade");
+        var task = new PlannedTask("app-vscode", "3.0.0", RiskLevel.Standard, TaskSource.BuiltIn, [], false, "upgrade");
 
         var result = await executor.CheckAsync(task, CancellationToken.None);
 
@@ -93,7 +93,7 @@ public sealed class WinGetTaskExecutorTests
     {
         var runner = new FakeRunner(NoApplicationsFoundExitCode, string.Empty, "No installed package found matching input criteria.");
         var executor = new WinGetTaskExecutor(new Catalog(), runner);
-        var task = new PlannedTask("app-vscode", "2.0.0", RiskLevel.Standard, TaskSource.BuiltIn, [], false, "upgrade");
+        var task = new PlannedTask("app-vscode", "3.0.0", RiskLevel.Standard, TaskSource.BuiltIn, [], false, "upgrade");
 
         var result = await executor.CheckAsync(task, CancellationToken.None);
 
@@ -107,7 +107,7 @@ public sealed class WinGetTaskExecutorTests
     {
         var runner = new FakeRunner(17, string.Empty, "unexpected failure");
         var executor = new WinGetTaskExecutor(new Catalog(), runner);
-        var task = new PlannedTask("app-vscode", "2.0.0", RiskLevel.Standard, TaskSource.BuiltIn, [], false, string.Empty);
+        var task = new PlannedTask("app-vscode", "3.0.0", RiskLevel.Standard, TaskSource.BuiltIn, [], false, string.Empty);
 
         var result = await executor.CheckAsync(task, CancellationToken.None);
 
@@ -121,8 +121,8 @@ public sealed class WinGetTaskExecutorTests
     {
         var runner = new FakeRunner(0, string.Empty, string.Empty);
         var executor = new WinGetTaskExecutor(new Catalog(), runner);
-        var task = new PlannedTask("terminal-powershell7", "2.0.0", RiskLevel.Standard, TaskSource.BuiltIn, [], false, "upgrade");
-        var plan = new PlanBuilder(new Catalog()).Build(new ProfileDocument("2.0", "p", ["terminal-powershell7"], new ProfileTarget(), new ExecutionPolicy(), false, false));
+        var task = new PlannedTask("terminal-powershell7", "3.0.0", RiskLevel.Standard, TaskSource.BuiltIn, [], false, "upgrade");
+        var plan = new PlanBuilder(new Catalog()).Build(new ProfileDocument("3.0", "p", ["terminal-powershell7"], new ProfileTarget(), new ExecutionPolicy(), false, false));
 
         var result = await executor.ApplyAsync(task, new ApplyContext("run", plan, CancellationToken.None, TimeSpan.FromSeconds(1), true));
 
@@ -138,8 +138,8 @@ public sealed class WinGetTaskExecutorTests
     {
         var runner = new FakeRunner(0, string.Empty, string.Empty);
         var executor = new WinGetTaskExecutor(new Catalog(), runner);
-        var task = new PlannedTask("app-vscode", "2.0.0", RiskLevel.Standard, TaskSource.BuiltIn, [], false, "remove");
-        var plan = new PlanBuilder(new Catalog()).Build(new ProfileDocument("2.0", "p", ["app-vscode"], new ProfileTarget(), new ExecutionPolicy(), false, false));
+        var task = new PlannedTask("app-vscode", "3.0.0", RiskLevel.Standard, TaskSource.BuiltIn, [], false, "remove");
+        var plan = new PlanBuilder(new Catalog()).Build(new ProfileDocument("3.0", "p", ["app-vscode"], new ProfileTarget(), new ExecutionPolicy(), false, false));
 
         var check = await executor.CheckAsync(task, CancellationToken.None);
         var apply = await executor.ApplyAsync(task, new ApplyContext("run", plan, CancellationToken.None, TimeSpan.FromSeconds(1), true));
@@ -180,7 +180,7 @@ public sealed class WinGetTaskExecutorTests
         var runner = new FakeRunner(0, string.Empty, string.Empty);
         var compatibility = Compatibility(networkAvailable, winGetAvailable);
         var executor = new RegisteredTaskExecutor(new Catalog(), new FakeBridge(), runner, compatibility);
-        var task = new PlannedTask("app-vscode", "2.0.0", RiskLevel.Standard, TaskSource.BuiltIn, [], false, string.Empty);
+        var task = new PlannedTask("app-vscode", "3.0.0", RiskLevel.Standard, TaskSource.BuiltIn, [], false, string.Empty);
 
         var result = await executor.CheckAsync(task, CancellationToken.None);
 

@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Wisk.Core.Tests;
 
-public sealed class V23CatalogTests
+public sealed class WiskCatalogTests
 {
     [Fact]
     public void PriorityWindowsFeaturesHaveConcreteBuiltInRoutes()

@@ -42,7 +42,7 @@ internal static class CatalogLocalization
             ["de"] = Map(("computer-name", "Windows-Computername"), ("accounts-local", "Lokale Konten"), ("language-zh-cn", "Chinesisch (vereinfacht, China)"), ("language-zh-tw", "Chinesisch (traditionell, Taiwan)"), ("language-en-us", "Englisch (Vereinigte Staaten)"), ("language-en-gb", "Englisch (Vereinigtes Königreich)"), ("language-zh-sg", "Chinesisches Regionalformat (Singapur)"), ("language-zh-hk", "Chinesisches Regionalformat (Hongkong)"), ("language-ui-preference", "Windows-Anzeigesprache"), ("font-supplements-cjk-indic-europe", "Zusätzliche Schriftarten"), ("feature-wireless-display", "Drahtlose Anzeige"), ("device-setup-region", "Region für die Geräteeinrichtung"), ("legacy-god-mode", "Windows-God-Mode-Ordner erstellen"))
         };
 
-    private static readonly string[] V23TaskIds =
+    private static readonly string[] WiskTaskIds =
     [
         "feature-wsl", "feature-virtual-machine-platform", "feature-sandbox", "feature-hyper-v", "capability-openssh-client",
         "feature-telnet-client", "setting-long-paths", "setting-developer-mode", "setting-show-file-extensions",
@@ -50,7 +50,7 @@ internal static class CatalogLocalization
         "setting-power-plan", "setting-sleep-timeouts"
     ];
 
-    private static readonly IReadOnlyDictionary<string, string[]> V23TaskNames = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
+    private static readonly IReadOnlyDictionary<string, string[]> WiskTaskNames = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
     {
         ["zh-CN"] = ["适用于 Linux 的 Windows 子系统", "虚拟机平台", "Windows 沙盒", "Hyper-V", "OpenSSH 客户端", "Telnet 客户端", "长路径支持", "开发者模式", "显示文件扩展名", "启用休眠", "启用快速启动", "创建系统还原点", "Windows 更新模式", "活动电源计划", "睡眠与屏幕超时"],
         ["ru"] = ["Подсистема Windows для Linux", "Платформа виртуальных машин", "Песочница Windows", "Hyper-V", "Клиент OpenSSH", "Клиент Telnet", "Поддержка длинных путей", "Режим разработчика", "Показывать расширения файлов", "Включить гибернацию", "Включить быстрый запуск", "Создать точку восстановления", "Режим Центра обновления Windows", "Активная схема питания", "Тайм-ауты сна и экрана"],
@@ -107,8 +107,8 @@ internal static class CatalogLocalization
         _ = RegistryGroupNameCount;
         var groupIndex = Array.FindIndex(RegistryGroupTaskIds, id => id.Equals(taskId, StringComparison.OrdinalIgnoreCase));
         if (groupIndex >= 0 && RegistryGroupTaskNames.TryGetValue(Localization.CurrentCode, out var groupValues)) return groupValues[groupIndex];
-        var index = Array.FindIndex(V23TaskIds, id => id.Equals(taskId, StringComparison.OrdinalIgnoreCase));
-        if (index >= 0 && V23TaskNames.TryGetValue(Localization.CurrentCode, out var values)) return values[index];
+        var index = Array.FindIndex(WiskTaskIds, id => id.Equals(taskId, StringComparison.OrdinalIgnoreCase));
+        if (index >= 0 && WiskTaskNames.TryGetValue(Localization.CurrentCode, out var values)) return values[index];
         return Lookup(TaskNames, taskId, fallback);
     }
     public static string Domain(string domain)

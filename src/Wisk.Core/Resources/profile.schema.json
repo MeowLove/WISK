@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://Wisk.local/schemas/profile.v2.json",
-  "title": "WISK V2 profile",
+  "$id": "https://Wisk.local/schemas/profile.v3.json",
+  "title": "WISK 3 profile",
   "type": "object",
   "additionalProperties": false,
   "required": ["schemaVersion", "profileId", "tasks", "target", "policy", "allowElevated", "allowHighRisk"],
   "properties": {
-    "schemaVersion": { "const": "2.0" },
+    "schemaVersion": { "const": "3.0" },
     "profileId": { "type": "string", "minLength": 1, "maxLength": 128 },
     "tasks": {
       "type": "array",

@@ -13,10 +13,10 @@ public sealed class WindowsTaskExecutorTests
     {
         var bridge = new FakeBridge();
         var executor = new WindowsTaskExecutor(bridge);
-        var task = new PlannedTask("runtime-webview2", "2.0.0", RiskLevel.Standard, TaskSource.BuiltIn, [], false, string.Empty);
+        var task = new PlannedTask("runtime-webview2", "3.0.0", RiskLevel.Standard, TaskSource.BuiltIn, [], false, string.Empty);
 
         var check = await executor.CheckAsync(task, CancellationToken.None);
-        var apply = await executor.ApplyAsync(task, new ApplyContext("run", new Wisk.Core.PlanBuilder(new Wisk.Core.Catalog()).Build(new ProfileDocument("2.0", "p", ["runtime-webview2"], new ProfileTarget(), new ExecutionPolicy(), false, false)), CancellationToken.None, TimeSpan.FromSeconds(1), true));
+        var apply = await executor.ApplyAsync(task, new ApplyContext("run", new Wisk.Core.PlanBuilder(new Wisk.Core.Catalog()).Build(new ProfileDocument("3.0", "p", ["runtime-webview2"], new ProfileTarget(), new ExecutionPolicy(), false, false)), CancellationToken.None, TimeSpan.FromSeconds(1), true));
 
         Assert.Equal(TaskState.Ready, check.State);
         Assert.Equal(TaskState.Succeeded, apply.State);
@@ -28,7 +28,7 @@ public sealed class WindowsTaskExecutorTests
     {
         var bridge = new FakeBridge();
         var executor = new WindowsTaskExecutor(bridge, new Wisk.Core.Catalog());
-        var task = new PlannedTask("computer-name", "2.0.0", RiskLevel.Elevated, TaskSource.BuiltIn, [], true, "safe-host");
+        var task = new PlannedTask("computer-name", "3.0.0", RiskLevel.Elevated, TaskSource.BuiltIn, [], true, "safe-host");
 
         await executor.CheckAsync(task, CancellationToken.None);
 
@@ -52,8 +52,8 @@ public sealed class WindowsTaskExecutorTests
     {
         var bridge = new FakeBridge();
         var executor = new WindowsTaskExecutor(bridge, new Wisk.Core.Catalog());
-        var task = new PlannedTask("accounts-local", "2.0.0", RiskLevel.Elevated, TaskSource.BuiltIn, [], false, "initializer");
-        var plan = new Wisk.Core.PlanBuilder(new Wisk.Core.Catalog()).Build(new ProfileDocument("2.0", "p", ["accounts-local"], new ProfileTarget(), new ExecutionPolicy(), true, false));
+        var task = new PlannedTask("accounts-local", "3.0.0", RiskLevel.Elevated, TaskSource.BuiltIn, [], false, "initializer");
+        var plan = new Wisk.Core.PlanBuilder(new Wisk.Core.Catalog()).Build(new ProfileDocument("3.0", "p", ["accounts-local"], new ProfileTarget(), new ExecutionPolicy(), true, false));
         var context = new ApplyContext("run", plan, CancellationToken.None, TimeSpan.FromSeconds(1), true,
             [new ProfileAccount("initializer", null, null, "S-1-5-32-545", false, false, false, "placeholder")]);
 
@@ -68,8 +68,8 @@ public sealed class WindowsTaskExecutorTests
     {
         var bridge = new FakeBridge();
         var executor = new WindowsTaskExecutor(bridge, new Wisk.Core.Catalog());
-        var task = new PlannedTask("language-ui-preference", "2.0.0", RiskLevel.Elevated, TaskSource.BuiltIn, [], true, "en-US");
-        var plan = new Wisk.Core.PlanBuilder(new Wisk.Core.Catalog()).Build(new ProfileDocument("2.0", "p", ["language-ui-preference"], new ProfileTarget(), new ExecutionPolicy(), true, false,
+        var task = new PlannedTask("language-ui-preference", "3.0.0", RiskLevel.Elevated, TaskSource.BuiltIn, [], true, "en-US");
+        var plan = new Wisk.Core.PlanBuilder(new Wisk.Core.Catalog()).Build(new ProfileDocument("3.0", "p", ["language-ui-preference"], new ProfileTarget(), new ExecutionPolicy(), true, false,
             Parameters: ImmutableDictionary<string, string>.Empty.Add("language-ui-preference", "en-US")));
         var context = new ApplyContext("run", plan, CancellationToken.None, TimeSpan.FromSeconds(1), true,
             [new ProfileAccount("initializer", null, null, null, false, false, false, "placeholder")]);
@@ -86,7 +86,7 @@ public sealed class WindowsTaskExecutorTests
     public async Task CheckPreservesBridgeFailureClassification(ErrorCode code, TaskState expectedState, bool retryable)
     {
         var executor = new WindowsTaskExecutor(new FailingBridge(code));
-        var task = new PlannedTask("language-zh-cn", "2.0.0", RiskLevel.Standard, TaskSource.BuiltIn, [], false, string.Empty);
+        var task = new PlannedTask("language-zh-cn", "3.0.0", RiskLevel.Standard, TaskSource.BuiltIn, [], false, string.Empty);
 
         var result = await executor.CheckAsync(task, CancellationToken.None);
 

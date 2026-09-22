@@ -1543,7 +1543,7 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
 
     private ProfileDocument? BuildInteractiveProfile(IReadOnlyCollection<string> ids)
     {
-        var profile = new ProfileDocument("2.0", "interactive", ids.ToImmutableArray(), new ProfileTarget(), _draftPolicy,
+        var profile = new ProfileDocument("3.0", "interactive", ids.ToImmutableArray(), new ProfileTarget(), _draftPolicy,
             AllowElevatedCheck.IsChecked == true, AllowHighRiskCheck.IsChecked == true);
         var parameters = ImmutableDictionary<string, string>.Empty;
         var accounts = ImmutableArray.CreateBuilder<ProfileAccount>();

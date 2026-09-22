@@ -42,7 +42,7 @@ public sealed record TaskDescriptor(
     RiskLevel Risk,
     TaskKind Kind,
     TaskSource Source = TaskSource.BuiltIn,
-    string Version = "2.0.0",
+    string Version = "3.0.0",
     bool DefaultSelected = false,
     bool RequiresAdministrator = false,
     bool RequiresInternet = false,

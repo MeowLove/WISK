@@ -11,7 +11,7 @@ public sealed class ProfileJsonTests
     public void DeserializeValidatesCatalogAndNormalizesParameters()
     {
         const string json = """
-            { "schemaVersion": "2.0", "profileId": "safe", "tasks": [ "runtime-dotnet-8" ],
+            { "schemaVersion": "3.0", "profileId": "safe", "tasks": [ "runtime-dotnet-8" ],
               "target": {}, "policy": {}, "allowElevated": false, "allowHighRisk": false }
             """;
 
@@ -26,7 +26,7 @@ public sealed class ProfileJsonTests
     public void DiagnosticsSerializationRedactsAccountAndParameterSecrets()
     {
         var profile = new ProfileDocument(
-            "2.0", "redacted", ["runtime-dotnet-8"], new ProfileTarget(), new ExecutionPolicy(), false, false,
+            "3.0", "redacted", ["runtime-dotnet-8"], new ProfileTarget(), new ExecutionPolicy(), false, false,
             Parameters: ImmutableDictionary<string, string>.Empty.Add("apiToken", "not-for-logs"),
             Accounts: [new ProfileAccount("operator", null, null, null, false, false, false, "not-for-logs")]);
 
@@ -40,7 +40,7 @@ public sealed class ProfileJsonTests
     public void DeserializeRejectsUnknownMembers()
     {
         const string json = """
-            { "schemaVersion": "2.0", "profileId": "safe", "tasks": [ "runtime-dotnet-8" ],
+            { "schemaVersion": "3.0", "profileId": "safe", "tasks": [ "runtime-dotnet-8" ],
               "target": {}, "policy": {}, "allowElevated": false, "allowHighRisk": false, "unexpected": true }
             """;
 
@@ -51,11 +51,11 @@ public sealed class ProfileJsonTests
     public void DeserializeRejectsCommentsAndAmbiguousPropertyCasing()
     {
         const string commented = """
-            { "schemaVersion": "2.0", /* no comments in profiles */ "profileId": "safe", "tasks": [ "runtime-dotnet-8" ],
+            { "schemaVersion": "3.0", /* no comments in profiles */ "profileId": "safe", "tasks": [ "runtime-dotnet-8" ],
               "target": {}, "policy": {}, "allowElevated": false, "allowHighRisk": false }
             """;
         const string wrongCase = """
-            { "SchemaVersion": "2.0", "profileId": "safe", "tasks": [ "runtime-dotnet-8" ],
+            { "SchemaVersion": "3.0", "profileId": "safe", "tasks": [ "runtime-dotnet-8" ],
               "target": {}, "policy": {}, "allowElevated": false, "allowHighRisk": false }
             """;
 
@@ -67,11 +67,11 @@ public sealed class ProfileJsonTests
     public void DeserializeRejectsDuplicatePropertiesAtAnyDepth()
     {
         const string duplicate = """
-            { "schemaVersion": "2.0", "profileId": "safe", "profileId": "changed", "tasks": [ "runtime-dotnet-8" ],
+            { "schemaVersion": "3.0", "profileId": "safe", "profileId": "changed", "tasks": [ "runtime-dotnet-8" ],
               "target": {}, "policy": {}, "allowElevated": false, "allowHighRisk": false }
             """;
         const string ambiguousNested = """
-            { "schemaVersion": "2.0", "profileId": "safe", "tasks": [ "runtime-dotnet-8" ],
+            { "schemaVersion": "3.0", "profileId": "safe", "tasks": [ "runtime-dotnet-8" ],
               "target": { "minimumBuild": 26100, "MinimumBuild": 26200 }, "policy": {}, "allowElevated": false, "allowHighRisk": false }
             """;
 
@@ -87,7 +87,7 @@ public sealed class ProfileJsonTests
     public void DeserializeRejectsMissingOrUnboundedTargetAndPolicy(string target, string policy)
     {
         var json = $$"""
-            { "schemaVersion": "2.0", "profileId": "safe", "tasks": [ "runtime-dotnet-8" ],
+            { "schemaVersion": "3.0", "profileId": "safe", "tasks": [ "runtime-dotnet-8" ],
               "target": {{target}}, "policy": {{policy}}, "allowElevated": false, "allowHighRisk": false }
             """;
 
@@ -98,7 +98,7 @@ public sealed class ProfileJsonTests
     public void DeserializeRejectsParametersForUnselectedTasks()
     {
         const string json = """
-            { "schemaVersion": "2.0", "profileId": "safe", "tasks": [ "runtime-dotnet-8" ],
+            { "schemaVersion": "3.0", "profileId": "safe", "tasks": [ "runtime-dotnet-8" ],
               "target": {}, "policy": {}, "allowElevated": false, "allowHighRisk": false,
               "parameters": { "app-vscode": "unexpected" } }
             """;
@@ -110,7 +110,7 @@ public sealed class ProfileJsonTests
     public void DeserializeAllowsAnExplicitEmptyAccountArrayWithoutAccountTask()
     {
         const string json = """
-            { "schemaVersion": "2.0", "profileId": "safe", "tasks": [ "runtime-dotnet-8" ],
+            { "schemaVersion": "3.0", "profileId": "safe", "tasks": [ "runtime-dotnet-8" ],
               "target": {}, "policy": {}, "allowElevated": false, "allowHighRisk": false,
               "accounts": [] }
             """;
@@ -126,7 +126,7 @@ public sealed class ProfileJsonTests
     public void DeserializeRejectsUnsafeAccountIdentityFields(string name, string groupSid)
     {
         var json = $$"""
-            { "schemaVersion": "2.0", "profileId": "account", "tasks": [ "accounts-local" ],
+            { "schemaVersion": "3.0", "profileId": "account", "tasks": [ "accounts-local" ],
               "target": {}, "policy": {}, "allowElevated": true, "allowHighRisk": false,
               "accounts": [{ "name": "{{name}}", "groupSid": "{{groupSid}}", "passwordNeverExpires": false,
                 "hideFromSignInScreen": false, "allowRemoteDesktop": false }] }

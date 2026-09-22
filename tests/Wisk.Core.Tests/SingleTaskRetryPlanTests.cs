@@ -45,7 +45,7 @@ public sealed class SingleTaskRetryPlanTests
 
     private static ImmutablePlan BuildPlan(params string[] taskIds)
     {
-        var tasks = taskIds.Select(id => new PlannedTask(id, "2.0.0", RiskLevel.Elevated, TaskSource.BuiltIn,
+        var tasks = taskIds.Select(id => new PlannedTask(id, "3.0.0", RiskLevel.Elevated, TaskSource.BuiltIn,
             [], id == "system-computer-name", id == "system-computer-name" ? "NEW-PC" : string.Empty,
             RequiresAdministrator: true)).ToImmutableArray();
         var plan = new ImmutablePlan("original", "interactive", "3.0.0", DateTimeOffset.UtcNow, tasks,

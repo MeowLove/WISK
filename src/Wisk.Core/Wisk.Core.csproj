@@ -7,10 +7,10 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Wisk.Contracts\Wisk.Contracts.csproj" />
-    <EmbeddedResource Include="Resources\catalog.v2.json" />
+    <EmbeddedResource Include="Resources\catalog.v3.json" />
     <EmbeddedResource Include="Resources\profile.schema.json" />
     <EmbeddedResource Include="Resources\extension-manifest.schema.json" />
-    <EmbeddedResource Include="Resources\trusted-publishers.v2.json" />
+    <EmbeddedResource Include="Resources\trusted-publishers.v3.json" />
     <EmbeddedResource Include="Resources\CXT_User.reg" />
     <EmbeddedResource Include="Resources\CXT_System.reg" />
   </ItemGroup>

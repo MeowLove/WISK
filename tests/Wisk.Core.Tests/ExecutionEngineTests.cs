@@ -347,7 +347,7 @@ public sealed class ExecutionEngineTests
     {
         var catalog = new Catalog();
         var tasks = taskIds.Select(id => catalog.Find(id)!).ToArray();
-        var profile = new ProfileDocument("2.0", "execution", taskIds.ToImmutableArray(), new ProfileTarget(), policy,
+        var profile = new ProfileDocument("3.0", "execution", taskIds.ToImmutableArray(), new ProfileTarget(), policy,
             tasks.Any(task => task.Risk == RiskLevel.Elevated), tasks.Any(task => task.Risk == RiskLevel.High));
         return new PlanBuilder(catalog).Build(profile);
     }
