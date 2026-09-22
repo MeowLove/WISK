@@ -38,6 +38,10 @@ only an audit source and is not a runtime dependency.
 
 - Set-ExecutionPolicy RemoteSigned is not migrated. WISK launches its fixed
   bridge with an explicit process policy and does not weaken the host policy.
+- The legacy one-off `winget update winget` and global
+  `ProxyCommandLineOptions` changes are not plan tasks. WISK keeps App
+  Installer self-update manual and carries a profile proxy explicitly on each
+  package command, so execution does not mutate a global WinGet setting.
 - Offline installers, proprietary archives, RDP Wrapper, and other legacy
   assets remain unavailable until supplied through a signed controlled
   extension package. The catalog keeps these entries visible as manual review
