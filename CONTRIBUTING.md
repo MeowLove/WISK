@@ -46,6 +46,9 @@ The authoritative WISK 3.0 requirements manual is local-only under the ignored
 behavioral decisions belong in `docs/WISK-3.0-Architecture.md` and the relevant
 source-level tests.
 
+Local `handoff/`, `work/`, and task-state files are also ignored and must not be
+included in pull requests or release archives.
+
 ## Pull requests
 
 Describe the user-visible behavior, safety impact, verification commands, and

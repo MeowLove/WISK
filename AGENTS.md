@@ -9,6 +9,8 @@
   smoke utilities; `legacy/` is migration-only code, not the default runtime.
 - `requirements/` is the local product manual and is ignored by Git.
 - `artifacts/` is generated output and is ignored by Git.
+- `handoff/`, `work/`, and other task-state directories are local-only and
+  ignored by Git; never publish their contents.
 - Keep the `WindowsInitializer.*` project and namespace names stable during
   the WISK 3.0 migration.
 
@@ -49,5 +51,5 @@ Examples:
 - Do not claim WPF startup, UAC, real Apply/Verify, or Authenticode validation
   without actually running and inspecting it in an isolated Windows test
   environment.
-- Never commit credentials, signing keys, local requirements, or generated
-  artifacts.
+- Never commit credentials, signing keys, local requirements, task state, or
+  generated artifacts.

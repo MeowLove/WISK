@@ -1,8 +1,45 @@
 # Build and publish output
 **/bin/
 **/obj/
-publish/
-artifacts/
+**/publish/
+/artifacts/
+/TestResults/
+**/TestResults/
+**/coverage/
+*.trx
+*.coverage
+*.coveragexml
+*.dmp
+
+# Local task state and private maintainer material
+/handoff/
+/work/
+/.codex/
+/.claude/
+/.task-state/
+
+# Local package, credential, and environment files
+**/.env
+**/.env.*
+!**/.env.example
+*.pfx
+*.p12
+*.snk
+*.key
+*.pem
+*.secret
+*.token
+*.local.json
+
+# Temporary and editor recovery files
+*.tmp
+*.temp
+*.bak
+*.orig
+*.rej
+*.pid
+*.swp
+*.swo
 
 # Internal product requirements and local planning material
 /requirements/
@@ -10,13 +47,18 @@ artifacts/
 # IDE and operating-system files
 .vs/
 .vscode/
+.idea/
+.fleet/
+.history/
 *.user
 *.suo
 Thumbs.db
 Desktop.ini
+.DS_Store
 
 # Local runtime state and logs
 legacy/PowerShell/Windows-Initializer/logs/
 legacy/PowerShell/Windows-Initializer/runs/
+**/logs/
+**/runs/
 *.log
-
