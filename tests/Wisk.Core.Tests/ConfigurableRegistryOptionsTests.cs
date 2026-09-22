@@ -26,6 +26,12 @@ public sealed class ConfigurableRegistryOptionsTests
         { "setting-search-web-results", "HKCU", @"Software\Microsoft\Windows\CurrentVersion\Search", "BingSearchEnabled" }
     };
 
+    [Fact]
+    public void CatalogContainsTheReleaseCandidateRegistryOptionCount()
+    {
+        Assert.Equal(18, ConfigurableRegistrySettingCatalog.All.Count);
+    }
+
     [Theory]
     [MemberData(nameof(Options))]
     public void ConfigurableOptionsHaveExactUserRegistryBackupTarget(string taskId, string hive, string path, string valueName)
