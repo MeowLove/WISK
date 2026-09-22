@@ -137,6 +137,21 @@ $optionalFeatures = @{
   'feature-hyper-v' = 'Microsoft-Hyper-V-All'
   'feature-telnet-client' = 'TelnetClient'
 }
+$optionalFeatureSets = @{
+  'feature-virtual-machine-platform' = @('VirtualMachinePlatform', 'HypervisorPlatform')
+}
+function Get-BridgeOptionalFeatureNames([string]$taskId) {
+  if ($optionalFeatureSets.ContainsKey($taskId)) { return @($optionalFeatureSets[$taskId]) }
+  return @($optionalFeatures[$taskId])
+}
+function Get-BridgeOptionalFeatureStates([string]$taskId) {
+  return @(
+    foreach ($featureName in (Get-BridgeOptionalFeatureNames $taskId)) {
+      $feature = Get-WindowsOptionalFeature -Online -FeatureName $featureName -ErrorAction SilentlyContinue
+      [pscustomobject]@{ Name = $featureName; State = if ($null -eq $feature) { 'Unavailable' } else { [string]$feature.State } }
+    }
+  )
+}
 $capabilities = @{
   'capability-openssh-client' = 'OpenSSH.Client~~~~0.0.1.0'
 }
@@ -236,11 +251,13 @@ switch ([string]$request.operation) {
     } elseif ($regionalCultures.ContainsKey($taskId)) {
       if ((Get-Culture).Name -ieq $regionalCultures[$taskId]) { $status = 'Skipped'; $message = 'The regional format is already configured.' } else { $message = 'Regional format change is ready.' }
     } elseif ($optionalFeatures.ContainsKey($taskId)) {
-      $feature = Get-WindowsOptionalFeature -Online -FeatureName $optionalFeatures[$taskId] -ErrorAction SilentlyContinue
-      if ($null -eq $feature) { $status = 'UnsupportedPrerequisite'; $code = 'UnsupportedOperatingSystem'; $message = 'This Windows feature is unavailable on the current edition.' }
-      elseif ($feature.State -eq 'Enabled' -and $taskId -eq 'feature-wsl' -and (Test-BridgeWsl2)) { $status = 'Skipped'; $message = 'Windows Subsystem for Linux and WSL 2 are already configured.' }
-      elseif ($feature.State -eq 'Enabled' -and $taskId -eq 'feature-wsl') { $message = 'The Windows Subsystem for Linux feature is enabled; the WSL 2 bootstrap is ready to run.' }
-      elseif ($feature.State -eq 'Enabled') { $status = 'Skipped'; $message = 'The Windows feature is already enabled.' } else { $message = 'The Windows feature is ready to be enabled.' }
+      $features = @(Get-BridgeOptionalFeatureStates $taskId)
+      $allAvailable = @($features | Where-Object State -ne 'Unavailable').Count -eq $features.Count
+      $allEnabled = $allAvailable -and @($features | Where-Object State -ne 'Enabled').Count -eq 0
+      if (-not $allAvailable) { $status = 'UnsupportedPrerequisite'; $code = 'UnsupportedOperatingSystem'; $message = 'This Windows feature is unavailable on the current edition.' }
+      elseif ($allEnabled -and $taskId -eq 'feature-wsl' -and (Test-BridgeWsl2)) { $status = 'Skipped'; $message = 'Windows Subsystem for Linux and WSL 2 are already configured.' }
+      elseif ($allEnabled -and $taskId -eq 'feature-wsl') { $message = 'The Windows Subsystem for Linux feature is enabled; the WSL 2 bootstrap is ready to run.' }
+      elseif ($allEnabled) { $status = 'Skipped'; $message = 'The Windows feature is already enabled.' } else { $message = 'The Windows feature is ready to be enabled.' }
     } elseif ($capabilities.ContainsKey($taskId)) {
       $cap = Get-WindowsCapability -Online -Name $capabilities[$taskId] -ErrorAction SilentlyContinue
       if ($null -eq $cap) { $status = 'UnsupportedPrerequisite'; $code = 'UnsupportedOperatingSystem'; $message = 'This Windows capability is unavailable.' }
@@ -298,11 +315,13 @@ switch ([string]$request.operation) {
   }
   'Apply' {
     if ($optionalFeatures.ContainsKey($taskId)) {
-      $feature = Get-WindowsOptionalFeature -Online -FeatureName $optionalFeatures[$taskId] -ErrorAction SilentlyContinue
-      if ($null -eq $feature) { throw 'This Windows feature is unavailable on the current edition.' }
-      $featureWasEnabled = $feature.State -eq 'Enabled'
+      $features = @(Get-BridgeOptionalFeatureStates $taskId)
+      if (@($features | Where-Object State -eq 'Unavailable').Count -gt 0) { throw 'This Windows feature is unavailable on the current edition.' }
+      $featureWasEnabled = @($features | Where-Object State -ne 'Enabled').Count -eq 0
       if (-not $featureWasEnabled) {
-        Enable-WindowsOptionalFeature -Online -FeatureName $optionalFeatures[$taskId] -All -NoRestart -ErrorAction Stop | Out-Null
+        foreach ($feature in @($features | Where-Object State -ne 'Enabled')) {
+          Enable-WindowsOptionalFeature -Online -FeatureName $feature.Name -All -NoRestart -ErrorAction Stop | Out-Null
+        }
         $changed = $true; $reboot = $true
         $message = if ($taskId -eq 'feature-wsl') { 'Windows Subsystem for Linux enabled; reboot and run the task again to complete WSL 2 bootstrap.' } else { 'Windows feature enabled.' }
       } elseif ($taskId -eq 'feature-wsl' -and -not (Test-BridgeWsl2)) {
@@ -428,7 +447,7 @@ switch ([string]$request.operation) {
     }
   }
   'Verify' {
-    if ($optionalFeatures.ContainsKey($taskId)) { $feature = Get-WindowsOptionalFeature -Online -FeatureName $optionalFeatures[$taskId] -ErrorAction SilentlyContinue; $enabled = $null -ne $feature -and $feature.State -eq 'Enabled'; $status = if ($enabled -and ($taskId -ne 'feature-wsl' -or (Test-BridgeWsl2))) { 'Succeeded' } else { 'Failed' }; $message = if ($taskId -eq 'feature-wsl') { 'Windows Subsystem for Linux and WSL 2 verification completed.' } else { 'Windows feature verification completed.' }
+    if ($optionalFeatures.ContainsKey($taskId)) { $features = @(Get-BridgeOptionalFeatureStates $taskId); $enabled = $features.Count -gt 0 -and @($features | Where-Object State -ne 'Enabled').Count -eq 0; $status = if ($enabled -and ($taskId -ne 'feature-wsl' -or (Test-BridgeWsl2))) { 'Succeeded' } else { 'Failed' }; $message = if ($taskId -eq 'feature-wsl') { 'Windows Subsystem for Linux and WSL 2 verification completed.' } else { 'Windows feature verification completed.' }
     } elseif ($capabilities.ContainsKey($taskId)) { $status = if ((Get-WindowsCapability -Online -Name $capabilities[$taskId] -ErrorAction SilentlyContinue).State -eq 'Installed') { 'Succeeded' } else { 'Failed' }; $message = 'Windows capability verification completed.'
     } elseif ($registrySettings.ContainsKey($taskId)) { $setting = $registrySettings[$taskId]; try { $state = ConvertFrom-BridgeBoolean $parameterValue; $status = if (Test-BridgeRegistrySetting $setting $state) { 'Succeeded' } else { 'Failed' }; $message = 'Windows setting verification completed.' } catch { $status = 'Failed'; $code = 'InvalidProfile'; $message = $_.Exception.Message }
     } elseif ($taskId -eq 'setting-hibernation') { $current = Get-ItemPropertyValue -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Power' -Name 'HibernateEnabled' -ErrorAction SilentlyContinue; $status = if ($null -ne $current -and [int]$current -eq 1) { 'Succeeded' } else { 'Failed' }; $message = 'Hibernation verification completed.'

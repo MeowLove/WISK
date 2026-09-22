@@ -79,6 +79,8 @@ public sealed class BridgeClientTests
         Assert.Contains("Microsoft-Windows-Subsystem-Linux", runner.FixedCommand, StringComparison.Ordinal);
         Assert.Contains("Containers-DisposableClientVM", runner.FixedCommand, StringComparison.Ordinal);
         Assert.Contains("Microsoft-Hyper-V-All", runner.FixedCommand, StringComparison.Ordinal);
+        Assert.Contains("HypervisorPlatform", runner.FixedCommand, StringComparison.Ordinal);
+        Assert.Contains("Get-BridgeOptionalFeatureStates", runner.FixedCommand, StringComparison.Ordinal);
         Assert.Contains("OpenSSH.Client~~~~0.0.1.0", runner.FixedCommand, StringComparison.Ordinal);
         Assert.Contains("TelnetClient", runner.FixedCommand, StringComparison.Ordinal);
         Assert.Contains("LongPathsEnabled", runner.FixedCommand, StringComparison.Ordinal);
