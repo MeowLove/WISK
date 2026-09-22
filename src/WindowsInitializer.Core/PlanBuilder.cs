@@ -208,6 +208,9 @@ public sealed class PlanBuilder(Catalog catalog)
         if (taskId.Equals("accounts-local", StringComparison.OrdinalIgnoreCase) && profile.Accounts is { IsDefaultOrEmpty: false })
             return string.Join(",", profile.Accounts.Value.Select(account => account.Name));
         if (profile.Parameters is null || !profile.Parameters.TryGetValue(taskId, out var value)) return string.Empty;
+        if (taskId.Equals(FontSupplementCatalog.TaskId, StringComparison.OrdinalIgnoreCase) &&
+            FontSupplementCatalog.TryNormalizeSelection(value, out var normalizedSelection))
+            value = normalizedSelection;
         return IsSecretKey(taskId) || IsSecretValue(value) ? "[REDACTED]" : value.Length > 256 ? value[..256] : value;
     }
 

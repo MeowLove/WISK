@@ -24,6 +24,7 @@ public partial class ConfigurationDialog : Window
         ComputerNamePanel.Visibility = Has("computer-name") ? Visibility.Visible : Visibility.Collapsed;
         DeviceRegionPanel.Visibility = Has("device-setup-region") ? Visibility.Visible : Visibility.Collapsed;
         LanguageUiPanel.Visibility = Has("language-ui-preference") ? Visibility.Visible : Visibility.Collapsed;
+        FontSupplementPanel.Visibility = Has(FontSupplementCatalog.TaskId) ? Visibility.Visible : Visibility.Collapsed;
         WindowsUpdateModePanel.Visibility = Has("setting-windows-update-mode") ? Visibility.Visible : Visibility.Collapsed;
         PowerPlanPanel.Visibility = Has("setting-power-plan") ? Visibility.Visible : Visibility.Collapsed;
         SleepTimeoutPanel.Visibility = Has("setting-sleep-timeouts") ? Visibility.Visible : Visibility.Collapsed;
@@ -48,6 +49,7 @@ public partial class ConfigurationDialog : Window
             if (existing.Parameters.TryGetValue("computer-name", out var computerName)) ComputerNameBox.Text = computerName;
             if (existing.Parameters.TryGetValue("device-setup-region", out var region)) DeviceRegionBox.Text = region;
             if (existing.Parameters.TryGetValue("language-ui-preference", out var language)) LanguageUiBox.Text = language;
+            if (existing.Parameters.TryGetValue(FontSupplementCatalog.TaskId, out var fonts)) LoadFontSelection(fonts);
             if (existing.Parameters.TryGetValue("setting-windows-update-mode", out var updateMode)) SelectTag(WindowsUpdateModeBox, updateMode);
             if (existing.Parameters.TryGetValue("setting-power-plan", out var powerPlan)) SelectTag(PowerPlanBox, powerPlan);
             if (existing.Parameters.TryGetValue("setting-sleep-timeouts", out var timeouts)) LoadTimeouts(timeouts);
@@ -85,6 +87,19 @@ public partial class ConfigurationDialog : Window
             var value = LanguageUiBox.Text.Trim();
             if (!Regex.IsMatch(value, "^[a-zA-Z]{2,3}(-[a-zA-Z]{2,4})?$")) { ShowInvalid("invalidLanguageTag"); return; }
             parameters = parameters.Add("language-ui-preference", value);
+        }
+        if (Has(FontSupplementCatalog.TaskId))
+        {
+            var value = string.Join(',', new[] { JapaneseFontsBox, KoreanFontsBox, EuropeanFontsBox, IndicFontsBox }
+                .Where(box => box.IsChecked == true)
+                .Select(box => box.Tag?.ToString())
+                .OfType<string>());
+            if (!FontSupplementCatalog.TryNormalizeSelection(value, out var normalized))
+            {
+                ShowInvalid("fontSelectionRequired");
+                return;
+            }
+            parameters = parameters.Add(FontSupplementCatalog.TaskId, normalized);
         }
         if (Has("setting-windows-update-mode"))
             parameters = parameters.Add("setting-windows-update-mode", SelectedTag(WindowsUpdateModeBox));
@@ -138,6 +153,14 @@ public partial class ConfigurationDialog : Window
         if (values.TryGetValue("dc", out var sleepDc)) SleepDcBox.Text = sleepDc;
         if (values.TryGetValue("displayAc", out var displayAc)) DisplayAcBox.Text = displayAc;
         if (values.TryGetValue("displayDc", out var displayDc)) DisplayDcBox.Text = displayDc;
+    }
+
+    private void LoadFontSelection(string value)
+    {
+        var selected = value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        foreach (var box in new[] { JapaneseFontsBox, KoreanFontsBox, EuropeanFontsBox, IndicFontsBox })
+            box.IsChecked = selected.Contains(box.Tag?.ToString() ?? string.Empty);
     }
 
     private static bool TryMinutes(string value, out int minutes) => int.TryParse(value.Trim(), out minutes) && minutes is >= 0 and <= 1440;

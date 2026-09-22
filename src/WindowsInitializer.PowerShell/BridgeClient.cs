@@ -122,10 +122,22 @@ function Install-BridgeLanguageCapabilities([string]$languageTag) {
   return $changedAny
 }
 function Get-BridgeSupplementalFontCapabilities {
-  return @(Get-WindowsCapability -Online -ErrorAction Stop | Where-Object {
-    $_.Name -like 'Language.Fonts.Jpan*' -or $_.Name -like 'Language.Fonts.Kore*' -or
-    $_.Name -like 'Language.Fonts.PanEuropeanSupplementalFonts*' -or $_.Name -like 'Language.Fonts.Deva*'
-  })
+  param([string]$selection)
+  $patterns = @{
+    # __FONT_SUPPLEMENT_PATTERNS__
+  }
+  $selectedIds = @($selection -split ',' | ForEach-Object { $_.Trim() } | Where-Object { $_ } | Select-Object -Unique)
+  if ($selectedIds.Count -eq 0) { throw 'At least one supplemental font selection is required.' }
+  $unknown = @($selectedIds | Where-Object { -not $patterns.ContainsKey($_) })
+  if ($unknown.Count -gt 0) { throw ('Unknown supplemental font selection: ' + ($unknown -join ', ')) }
+  $available = @(Get-WindowsCapability -Online -ErrorAction Stop)
+  $result = @()
+  foreach ($id in $selectedIds) {
+    $matches = @($available | Where-Object { $_.Name -like $patterns[$id] })
+    if ($matches.Count -eq 0) { throw ('Supplemental font capability is unavailable: ' + $id) }
+    $result += $matches
+  }
+  return @($result | Sort-Object Name -Unique)
 }
 $regionalCultures = @{
   'language-zh-sg' = 'zh-SG'; 'language-zh-hk' = 'zh-HK'
@@ -288,7 +300,7 @@ switch ([string]$request.operation) {
       if ($null -eq $cap) { $status = 'UnsupportedPrerequisite'; $code = 'UnsupportedOperatingSystem'; $message = 'Wireless display is unavailable on this Windows edition.' }
       elseif ($cap.State -eq 'Installed') { $status = 'Skipped'; $message = 'Wireless display is already enabled.' } else { $message = 'Wireless display capability is ready.' }
     } elseif ($taskId -eq 'font-supplements-cjk-indic-europe') {
-      $fonts = @(Get-BridgeSupplementalFontCapabilities)
+      $fonts = @(Get-BridgeSupplementalFontCapabilities $parameterValue)
       $missing = @($fonts | Where-Object State -ne 'Installed')
       if ($fonts.Count -eq 0) { $status = 'UnsupportedPrerequisite'; $code = 'UnsupportedOperatingSystem'; $message = 'Supplemental font capabilities are unavailable on this Windows edition.' }
       elseif ($missing.Count -eq 0) { $status = 'Skipped'; $message = 'Supplemental fonts are already installed.' } else { $message = 'Supplemental fonts are ready.' }
@@ -388,7 +400,7 @@ switch ([string]$request.operation) {
     } elseif ($taskId -eq 'feature-wireless-display') {
       Add-WindowsCapability -Online -Name 'App.WirelessDisplay.Connect~~~~0.0.1.0' -ErrorAction Stop | Out-Null; $changed = $true; $message = 'Wireless display capability enabled.'
     } elseif ($taskId -eq 'font-supplements-cjk-indic-europe') {
-      $fonts = @(Get-BridgeSupplementalFontCapabilities)
+      $fonts = @(Get-BridgeSupplementalFontCapabilities $parameterValue)
       if ($fonts.Count -eq 0) { throw 'Supplemental font capabilities are unavailable on this Windows edition.' }
       $missing = @($fonts | Where-Object State -ne 'Installed')
       foreach ($font in $missing) { Add-WindowsCapability -Online -Name $font.Name -ErrorAction Stop | Out-Null }
@@ -458,7 +470,7 @@ switch ([string]$request.operation) {
     } elseif ($languageTags.ContainsKey($taskId)) { $languageTag = $languageTags[$taskId]; $installed = @(Get-BridgeInstalledLanguageIds) -contains $languageTag; $registered = @(Get-BridgeUserLanguageKeys) -contains (ConvertTo-BridgeLanguageTagKey $languageTag); $status = if ($installed -and $registered) { 'Succeeded' } else { 'Failed' }; $code = if ($status -eq 'Failed') { 'VerificationFailed' } else { 'None' }; $message = 'Complete language pack and user language registration verification completed.'
     } elseif ($regionalCultures.ContainsKey($taskId)) { $status = if ((Get-Culture).Name -ieq $regionalCultures[$taskId]) { 'Succeeded' } else { 'Failed' }; $message = 'Regional format verification completed.'
     } elseif ($taskId -eq 'feature-wireless-display') { $status = if ((Get-WindowsCapability -Online -Name 'App.WirelessDisplay.Connect~~~~0.0.1.0' -ErrorAction SilentlyContinue).State -eq 'Installed') { 'Succeeded' } else { 'Failed' }; $message = 'Wireless display verification completed.'
-    } elseif ($taskId -eq 'font-supplements-cjk-indic-europe') { $fonts = @(Get-BridgeSupplementalFontCapabilities); $status = if ($fonts.Count -gt 0 -and @($fonts | Where-Object State -ne 'Installed').Count -eq 0) { 'Succeeded' } else { 'Failed' }; $code = if ($status -eq 'Failed') { 'VerificationFailed' } else { 'None' }; $message = 'Supplemental font verification completed.'
+    } elseif ($taskId -eq 'font-supplements-cjk-indic-europe') { $fonts = @(Get-BridgeSupplementalFontCapabilities $parameterValue); $status = if ($fonts.Count -gt 0 -and @($fonts | Where-Object State -ne 'Installed').Count -eq 0) { 'Succeeded' } else { 'Failed' }; $code = if ($status -eq 'Failed') { 'VerificationFailed' } else { 'None' }; $message = 'Supplemental font verification completed.'
     } elseif ($taskId -eq 'accounts-local') { $status = if ($accountNames.Count -gt 0 -and @($accountNames | Where-Object { $null -eq (Get-LocalUser -Name $_ -ErrorAction SilentlyContinue) }).Count -eq 0) { 'Succeeded' } else { 'Failed' }; $code = if ($status -eq 'Failed') { 'VerificationFailed' } else { 'None' }; $message = 'Local account verification completed.'
     } elseif ($taskId -eq 'computer-name') { $status = if ($parameterValue -and ([Environment]::MachineName -ieq $parameterValue)) { 'Succeeded' } else { 'Failed' }; $code = if ($status -eq 'Failed') { 'VerificationFailed' } else { 'None' }; $message = 'Computer name verification completed.'
     } elseif ($taskId -eq 'language-ui-preference') { $status = if ((Get-Command -Name Get-WinUILanguageOverride -ErrorAction SilentlyContinue) -and $parameterValue -and (((Get-WinUILanguageOverride) | ForEach-Object { $_.Name }) -ieq $parameterValue)) { 'Succeeded' } else { 'Failed' }; $code = if ($status -eq 'Failed') { 'VerificationFailed' } else { 'None' }; $message = 'Display language verification completed.'
@@ -478,12 +490,16 @@ $responseJson = [pscustomobject]@{ protocolVersion = '1.0'; runId = [string]$req
 
     private static string BuildFixedCommand()
     {
-        var entries = ConfigurableRegistrySettingCatalog.All.Select(setting =>
+    var entries = ConfigurableRegistrySettingCatalog.All.Select(setting =>
         {
             var path = $"{setting.Hive}:\\{setting.Path}";
             return $"  '{PowerShellLiteral(setting.TaskId)}' = @{{ Path = '{PowerShellLiteral(path)}'; Name = '{PowerShellLiteral(setting.ValueName)}'; Enabled = {setting.EnabledValue}; Disabled = {setting.DisabledValue} }}";
         });
-        return FixedCommandTemplate.Replace("  # __CONFIGURABLE_REGISTRY_SETTINGS__", string.Join(Environment.NewLine, entries), StringComparison.Ordinal);
+        var fontEntries = FontSupplementCatalog.All.Select(font =>
+            $"    '{PowerShellLiteral(font.Id)}' = '{PowerShellLiteral(font.CapabilityPattern)}'");
+        return FixedCommandTemplate
+            .Replace("  # __CONFIGURABLE_REGISTRY_SETTINGS__", string.Join(Environment.NewLine, entries), StringComparison.Ordinal)
+            .Replace("    # __FONT_SUPPLEMENT_PATTERNS__", string.Join(Environment.NewLine, fontEntries), StringComparison.Ordinal);
     }
 
     private static string PowerShellLiteral(string value) => value.Replace("'", "''", StringComparison.Ordinal);
@@ -527,7 +543,7 @@ $responseJson = [pscustomobject]@{ protocolVersion = '1.0'; runId = [string]$req
             throw new BridgeFailureException("Unsupported bridge operation.", ErrorCode.InvalidProfile);
         var acceptsValue = ConfigurableRegistrySettingCatalog.Find(request.TaskId) is not null || request.TaskId is
             "computer-name" or "language-ui-preference" or "device-setup-region" or "setting-windows-update-mode" or
-            "setting-power-plan" or "setting-sleep-timeouts";
+            "setting-power-plan" or "setting-sleep-timeouts" or "font-supplements-cjk-indic-europe";
         var allowedParameters = request.TaskId.Equals("accounts-local", StringComparison.OrdinalIgnoreCase)
             ? request.Operation == "Apply" ? new[] { "accountNames", "accountsJson" } : ["accountNames"]
             : acceptsValue ? ["value"] : [];

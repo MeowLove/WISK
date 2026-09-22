@@ -60,7 +60,7 @@ public sealed class WindowsTaskExecutor(IBridgeInvoker bridge, Catalog? catalog 
     private Task<BridgeResponse> InvokeAsync(PlannedTask task, string operation, TimeSpan timeout, CancellationToken cancellationToken, ApplyContext? context = null)
     {
         var parameters = ImmutableDictionary<string, string>.Empty;
-        if (_catalog?.Find(task.TaskId) is { Kind: TaskKind.SystemSetting } && !string.IsNullOrWhiteSpace(task.ParameterSummary))
+        if ((_catalog?.Find(task.TaskId) is { Kind: TaskKind.SystemSetting } || task.TaskId.Equals(FontSupplementCatalog.TaskId, StringComparison.OrdinalIgnoreCase)) && !string.IsNullOrWhiteSpace(task.ParameterSummary))
             parameters = parameters.Add("value", task.ParameterSummary);
         if (task.TaskId.Equals("accounts-local", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(task.ParameterSummary))
             parameters = parameters.Add("accountNames", task.ParameterSummary);

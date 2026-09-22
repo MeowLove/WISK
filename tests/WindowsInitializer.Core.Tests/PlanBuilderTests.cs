@@ -103,6 +103,27 @@ public sealed class PlanBuilderTests
     }
 
     [Fact]
+    public void SupplementalFontsRequireExplicitValidSelection()
+    {
+        var missing = new ProfileDocument("2.0", "fonts-missing", [FontSupplementCatalog.TaskId], new ProfileTarget(),
+            new ExecutionPolicy(), false, false);
+        var invalid = missing with
+        {
+            ProfileId = "fonts-invalid",
+            Parameters = ImmutableDictionary<string, string>.Empty.Add(FontSupplementCatalog.TaskId, "japanese,unknown")
+        };
+        var valid = missing with
+        {
+            ProfileId = "fonts-valid",
+            Parameters = ImmutableDictionary<string, string>.Empty.Add(FontSupplementCatalog.TaskId, "korean,japanese")
+        };
+
+        Assert.Equal(ErrorCode.InvalidProfile, Assert.Throws<PlanValidationException>(() => new PlanBuilder(new Catalog()).Build(missing)).Code);
+        Assert.Equal(ErrorCode.InvalidProfile, Assert.Throws<PlanValidationException>(() => new PlanBuilder(new Catalog()).Build(invalid)).Code);
+        Assert.Equal("japanese,korean", Assert.Single(new PlanBuilder(new Catalog()).Build(valid).Tasks).ParameterSummary);
+    }
+
+    [Fact]
     public void FastStartupCanBePlannedWithoutSeparateHibernationTask()
     {
         var builder = new PlanBuilder(new Catalog());

@@ -64,6 +64,8 @@ public sealed class BridgeClientTests
         Assert.Contains("$entry = $newLanguageList[0]", runner.FixedCommand, StringComparison.Ordinal);
         Assert.Contains("Add-WindowsCapability -Online -Name $name -ErrorAction Stop | Out-Null", runner.FixedCommand, StringComparison.Ordinal);
         Assert.Contains("Get-BridgeSupplementalFontCapabilities", runner.FixedCommand, StringComparison.Ordinal);
+        Assert.Contains("'japanese' = 'Language.Fonts.Jpan*'", runner.FixedCommand, StringComparison.Ordinal);
+        Assert.Contains("Get-BridgeSupplementalFontCapabilities $parameterValue", runner.FixedCommand, StringComparison.Ordinal);
         Assert.DoesNotContain("Install-Language -Language $languageTags[$taskId] -CopyToSettings", runner.FixedCommand, StringComparison.Ordinal);
         Assert.Contains(BridgeClient.ResponseMarker, runner.FixedCommand, StringComparison.Ordinal);
         Assert.Contains("Windows God Mode", runner.FixedCommand, StringComparison.Ordinal);

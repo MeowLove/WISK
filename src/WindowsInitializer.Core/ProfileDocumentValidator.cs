@@ -68,6 +68,13 @@ public static class ProfileDocumentValidator
                 return Invalid($"Task '{taskId}' requires an explicit enabled, disabled, or default value before planning.");
         }
 
+        if (profile.Tasks.Contains(FontSupplementCatalog.TaskId, StringComparer.OrdinalIgnoreCase))
+        {
+            var value = profile.Parameters?.FirstOrDefault(pair => pair.Key.Equals(FontSupplementCatalog.TaskId, StringComparison.OrdinalIgnoreCase)).Value;
+            if (!FontSupplementCatalog.IsValidSelection(value))
+                return Invalid("The supplemental font task requires at least one valid font selection.");
+        }
+
         if (profile.Accounts is { } accounts)
         {
             if (accounts.Length > MaximumAccountCount)

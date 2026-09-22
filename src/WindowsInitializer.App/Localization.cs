@@ -40,7 +40,7 @@ public static class Localization
         new("de", "Deutsch", FlowDirection.LeftToRight)
     ];
 
-    private static readonly string[] Keys = ["home", "system", "software", "progress", "language", "refresh", "preview", "apply", "selected", "ready", "settingsSubtitle", "softwareSubtitle", "setupConfidence", "review", "systemCompatibility", "selectedTasks", "noAutomaticSelection", "curatedCatalog", "configureSystem", "browseSoftware", "previewSelected", "allRisk", "standard", "elevated", "high", "add", "authorizeElevated", "authorizeHigh", "noTasks", "executionLogs", "noRun", "cancel", "resume", "history", "diagnostics", "darkTheme", "lightTheme", "appName", "manager", "safePlan", "catalogSummary", "executionLogsAndProgress", "noRunStarted", "task", "state", "code", "message", "changed", "restart", "planExecution", "currentPlan", "selectToPlan", "queueCount", "queueReady"];
+    private static readonly string[] Keys = ["home", "system", "software", "progress", "language", "refresh", "preview", "apply", "selected", "ready", "settingsSubtitle", "softwareSubtitle", "setupConfidence", "review", "systemCompatibility", "selectedTasks", "noAutomaticSelection", "curatedCatalog", "configureSystem", "browseSoftware", "previewSelected", "allRisk", "standard", "elevated", "high", "add", "authorizeElevated", "authorizeHigh", "noTasks", "executionLogs", "noRun", "cancel", "resume", "history", "diagnostics", "darkTheme", "lightTheme", "appName", "manager", "safePlan", "catalogSummary", "executionLogsAndProgress", "noRunStarted", "task", "state", "code", "message", "changed", "restart", "planExecution", "currentPlan", "selectToPlan", "queueCount", "queueReady", "supplementalFonts", "supplementalFontsHint", "fontJapanese", "fontKorean", "fontEuropean", "fontIndic", "fontSelectionRequired"];
     private static readonly Dictionary<string, Dictionary<string, string>> Text = BuildCatalog();
 
     private static Dictionary<string, Dictionary<string, string>> BuildCatalog()
@@ -105,6 +105,14 @@ public static class Localization
             catalogs["es"][key] = es; catalogs["fr"][key] = fr; catalogs["ar"][key] = ar;
             catalogs["pt-BR"][key] = pt; catalogs["ja"][key] = ja; catalogs["de"][key] = de;
         }
+
+        Add("supplementalFonts", "Supplemental fonts", "补充字体", "Дополнительные шрифты", "Fuentes complementarias", "Polices supplémentaires", "الخطوط الإضافية", "Fontes complementares", "補助フォント", "Zusätzliche Schriftarten");
+        Add("supplementalFontsHint", "Select at least one font group.", "至少选择一种字体组。", "Выберите хотя бы одну группу шрифтов.", "Selecciona al menos un grupo de fuentes.", "Sélectionnez au moins un groupe de polices.", "حدد مجموعة خطوط واحدة على الأقل.", "Selecione pelo menos um grupo de fontes.", "少なくとも 1 つのフォント グループを選択してください。", "Wählen Sie mindestens eine Schriftgruppe aus.");
+        Add("fontJapanese", "Japanese fonts", "日文字体", "Японские шрифты", "Fuentes japonesas", "Polices japonaises", "الخطوط اليابانية", "Fontes japonesas", "日本語フォント", "Japanische Schriftarten");
+        Add("fontKorean", "Korean fonts", "韩文字体", "Корейские шрифты", "Fuentes coreanas", "Polices coréennes", "الخطوط الكورية", "Fontes coreanas", "韓国語フォント", "Koreanische Schriftarten");
+        Add("fontEuropean", "European supplemental fonts", "欧洲补充字体", "Дополнительные европейские шрифты", "Fuentes europeas complementarias", "Polices européennes supplémentaires", "الخطوط الأوروبية الإضافية", "Fontes europeias complementares", "欧州補助フォント", "Europäische Zusatzschriftarten");
+        Add("fontIndic", "Indic (Devanagari) fonts", "印度语（天城文）字体", "Шрифты для индийских языков (деванагари)", "Fuentes índicas (devanagari)", "Polices indiennes (dévanagari)", "خطوط هندية (ديفاناغاري)", "Fontes índicas (devanágari)", "インド系文字（デーヴァナーガリー）フォント", "Indische Schriften (Devanagari)");
+        Add("fontSelectionRequired", "Select at least one supplemental font group.", "至少选择一种补充字体组。", "Выберите хотя бы одну группу дополнительных шрифтов.", "Selecciona al menos un grupo de fuentes complementarias.", "Sélectionnez au moins un groupe de polices supplémentaires.", "حدد مجموعة واحدة على الأقل من الخطوط الإضافية.", "Selecione pelo menos um grupo de fontes complementares.", "補助フォント グループを 1 つ以上選択してください。", "Wählen Sie mindestens eine Gruppe zusätzlicher Schriftarten aus.");
 
         Add("workspace", "WORKSPACE", "工作区", "РАБОЧАЯ ОБЛАСТЬ", "ESPACIO DE TRABAJO", "ESPACE DE TRAVAIL", "مساحة العمل", "ÁREA DE TRABALHO", "ワークスペース", "ARBEITSBEREICH");
         Add("pendingPlan", "Pending", "待执行", "Ожидает", "Pendiente", "En attente", "قيد الانتظار", "Pendente", "実行待ち", "Ausstehend");

@@ -24,6 +24,7 @@ internal static class TaskConfigurationCatalog
             ["computer-name"] = new(TaskConfigurationMode.SingleValue, true),
             ["device-setup-region"] = new(TaskConfigurationMode.SingleValue, true),
             ["language-ui-preference"] = new(TaskConfigurationMode.SingleValue, true),
+            [FontSupplementCatalog.TaskId] = new(TaskConfigurationMode.SingleValue, true),
             ["setting-windows-update-mode"] = new(TaskConfigurationMode.SingleValue, true),
             ["setting-power-plan"] = new(TaskConfigurationMode.SingleValue, true),
             ["setting-sleep-timeouts"] = new(TaskConfigurationMode.SingleValue, true),

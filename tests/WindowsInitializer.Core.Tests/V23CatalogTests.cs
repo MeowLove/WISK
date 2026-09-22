@@ -44,6 +44,14 @@ public sealed class V23CatalogTests
     }
 
     [Fact]
+    public void SupplementalFontCatalogKeepsLegacyOptionOrder()
+    {
+        Assert.True(FontSupplementCatalog.TryNormalizeSelection("korean,japanese", out var normalized));
+        Assert.Equal("japanese,korean", normalized);
+        Assert.False(FontSupplementCatalog.IsValidSelection("japanese,unknown"));
+    }
+
+    [Fact]
     public void CatalogNeverSelectsTasksByDefault()
     {
         Assert.All(new Catalog().GetTasks(), task => Assert.False(task.DefaultSelected, task.Id));

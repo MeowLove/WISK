@@ -8,6 +8,10 @@ only an audit source and is not a runtime dependency.
 - Computer name, local accounts, language packs, regional formats, display
   language, supplemental fonts, wireless display, and device setup region use
   built-in adapters.
+- Supplemental fonts preserve the legacy explicit-selection behavior: the
+  configuration dialog requires at least one Japanese, Korean, European, or
+  Indic group, the plan stores canonical selection IDs, and the bridge
+  validates only the selected Windows capabilities.
 - WinGet software and runtime entries use the public catalog and fixed package
   IDs. Legacy machine-scoped entries pin `machine` in the plan and pass it to
   Check, Apply, and Verify; an explicit profile proxy is carried into the same

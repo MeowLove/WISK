@@ -24,6 +24,14 @@
           <TextBlock Text="{local:Loc windowsLanguageTag}" FontWeight="SemiBold" />
           <TextBox x:Name="LanguageUiBox" Margin="0,6,0,0" ToolTip="{local:Loc languageTagExample}" />
         </StackPanel>
+        <StackPanel x:Name="FontSupplementPanel" Margin="0,0,0,14">
+          <TextBlock Text="{local:Loc supplementalFonts}" FontWeight="SemiBold" />
+          <TextBlock Text="{local:Loc supplementalFontsHint}" Foreground="{DynamicResource AppMutedTextBrush}" Margin="0,4,0,8" TextWrapping="Wrap" />
+          <CheckBox x:Name="JapaneseFontsBox" Content="{local:Loc fontJapanese}" Tag="japanese" Margin="0,3,0,0" />
+          <CheckBox x:Name="KoreanFontsBox" Content="{local:Loc fontKorean}" Tag="korean" Margin="0,3,0,0" />
+          <CheckBox x:Name="EuropeanFontsBox" Content="{local:Loc fontEuropean}" Tag="european" Margin="0,3,0,0" />
+          <CheckBox x:Name="IndicFontsBox" Content="{local:Loc fontIndic}" Tag="indic" Margin="0,3,0,0" />
+        </StackPanel>
         <StackPanel x:Name="WindowsUpdateModePanel" Margin="0,0,0,14">
           <TextBlock Text="{local:Loc windowsUpdateMode}" FontWeight="SemiBold" />
           <ComboBox x:Name="WindowsUpdateModeBox" Margin="0,6,0,0" SelectedIndex="0">
