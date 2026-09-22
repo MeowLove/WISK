@@ -60,7 +60,7 @@ WPF App / CLI
   retries, history retention, failure diagnostics, and self-test reports. Apply
   completion is separate from a reboot boundary: `RebootRequired` remains an
   audit fact, while `VerificationStatus` records whether read-only confirmation
-  is pending, verified, or unavailable.
+  is pending, verified, failed, or requires manual verification.
 - **Platform.Windows** maps allow-listed task IDs to Windows APIs, registry
   targets, WinGet package IDs, and native settings entry points.
 - **PowerShell** runs only fixed bridge operations. Scripts and JSON requests are
@@ -95,10 +95,12 @@ separate task. Native management links open Windows settings without pretending
 that an external UI action was applied by WISK.
 
 Apply results that require a restart remain completed instead of being shown as
-an unfinished run. On startup or history refresh, WISK may call Verify for those
-tasks through the fixed read-only adapter. The original run snapshot is
-immutable; post-restart verification is a derived view and never rewrites the
-Apply audit fact.
+an unfinished run. On startup or history refresh, WISK calls Verify for those
+tasks through the fixed read-only adapter when possible. A successful readback
+is `Verified`, a confirmed mismatch is `Failed`, and an unavailable or manual
+boundary is `Unknown` (manual verification required). The original run
+snapshot is immutable; post-restart verification is a derived view and never
+rewrites the Apply audit fact.
 
 ## 5. Public catalog boundary
 

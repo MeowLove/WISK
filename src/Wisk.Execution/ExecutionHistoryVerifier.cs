@@ -60,9 +60,7 @@ public sealed class ExecutionHistoryVerifier(IInitializerTaskExecutor executor)
                 try
                 {
                     var verification = await executor.VerifyAsync(task, cancellationToken).ConfigureAwait(false);
-                    statuses[result.TaskId] = verification.Succeeded
-                        ? VerificationStatus.Verified
-                        : VerificationStatus.PendingRestart;
+                    statuses[result.TaskId] = ResolveStatus(verification);
                 }
                 catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
                 {
@@ -77,9 +75,28 @@ public sealed class ExecutionHistoryVerifier(IInitializerTaskExecutor executor)
 
         var status = statuses.Values.Any(value => value == VerificationStatus.Unknown)
             ? VerificationStatus.Unknown
-            : statuses.Values.Any(value => value == VerificationStatus.PendingRestart)
-                ? VerificationStatus.PendingRestart
-                : VerificationStatus.Verified;
+            : statuses.Values.Any(value => value == VerificationStatus.Failed)
+                ? VerificationStatus.Failed
+                : statuses.Values.Any(value => value == VerificationStatus.PendingRestart)
+                    ? VerificationStatus.PendingRestart
+                    : VerificationStatus.Verified;
         return new ExecutionHistoryVerification(status, statuses.ToImmutable());
+    }
+
+    private static VerificationStatus ResolveStatus(VerifyResult verification)
+    {
+        if (verification.VerificationStatus != VerificationStatus.NotRequired)
+            return verification.VerificationStatus;
+
+        if (verification.Code is ErrorCode.ManualReviewRequired or ErrorCode.UnsupportedOperatingSystem or
+            ErrorCode.MissingPowerShell or ErrorCode.MissingWinGet or ErrorCode.NetworkUnavailable or
+            ErrorCode.NotAdministrator or ErrorCode.AccessDenied or ErrorCode.Timeout or
+            ErrorCode.Cancelled or ErrorCode.ProcessFailed)
+            return VerificationStatus.Unknown;
+
+        if (verification.Succeeded)
+            return verification.RebootRequired ? VerificationStatus.PendingRestart : VerificationStatus.Verified;
+
+        return VerificationStatus.Failed;
     }
 }

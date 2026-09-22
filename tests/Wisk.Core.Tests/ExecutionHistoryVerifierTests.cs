@@ -27,7 +27,7 @@ public sealed class ExecutionHistoryVerifierTests
     }
 
     [Fact]
-    public async Task FailedReadbackRemainsPendingInsteadOfBecomingFailedRun()
+    public async Task FailedReadbackIsReportedAsVerificationFailure()
     {
         var plan = BuildPlan();
         var snapshot = Snapshot(plan, new ExecutionResult("runtime-webview2", TaskState.Succeeded,
@@ -35,7 +35,22 @@ public sealed class ExecutionHistoryVerifierTests
 
         var verification = await new ExecutionHistoryVerifier(new FakeExecutor(succeeded: false)).VerifyAsync(snapshot);
 
-        Assert.Equal(VerificationStatus.PendingRestart, verification.Status);
+        Assert.Equal(VerificationStatus.Failed, verification.Status);
+        Assert.Equal(VerificationStatus.Failed, verification.TaskStatuses["runtime-webview2"]);
+    }
+
+    [Fact]
+    public async Task ManualReviewReadbackIsNotShownAsPendingRestart()
+    {
+        var plan = BuildPlan();
+        var snapshot = Snapshot(plan, new ExecutionResult("runtime-webview2", TaskState.Succeeded,
+            "None", "Apply completed.", true, true, VerificationStatus: VerificationStatus.PendingRestart));
+
+        var verification = await new ExecutionHistoryVerifier(
+            new FakeExecutor(succeeded: false, failureCode: ErrorCode.ManualReviewRequired)).VerifyAsync(snapshot);
+
+        Assert.Equal(VerificationStatus.Unknown, verification.Status);
+        Assert.Equal(VerificationStatus.Unknown, verification.TaskStatuses["runtime-webview2"]);
     }
 
     [Fact]
@@ -74,7 +89,7 @@ public sealed class ExecutionHistoryVerifierTests
         return new PlanBuilder(new Catalog()).Build(profile);
     }
 
-    private sealed class FakeExecutor(bool succeeded) : IInitializerTaskExecutor
+    private sealed class FakeExecutor(bool succeeded, ErrorCode failureCode = ErrorCode.VerificationFailed) : IInitializerTaskExecutor
     {
         public int VerifyCount { get; private set; }
         public Task<TaskCheckResult> CheckAsync(PlannedTask task, CancellationToken cancellationToken) =>
@@ -86,7 +101,7 @@ public sealed class ExecutionHistoryVerifierTests
         public Task<VerifyResult> VerifyAsync(PlannedTask task, CancellationToken cancellationToken)
         {
             VerifyCount++;
-            return Task.FromResult(new VerifyResult(task.TaskId, succeeded, succeeded ? ErrorCode.None : ErrorCode.VerificationFailed,
+            return Task.FromResult(new VerifyResult(task.TaskId, succeeded, succeeded ? ErrorCode.None : failureCode,
                 succeeded ? "verified" : "not yet verified"));
         }
     }

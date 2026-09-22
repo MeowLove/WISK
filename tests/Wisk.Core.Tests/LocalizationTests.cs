@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using Wisk.Contracts;
 using Xunit;
 
 namespace Wisk.Core.Tests;
@@ -23,6 +24,15 @@ public sealed partial class LocalizationTests
         Assert.Contains("[\"planExecution\"]=\"计划与执行\"", source);
         Assert.Contains("[\"apply\"]=\"执行计划\"", source);
         Assert.Contains("[\"authorizeHigh\"]=\"授权已选的高风险任务\"", source);
+    }
+
+    [Fact]
+    public void EveryConfigurableRegistrySettingHasLocalizedDisplayText()
+    {
+        var source = File.ReadAllText(Path.Combine(RepositoryRoot(), "src", "Wisk.App", "Localization.cs"));
+
+        Assert.All(ConfigurableRegistrySettingCatalog.All, setting =>
+            Assert.Contains($"Add(\"{setting.TaskId}\"", source, StringComparison.Ordinal));
     }
 
     [Fact]

@@ -1553,6 +1553,7 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
         VerificationStatus.NotRequired => "verificationNotRequired",
         VerificationStatus.PendingRestart => "verificationPendingRestart",
         VerificationStatus.Verified => "verificationVerified",
+        VerificationStatus.Failed => "verificationFailed",
         _ => "verificationUnknown"
     });
 
@@ -1707,6 +1708,8 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
         private TaskState DisplayState => snapshot.State == TaskState.NeedsReboot ? TaskState.Succeeded : snapshot.State;
         public string StatusGlyph => DisplayState switch
         {
+            _ when verification.Status == VerificationStatus.Failed => "×",
+            _ when verification.Status is VerificationStatus.PendingRestart or VerificationStatus.Unknown => "!",
             TaskState.Succeeded or TaskState.NeedsReboot => "✓",
             TaskState.Failed => "×",
             TaskState.Cancelled => "!",
@@ -1714,6 +1717,8 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
         };
         public Brush StatusBrush => DisplayState switch
         {
+            _ when verification.Status == VerificationStatus.Failed => Brushes.IndianRed,
+            _ when verification.Status is VerificationStatus.PendingRestart or VerificationStatus.Unknown => Brushes.DarkOrange,
             TaskState.Succeeded or TaskState.NeedsReboot => Brushes.SeaGreen,
             TaskState.Failed or TaskState.Cancelled => Brushes.IndianRed,
             _ => Brushes.DarkOrange
@@ -1744,8 +1749,18 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
             $"\n{Localization.Get("message")}: {SensitiveDataRedactor.Redact(result.Message)}" +
             $"\n{Localization.Get("suggestedAction")}: {FailureAdvice(result.Code)}" +
             $"\n{result.StartedAt?.ToLocalTime():g} - {result.CompletedAt?.ToLocalTime():g}";
-        public string StatusGlyph => result.State switch { TaskState.Succeeded or TaskState.NeedsReboot => "✓", TaskState.Failed => "×", TaskState.Cancelled => "!", TaskState.Skipped => "–", _ => "•" };
-        public Brush StatusBrush => result.State switch { TaskState.Succeeded or TaskState.NeedsReboot => Brushes.SeaGreen, TaskState.Failed or TaskState.Cancelled => Brushes.IndianRed, _ => Brushes.DarkOrange };
+        public string StatusGlyph => result.VerificationStatus switch
+        {
+            VerificationStatus.Failed => "×",
+            VerificationStatus.PendingRestart or VerificationStatus.Unknown => "!",
+            _ => result.State switch { TaskState.Succeeded or TaskState.NeedsReboot => "✓", TaskState.Failed => "×", TaskState.Cancelled => "!", TaskState.Skipped => "–", _ => "•" }
+        };
+        public Brush StatusBrush => result.VerificationStatus switch
+        {
+            VerificationStatus.Failed => Brushes.IndianRed,
+            VerificationStatus.PendingRestart or VerificationStatus.Unknown => Brushes.DarkOrange,
+            _ => result.State switch { TaskState.Succeeded or TaskState.NeedsReboot => Brushes.SeaGreen, TaskState.Failed or TaskState.Cancelled => Brushes.IndianRed, _ => Brushes.DarkOrange }
+        };
         public void RefreshLocalization() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
         public event PropertyChangedEventHandler? PropertyChanged;
         private static string FailureAdvice(string code) => Enum.TryParse<ErrorCode>(code, true, out var parsed) ? parsed switch

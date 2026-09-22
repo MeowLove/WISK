@@ -8,23 +8,16 @@ namespace Wisk.Core.Tests;
 
 public sealed class ConfigurableRegistryOptionsTests
 {
-    public static TheoryData<string, string, string, string> Options => new()
+    public static TheoryData<string, string, string, string> Options
     {
-        { "setting-taskbar-seconds", "HKCU", @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "ShowSecondsInSystemClock" },
-        { "setting-taskbar-end-task", "HKCU", @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\TaskbarDeveloperSettings", "TaskbarEndTask" },
-        { "setting-taskbar-widgets", "HKCU", @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "TaskbarDa" },
-        { "setting-taskbar-meet-now", "HKCU", @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "TaskbarMn" },
-        { "setting-taskbar-copilot-button", "HKCU", @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "ShowCopilotButton" },
-        { "setting-notification-banners", "HKCU", @"Software\Microsoft\Windows\CurrentVersion\PushNotifications", "ToastEnabled" },
-        { "setting-lock-screen-notifications", "HKCU", @"Software\Microsoft\Windows\CurrentVersion\PushNotifications", "LockScreenToastEnabled" },
-        { "setting-explorer-this-pc", "HKCU", @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "LaunchTo" },
-        { "setting-explorer-full-path", "HKCU", @"Software\Microsoft\Windows\CurrentVersion\Explorer\CabinetState", "FullPath" },
-        { "setting-explorer-separate-process", "HKCU", @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "SeparateProcess" },
-        { "setting-recent-documents-tracking", "HKCU", @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "Start_TrackDocs" },
-        { "setting-advertising-id", "HKCU", @"SOFTWARE\Microsoft\Windows\CurrentVersion\AdvertisingInfo", "Enabled" },
-        { "setting-tailored-experiences", "HKCU", @"SOFTWARE\Microsoft\Windows\CurrentVersion\Privacy", "TailoredExperiencesWithDiagnosticDataEnabled" },
-        { "setting-search-web-results", "HKCU", @"Software\Microsoft\Windows\CurrentVersion\Search", "BingSearchEnabled" }
-    };
+        get
+        {
+            var data = new TheoryData<string, string, string, string>();
+            foreach (var setting in ConfigurableRegistrySettingCatalog.All)
+                data.Add(setting.TaskId, setting.Hive, setting.Path, setting.ValueName);
+            return data;
+        }
+    }
 
     [Fact]
     public void CatalogContainsTheReleaseCandidateRegistryOptionCount()
@@ -53,10 +46,12 @@ public sealed class ConfigurableRegistryOptionsTests
         Assert.False(string.IsNullOrWhiteSpace(__));
         Assert.False(string.IsNullOrWhiteSpace(___));
         var descriptor = Assert.Single(new Catalog().GetTasks(), task => task.Id.Equals(taskId, StringComparison.OrdinalIgnoreCase));
+        var definition = ConfigurableRegistrySettingCatalog.Find(taskId);
+        Assert.NotNull(definition);
         Assert.Equal(TaskKind.SystemSetting, descriptor.Kind);
         Assert.Equal(RollbackSupport.Exact, descriptor.Rollback);
-        Assert.Equal(ExecutionBoundary.SignOut, descriptor.Boundary);
-        Assert.False(descriptor.RequiresAdministrator);
+        Assert.Equal(definition!.Boundary, descriptor.Boundary);
+        Assert.Equal(definition.RequiresAdministrator, descriptor.RequiresAdministrator);
         Assert.True(BridgeClient.SupportsTask(taskId));
     }
 

@@ -18,7 +18,7 @@ public enum RollbackSupport { Exact, Conditional, Manual }
 
 public enum ExecutionBoundary { None, Reboot, SignOut }
 
-public enum VerificationStatus { NotRequired, PendingRestart, Verified, Unknown }
+public enum VerificationStatus { NotRequired, PendingRestart, Verified, Failed, Unknown }
 
 public sealed record TaskRelation(string TargetTaskId, TaskRelationKind Kind, string ReasonKey);
 
@@ -164,7 +164,13 @@ public sealed record ApplyContext(
     bool IsElevated,
     ImmutableArray<ProfileAccount> Accounts = default);
 
-public sealed record VerifyResult(string TaskId, bool Succeeded, ErrorCode Code, string Message, bool RebootRequired = false);
+public sealed record VerifyResult(
+    string TaskId,
+    bool Succeeded,
+    ErrorCode Code,
+    string Message,
+    bool RebootRequired = false,
+    VerificationStatus VerificationStatus = VerificationStatus.NotRequired);
 
 public sealed record ExecutionResult(
     string TaskId, TaskState State, string Code, string Message, bool Changed, bool RebootRequired,
