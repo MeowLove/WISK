@@ -20,7 +20,7 @@ public sealed class Catalog
         new("language-ui-preference", "Windows display language preference", "Language and display", RiskLevel.Elevated, TaskKind.SystemSetting, RequiresAdministrator: true, RequiresReboot: true),
         new("font-supplements-cjk-indic-europe", "Supplemental fonts", "Language and display", RiskLevel.Standard, TaskKind.Capability, RequiresInternet: true),
         new("feature-wireless-display", "Wireless display", "Language and display", RiskLevel.Elevated, TaskKind.Capability, RequiresAdministrator: true, RequiresInternet: true),
-        new("feature-wsl", "Windows Subsystem for Linux", "Windows features", RiskLevel.Elevated, TaskKind.Capability, RequiresAdministrator: true, RequiresReboot: true,
+        new("feature-wsl", "Windows Subsystem for Linux", "Windows features", RiskLevel.Elevated, TaskKind.Capability, RequiresAdministrator: true, RequiresInternet: true, RequiresReboot: true,
             Relations: [new("feature-virtual-machine-platform", TaskRelationKind.Recommends, "relationWslRecommendsVirtualization")], ResourceLocks: ["dism"], Rollback: RollbackSupport.Conditional, Boundary: ExecutionBoundary.Reboot),
         new("feature-virtual-machine-platform", "Virtual Machine Platform", "Windows features", RiskLevel.Elevated, TaskKind.Capability, RequiresAdministrator: true, RequiresReboot: true),
         new("feature-sandbox", "Windows Sandbox", "Windows features", RiskLevel.Elevated, TaskKind.Capability, RequiresAdministrator: true, RequiresReboot: true),

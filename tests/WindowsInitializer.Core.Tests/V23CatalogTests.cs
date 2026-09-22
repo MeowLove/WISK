@@ -21,6 +21,15 @@ public sealed class V23CatalogTests
     }
 
     [Fact]
+    public void WslBootstrapRequiresNetwork()
+    {
+        var task = Assert.IsType<TaskDescriptor>(new Catalog().Find("feature-wsl"));
+
+        Assert.True(task.RequiresInternet);
+        Assert.True(task.RequiresReboot);
+    }
+
+    [Fact]
     public void CatalogNeverSelectsTasksByDefault()
     {
         Assert.All(new Catalog().GetTasks(), task => Assert.False(task.DefaultSelected, task.Id));

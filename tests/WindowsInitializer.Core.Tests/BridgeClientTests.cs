@@ -87,6 +87,12 @@ public sealed class BridgeClientTests
         Assert.Contains("powercfg.exe", runner.FixedCommand, StringComparison.Ordinal);
         Assert.Contains("HiberbootEnabled", runner.FixedCommand, StringComparison.Ordinal);
         Assert.Contains("Enable-WindowsOptionalFeature", runner.FixedCommand, StringComparison.Ordinal);
+        Assert.Contains("wsl.exe", runner.FixedCommand, StringComparison.Ordinal);
+        Assert.Contains("--install", runner.FixedCommand, StringComparison.Ordinal);
+        Assert.Contains("--no-distribution", runner.FixedCommand, StringComparison.Ordinal);
+        Assert.Contains("--set-default-version", runner.FixedCommand, StringComparison.Ordinal);
+        Assert.Contains("--update", runner.FixedCommand, StringComparison.Ordinal);
+        Assert.Contains("Test-BridgeWsl2", runner.FixedCommand, StringComparison.Ordinal);
     }
 
     [Fact]
