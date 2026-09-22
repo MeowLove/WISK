@@ -52,6 +52,6 @@ included in pull requests or release archives.
 ## Pull requests
 
 Describe the user-visible behavior, safety impact, verification commands, and
-any environment-dependent checks that were not run. Keep unrelated legacy
-cleanup out of feature changes; the `legacy/` tree is retained for migration
-context and is not the default WISK runtime.
+any environment-dependent checks that were not run. The local `legacy/` archive
+contains superseded V1 material, is ignored by Git, and must not receive new
+code or release content; use the WISK 3.0 source under `src/`.

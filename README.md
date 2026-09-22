@@ -11,9 +11,11 @@ counterpart is [LISK](https://github.com/MeowLove/LISK).
 ## What is public
 
 This repository contains the application source, tests, public catalog data,
-schemas, packaging scripts, legacy migration material, and architecture docs.
+schemas, packaging scripts, and architecture docs.
 The local product requirements manual remains under the ignored `requirements/`
-directory and is never published.
+directory and is never published. The superseded V1 archive is also local-only
+under the ignored `legacy/` directory; `src/` is the canonical WISK 3.0
+implementation.
 
 The public catalog is [`catalog/index.json`](catalog/index.json), validated by
 [`tools/validate-catalog.mjs`](tools/validate-catalog.mjs). It records WISK's
@@ -31,7 +33,6 @@ packaging/           Release and CLI publishing wrappers
 tools/               Read-only UI smoke and catalog validation tools
 artifacts/           Ignored build, test, and publish output
 docs/                Public architecture and development documentation
-legacy/              Retained V1 PowerShell implementation for migration context
 requirements/        Local-only V3 requirements; ignored by Git
 ```
 

@@ -44,6 +44,9 @@
 # Internal product requirements and local planning material
 /requirements/
 
+# Superseded V1 source archive
+/legacy/
+
 # IDE and operating-system files
 .vs/
 .vscode/
@@ -57,8 +60,6 @@ Desktop.ini
 .DS_Store
 
 # Local runtime state and logs
-legacy/PowerShell/Windows-Initializer/logs/
-legacy/PowerShell/Windows-Initializer/runs/
 **/logs/
 **/runs/
 *.log

@@ -16,14 +16,6 @@
       "visibility": "public",
       "url": "https://github.com/MeowLove/WISK",
       "license": "GPL-3.0"
-    },
-    {
-      "id": "windows-initializer",
-      "name": "Windows Initializer (legacy source)",
-      "kind": "application",
-      "visibility": "public",
-      "url": "https://github.com/MeowLove/WindowsInitTools",
-      "license": "See repository"
     }
   ],
   "applications": [

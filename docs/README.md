@@ -7,8 +7,8 @@
 - `requirements/` at the repository root is intentionally local-only and is
   ignored by Git. The local WISK 3.0 requirements manual is the product
   behavior authority during development.
-- `legacy/` contains the retained PowerShell implementation and historical
-  assets; it is not the default WISK 3.0 execution path.
+- The superseded V1 source archive is local-only under ignored `legacy/`; it is
+  not part of the public WISK 3.0 source or release archives.
 
 Historical Windows Initializer V2 documents are not copied into the public
 WISK repository as current requirements. Their behavior was used as migration
