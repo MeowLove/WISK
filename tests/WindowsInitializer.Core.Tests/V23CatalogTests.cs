@@ -30,6 +30,20 @@ public sealed class V23CatalogTests
     }
 
     [Fact]
+    public void LegacyMachineScopedPackagesKeepTheirInstallScope()
+    {
+        var catalog = new Catalog();
+        var ids = new[]
+        {
+            "runtime-edge", "runtime-webview2", "app-vscode", "app-everything", "app-chocolatey", "app-peazip",
+            "app-localsend", "app-syncthing", "app-syncthingtray", "app-docker-desktop", "app-obs",
+            "app-advanced-ip-scanner", "app-wsl-manager", "app-openvpn", "app-sandboxie-plus", "app-fxsound", "app-escrcpy"
+        };
+
+        Assert.All(ids, id => Assert.Equal("machine", Assert.IsType<TaskDescriptor>(catalog.Find(id)).PackageScope));
+    }
+
+    [Fact]
     public void CatalogNeverSelectsTasksByDefault()
     {
         Assert.All(new Catalog().GetTasks(), task => Assert.False(task.DefaultSelected, task.Id));

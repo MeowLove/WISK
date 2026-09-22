@@ -19,7 +19,7 @@ public sealed class WinGetTaskExecutorTests
         var result = await executor.CheckAsync(task, CancellationToken.None);
 
         Assert.True(result.AlreadyComplete);
-        Assert.Equal(new[] { "list", "--id", "Microsoft.EdgeWebView2Runtime", "--exact", "--source", "winget", "--accept-source-agreements" }, runner.Arguments);
+        Assert.Equal(new[] { "list", "--id", "Microsoft.EdgeWebView2Runtime", "--exact", "--source", "winget", "--accept-source-agreements", "--scope", "machine" }, runner.Arguments);
     }
 
     [Fact]
@@ -34,6 +34,9 @@ public sealed class WinGetTaskExecutorTests
 
         Assert.Equal(TaskState.Succeeded, result.State);
         Assert.Contains("install", runner.Arguments);
+        var scopeIndex = Array.IndexOf(runner.Arguments.ToArray(), "--scope");
+        Assert.True(scopeIndex >= 0);
+        Assert.Equal("machine", runner.Arguments[scopeIndex + 1]);
         Assert.Contains("--accept-package-agreements", runner.Arguments);
         Assert.DoesNotContain("powershell", runner.Arguments, StringComparer.OrdinalIgnoreCase);
     }

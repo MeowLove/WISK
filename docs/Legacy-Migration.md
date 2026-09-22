@@ -9,7 +9,9 @@ only an audit source and is not a runtime dependency.
   language, supplemental fonts, wireless display, and device setup region use
   built-in adapters.
 - WinGet software and runtime entries use the public catalog and fixed package
-  IDs. An explicit profile proxy is carried into Check and Apply commands.
+  IDs. Legacy machine-scoped entries pin `machine` in the plan and pass it to
+  Check, Apply, and Verify; an explicit profile proxy is carried into the same
+  commands.
 - Windows Subsystem for Linux configures the optional feature first; after the
   required reboot, a second Apply completes WSL 2 installation, default
   version, and kernel update.

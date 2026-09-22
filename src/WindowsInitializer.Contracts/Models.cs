@@ -63,7 +63,8 @@ public sealed record TaskDescriptor(
     ImmutableArray<TaskRelation>? Relations = null,
     ImmutableArray<string>? ResourceLocks = null,
     RollbackSupport Rollback = RollbackSupport.Manual,
-    ExecutionBoundary Boundary = ExecutionBoundary.None);
+    ExecutionBoundary Boundary = ExecutionBoundary.None,
+    string? PackageScope = null);
 
 public sealed record CompatibilitySnapshot(
     string ProductName,
@@ -143,7 +144,7 @@ public sealed record PlannedTask(
     string? ExtensionExecutableHash = null, string? ExtensionProtocol = null,
     ImmutableArray<TaskRelation>? Relations = null, ImmutableArray<string>? ResourceLocks = null,
     RollbackSupport Rollback = RollbackSupport.Manual, ExecutionBoundary Boundary = ExecutionBoundary.None,
-    string? Proxy = null);
+    string? Proxy = null, string? PackageScope = null);
 
 public sealed record ImmutablePlan(
     string PlanId, string ProfileId, string CatalogVersion, DateTimeOffset CreatedAt,

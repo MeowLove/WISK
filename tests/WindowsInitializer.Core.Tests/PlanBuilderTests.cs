@@ -86,6 +86,7 @@ public sealed class PlanBuilderTests
         var plan = builder.Build(profile);
 
         Assert.Equal(profile.Proxy, Assert.Single(plan.Tasks).Proxy);
+        Assert.Equal("machine", Assert.Single(plan.Tasks).PackageScope);
         Assert.Equal(plan.SemanticHash, PlanBuilder.ComputeSemanticHash(plan));
     }
 
