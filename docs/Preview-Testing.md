@@ -41,10 +41,12 @@ the listed views and do not establish system-change safety.
 
 When reporting a problem, include WISK version, package type, Windows edition
 and build, reproduction steps, expected result, actual result, and the relevant
-task ID if visible. Review screenshots, logs, and diagnostic exports before
-sharing them. Remove names, account identifiers, device identifiers, network
-details, file paths, and other personal information. Do not attach passwords,
-tokens, or signing material.
+task ID if visible. Diagnostic exports attempt to redact known account,
+computer, profile, proxy, and local path values, but this is best-effort and
+cannot guarantee that all personal information is removed. Review screenshots,
+logs, and diagnostic exports before sharing them. Remove names, account
+identifiers, device identifiers, network details, file paths, and other
+personal information. Do not attach passwords, tokens, or signing material.
 
 ## 简体中文
 
@@ -79,6 +81,7 @@ Apply/Verify 验收。随包提供的启动截图（如有）只覆盖所列界�
 修改安全。
 
 反馈请包含 WISK 版本、包类型、Windows 版本和内部版本号、复现步骤、预期结果、
-实际结果，以及界面上可见的任务 ID。分享截图、日志和诊断导出前，请检查并移除
-姓名、账户标识、设备标识、网络信息、文件路径等个人信息。不要附上密码、令牌或
-签名材料。
+实际结果，以及界面上可见的任务 ID。诊断导出会尝试隐藏已知账户、计算机、配置档、
+代理和本地路径，但这是尽力脱敏，不能保证移除全部个人信息。分享截图、日志和诊断
+导出前，仍须检查并移除姓名、账户标识、设备标识、网络信息、文件路径等个人信息。
+不要附上密码、令牌或签名材料。

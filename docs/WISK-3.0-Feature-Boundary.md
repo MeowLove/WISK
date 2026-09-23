@@ -41,6 +41,9 @@ are not runtime dependencies.
   `VerificationStatus`. The derived state distinguishes pending restart,
   verified, verification failed, and manual verification required without
   rewriting the original snapshot.
+- Diagnostic export redacts known identities, proxy values, and local paths in
+  the exported copy. Redaction is best-effort; users must review diagnostics
+  before sharing, and local run history is not modified.
 - The Windows Terminal PowerShell switcher is maintained as
   tools/Manage-WindowsTerminalPowerShell.ps1. It keeps its JSON backup and
   JSONC refusal behavior and remains an explicit helper rather than an

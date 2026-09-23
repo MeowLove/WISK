@@ -61,6 +61,9 @@ WPF App / CLI
   completion is separate from a reboot boundary: `RebootRequired` remains an
   audit fact, while `VerificationStatus` records whether read-only confirmation
   is pending, verified, failed, or requires manual verification.
+  Diagnostic exports redact known account, computer, profile, proxy, and local
+  path values in an exported copy; local run history remains unchanged. This is
+  best-effort redaction, so exported material must still be reviewed before sharing.
 - **Platform.Windows** maps allow-listed task IDs to Windows APIs, registry
   targets, WinGet package IDs, and native settings entry points.
 - **PowerShell** runs only fixed bridge operations. Scripts and JSON requests are
