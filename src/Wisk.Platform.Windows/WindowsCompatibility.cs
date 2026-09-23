@@ -28,15 +28,19 @@ public sealed class WindowsCompatibility
 
     public CompatibilitySnapshot Read()
     {
-        var productName = _probe.ReadCurrentVersion("ProductName") ?? "Unknown Windows";
+        var reportedProductName = _probe.ReadCurrentVersion("ProductName") ?? "Unknown Windows";
         var displayVersion = _probe.ReadCurrentVersion("DisplayVersion") ?? string.Empty;
         var buildText = _probe.ReadCurrentVersion("CurrentBuildNumber") ?? "0";
         var ubrText = _probe.ReadCurrentVersion("UBR") ?? "0";
         _ = int.TryParse(buildText, out var build);
         _ = int.TryParse(ubrText, out var ubr);
-        var isWindowsClient = productName.Contains("Windows", StringComparison.OrdinalIgnoreCase) &&
-                              !productName.Contains("Server", StringComparison.OrdinalIgnoreCase);
+        const string windows10Prefix = "Windows 10";
+        var isWindowsClient = reportedProductName.Contains("Windows", StringComparison.OrdinalIgnoreCase) &&
+                              !reportedProductName.Contains("Server", StringComparison.OrdinalIgnoreCase);
         var isWindows11 = isWindowsClient && build >= 22000;
+        var productName = isWindows11 && reportedProductName.StartsWith(windows10Prefix, StringComparison.OrdinalIgnoreCase)
+            ? $"Windows 11{reportedProductName[windows10Prefix.Length..]}"
+            : reportedProductName;
         var isSupportedArchitecture = string.Equals(_probe.OsArchitecture, "x64", StringComparison.OrdinalIgnoreCase) &&
                                       string.Equals(_probe.ProcessArchitecture, "x64", StringComparison.OrdinalIgnoreCase);
         var isSupportedBuild = isWindows11 && build >= MinimumSupportedBuild;

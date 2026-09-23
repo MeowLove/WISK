@@ -3,6 +3,22 @@
 These scripts are maintained helpers for workflows that are not safe to model
 as automatic WISK plan tasks.
 
+## Preview packages
+
+`Build-PreviewPackages.ps1` creates separate framework-dependent and
+self-contained WISK 3.0.0 Preview ZIPs under the ignored
+`artifacts/preview/3.0.0/` directory. It checks each release manifest against
+the current source commit, stages the required license and testing guide, and
+verifies both the staged package and the completed ZIP. It refuses to overwrite
+existing ZIPs by default and leaves unrelated files or subdirectories alone.
+`-ReplaceExisting` moves the known ZIPs and checksum file into a timestamped
+`.superseded-*` folder before creating replacements.
+
+`Verify-PreviewPackage.ps1` checks an extracted package or ZIP for the exact
+expected file set and verifies the WISK executable's length and SHA-256 against
+its release manifest. This establishes package consistency, not publisher
+authenticity.
+
 ## Manage-WindowsTerminalPowerShell.ps1
 
 This migrated helper switches the Windows Terminal default profile between

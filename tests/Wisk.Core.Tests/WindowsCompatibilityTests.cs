@@ -64,9 +64,20 @@ public sealed class WindowsCompatibilityTests
     {
         var snapshot = new WindowsCompatibility(new FakeProbe(26200, "x64", "x64", "Windows 10 Enterprise")).Read();
 
+        Assert.Equal("Windows 11 Enterprise", snapshot.ProductName);
         Assert.True(snapshot.IsWindows11);
         Assert.True(snapshot.IsSupportedBuild);
         Assert.True(snapshot.IsApplySupported);
+    }
+
+    [Fact]
+    public void Windows10DisplayNameRemainsForBuildsBelowWindows11()
+    {
+        var snapshot = new WindowsCompatibility(new FakeProbe(19045, "x64", "x64", "Windows 10 Enterprise")).Read();
+
+        Assert.Equal("Windows 10 Enterprise", snapshot.ProductName);
+        Assert.False(snapshot.IsWindows11);
+        Assert.False(snapshot.IsApplySupported);
     }
 
     private sealed class FakeProbe(int build, string osArchitecture, string processArchitecture, string productName = "Windows 11 Pro") : IWindowsSystemProbe
