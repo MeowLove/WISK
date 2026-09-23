@@ -1,7 +1,7 @@
 ---
-name: Preview bug report / 预览版问题反馈
-about: Report a reproducible WISK 3.0.0 Preview issue / 报告可复现的问题
-title: "[Preview] "
+name: WISK 3.0 bug report / WISK 3.0 问题反馈
+about: Report a reproducible WISK 3.0 issue / 报告 WISK 3.0 可复现的问题
+title: "[3.0] "
 ---
 
 ## Environment / 环境

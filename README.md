@@ -8,6 +8,21 @@ Verify execution model.
 WISK is the Windows member of the MeowLove Init Setup Kit family. The Linux
 counterpart is [LISK](https://github.com/MeowLove/LISK).
 
+## WISK 3.0 public release and feedback
+
+WISK 3.0.0 is the first public release of the new WISK implementation. We plan
+to iterate rapidly based on community feedback. Please report reproducible
+issues so we can prioritize fixes:
+
+- [Download WISK 3.0.0](https://github.com/MeowLove/WISK/releases/tag/v3.0.0)
+- [Read the release testing guide](docs/Preview-Testing.md)
+- [Report a problem](https://github.com/MeowLove/WISK/issues/new?template=bug_report.md)
+
+This build is unsigned and has not completed isolated UAC, registry, software
+installation, reboot, or real Apply/Verify acceptance. For ordinary testing,
+run as a standard user and do not apply changes on a daily-use, work, or
+production computer. See the testing guide for the full boundary.
+
 ## What is public
 
 This repository contains the application source, tests, public catalog data,
