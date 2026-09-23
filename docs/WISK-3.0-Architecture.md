@@ -81,6 +81,10 @@ All entries are unselected by default. Items needing input use a configure
 before add flow: validation completes first, cancellation does not enqueue an
 item, and an existing draft can be edited. Plan additions preserve explicit
 enabled, disabled, and default semantics; disabled never means restore default.
+Plan templates contain task configuration and execution policy, not current
+session authorization. Exported templates do not persist elevated/high-risk
+grants, and importing a template clears those grants so Apply requires explicit
+authorization in the current session.
 
 Registry-backed tasks use shared data-driven catalogs for source resources,
 task ID, hive, subkey, value name, accepted states, risk, backup policy, and

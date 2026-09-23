@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Text.Json;
 using Wisk.Contracts;
 using Wisk.Core;
 using Xunit;
@@ -45,6 +46,27 @@ public sealed class PlanTemplateJsonTests
         Assert.Equal(policy, restored.Policy);
     }
 
+    [Fact]
+    public void TemplateSerializationAndImportNeverCarryRiskAuthorization()
+    {
+        var catalog = new Catalog();
+        var template = Template([new PlanTemplateItem("runtime-dotnet-8")]) with
+        {
+            AllowElevated = true,
+            AllowHighRisk = true
+        };
+
+        var exported = PlanTemplateJson.Serialize(template, catalog);
+        using var exportedJson = JsonDocument.Parse(exported);
+        var importedUntrusted = PlanTemplateJson.Deserialize(
+            JsonSerializer.Serialize(template, new JsonSerializerOptions(JsonSerializerDefaults.Web)), catalog);
+
+        Assert.False(exportedJson.RootElement.GetProperty("allowElevated").GetBoolean());
+        Assert.False(exportedJson.RootElement.GetProperty("allowHighRisk").GetBoolean());
+        Assert.False(importedUntrusted.AllowElevated);
+        Assert.False(importedUntrusted.AllowHighRisk);
+    }
+
     [Theory]
     [InlineData("app-vscode", "upgrade")]
     [InlineData("app-vscode", "install")]
@@ -77,6 +99,40 @@ public sealed class PlanTemplateJsonTests
         var json = PlanTemplateJson.Serialize(Template([new PlanTemplateItem("runtime-dotnet-8")]), new Catalog());
         Assert.Throws<ProfileValidationException>(() => PlanTemplateJson.Deserialize(json.Replace("\"name\":", "\"unexpected\":true,\"name\":"), new Catalog()));
         Assert.Throws<ProfileValidationException>(() => PlanTemplateJson.Serialize(Template([new PlanTemplateItem("missing-task")]), new Catalog()));
+    }
+
+    [Theory]
+    [InlineData("schema")]
+    [InlineData("item")]
+    [InlineData("taskId")]
+    [InlineData("policy")]
+    public void RejectsNullRequiredTemplateValues(string field)
+    {
+        var template = field switch
+        {
+            "schema" => Template([new PlanTemplateItem("runtime-webview2")]) with { SchemaVersion = null! },
+            "item" => Template([null!]),
+            "taskId" => Template([new PlanTemplateItem(null!)]),
+            "policy" => Template([new PlanTemplateItem("runtime-webview2")]) with { Policy = null! },
+            _ => throw new ArgumentOutOfRangeException(nameof(field))
+        };
+        var json = JsonSerializer.Serialize(template, new JsonSerializerOptions(JsonSerializerDefaults.Web));
+
+        Assert.Throws<ProfileValidationException>(() => PlanTemplateJson.Deserialize(json, new Catalog()));
+    }
+
+    [Fact]
+    public void RejectsTemplatesWithConflictingRegistrySettings()
+    {
+        var catalog = new Catalog();
+        var template = Template([
+            new PlanTemplateItem("setting-show-file-extensions", "enabled"),
+            new PlanTemplateItem("registry-group-user-desktop-start")]);
+        var json = JsonSerializer.Serialize(template, new JsonSerializerOptions(JsonSerializerDefaults.Web));
+
+        var exception = Assert.Throws<ProfileValidationException>(() => PlanTemplateJson.Deserialize(json, catalog));
+
+        Assert.Contains("conflicts", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     private static PlanTemplateDocument Template(ImmutableArray<PlanTemplateItem> items) => new(

@@ -68,7 +68,7 @@ public sealed class DiagnosticExporterTests
             RiskLevel.Elevated, false, "hash");
         var snapshot = new RunStateSnapshot("run", "plan", "hash", TaskState.Failed,
             [new ExecutionResult("computer-name", TaskState.Failed, "ProcessFailed",
-                "Failed for alice on WISK-LAB-07 using proxy.private.lan at C:\\Users\\alice\\Desktop\\wisk.log", false, false)],
+                "Failed for alice on WISK-LAB-07 using proxy.private.lan at C:\\Users\\alice\\Desktop\\wisk.log and %LOCALAPPDATA%\\WISK\\logs\\run.log and \\\\private-nas\\users\\alice\\report.json", false, false)],
             DateTimeOffset.UtcNow, SerializedPlan: JsonSerializer.Serialize(plan,
                 new JsonSerializerOptions(JsonSerializerDefaults.Web)));
         var originalPlan = snapshot.SerializedPlan;
@@ -83,6 +83,8 @@ public sealed class DiagnosticExporterTests
             Assert.DoesNotContain("AliceProfile", json, StringComparison.OrdinalIgnoreCase);
             Assert.DoesNotContain("proxy.private.lan", json, StringComparison.OrdinalIgnoreCase);
             Assert.DoesNotContain("C:\\\\Users\\\\alice", json, StringComparison.OrdinalIgnoreCase);
+            Assert.DoesNotContain("%LOCALAPPDATA%", json, StringComparison.OrdinalIgnoreCase);
+            Assert.DoesNotContain("private-nas", json, StringComparison.OrdinalIgnoreCase);
             Assert.Contains("[LOCAL_PATH]", json, StringComparison.Ordinal);
             Assert.Contains("[REDACTED]", json, StringComparison.Ordinal);
             Assert.Equal(originalPlan, snapshot.SerializedPlan);

@@ -36,6 +36,9 @@ are not runtime dependencies.
 - Fixed presets remain grouped by user purpose. A configurable setting that
   overlaps a fixed preset receives an explicit conflict relation; unsupported
   or version-dependent entries are not exposed as reversible switches.
+- Plan templates do not carry elevated/high-risk authorization between
+  sessions. Import resets authorization, and Apply requires current-session
+  confirmation.
 - Apply results that require a restart remain completed. The audit keeps
   `RebootRequired`, while a later read-only Verify produces a derived
   `VerificationStatus`. The derived state distinguishes pending restart,

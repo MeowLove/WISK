@@ -128,6 +128,41 @@ public sealed class BridgeClientTests
     }
 
     [Fact]
+    public async Task ConfigurableRegistryDefaultIsDistinctFromDisabledAndUsesOnlyMockedRegistryCommands()
+    {
+        if (!OperatingSystem.IsWindows()) return;
+        var powerShell = Path.Combine(Environment.SystemDirectory, "WindowsPowerShell", "v1.0", "powershell.exe");
+        if (!File.Exists(powerShell)) return;
+
+        var setting = ConfigurableRegistrySettingCatalog.Find("setting-advertising-id")!;
+        var removalLog = Path.Combine(Path.GetTempPath(), "WISK-registry-mock-" + Guid.NewGuid().ToString("N") + ".txt");
+        try
+        {
+            async Task<TaskState> Invoke(string operation, string state, int? storedValue, string? logPath = null)
+            {
+                var prefix = RegistryCmdletMocks(storedValue, logPath);
+                var parameters = ImmutableDictionary<string, string>.Empty.Add("value", state);
+                var response = await new BridgeClient(new PrefixingProcessRunner(prefix)).InvokeAsync(
+                    new BridgeRequest("1.0", "registry-state-test", setting.TaskId, operation, parameters),
+                    TimeSpan.FromSeconds(15));
+                return response.Status;
+            }
+
+            Assert.Equal(TaskState.Ready, await Invoke("Check", "default", setting.DisabledValue));
+            Assert.Equal(TaskState.Skipped, await Invoke("Check", "disabled", setting.DisabledValue));
+            Assert.Equal(TaskState.Failed, await Invoke("Verify", "default", setting.DisabledValue));
+            Assert.Equal(TaskState.Succeeded, await Invoke("Verify", "disabled", setting.DisabledValue));
+
+            Assert.Equal(TaskState.Succeeded, await Invoke("Apply", "default", null, removalLog));
+            Assert.Equal($"{setting.Hive}:\\{setting.Path}|{setting.ValueName}", await File.ReadAllTextAsync(removalLog));
+        }
+        finally
+        {
+            if (File.Exists(removalLog)) File.Delete(removalLog);
+        }
+    }
+
+    [Fact]
     public async Task UnframedCmdletOutputCannotCorruptTheBridgeResponse()
     {
         const string json = "{\"protocolVersion\":\"1.0\",\"runId\":\"run\",\"taskId\":\"language-zh-cn\",\"status\":\"Ready\",\"code\":\"None\",\"message\":\"ok\",\"changed\":false,\"rebootRequired\":false,\"summary\":\"ok\"}";
@@ -250,6 +285,24 @@ function Get-WinUserLanguageList {
   Write-Output -NoEnumerate $items
 }
 """;
+
+    private static string RegistryCmdletMocks(int? storedValue, string? removalLogPath = null)
+    {
+        var getValue = storedValue is null ? "return $null" : $"return {storedValue.Value}";
+        var script = $"function Get-ItemPropertyValue {{ [CmdletBinding()] param($Path, $Name) {getValue} }}{Environment.NewLine}" +
+                     "function New-Item { [CmdletBinding()] param($Path, [switch]$Force) throw 'Unexpected registry key creation.' }" + Environment.NewLine +
+                     "function Set-ItemProperty { [CmdletBinding()] param($Path, $Name, $Type, $Value) throw 'Unexpected registry value write.' }" + Environment.NewLine;
+        if (!string.IsNullOrWhiteSpace(removalLogPath))
+        {
+            var escapedPath = removalLogPath.Replace("'", "''", StringComparison.Ordinal);
+            script += $"function Remove-ItemProperty {{ [CmdletBinding()] param($Path, $Name) [System.IO.File]::WriteAllText('{escapedPath}', $Path + '|' + $Name) }}";
+        }
+        else
+        {
+            script += "function Remove-ItemProperty { [CmdletBinding()] param($Path, $Name) throw 'Unexpected registry value removal.' }";
+        }
+        return script;
+    }
 
     private sealed class PrefixingProcessRunner(string prefix) : IBridgeProcessRunner
     {

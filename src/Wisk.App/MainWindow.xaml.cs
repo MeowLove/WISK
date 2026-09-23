@@ -1364,8 +1364,7 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
             var items = _draftItems.Select(item => new PlanTemplateItem(item.TaskId,
                 item.Configuration?.Parameters.TryGetValue(item.TaskId, out var value) == true ? value : null)).ToImmutableArray();
             var template = new PlanTemplateDocument(PlanTemplateJson.SchemaVersion, "template-" + Guid.NewGuid().ToString("N"),
-                Path.GetFileNameWithoutExtension(dialog.FileName), DateTimeOffset.UtcNow, items, _draftPolicy,
-                AllowElevatedCheck.IsChecked == true, AllowHighRiskCheck.IsChecked == true);
+                Path.GetFileNameWithoutExtension(dialog.FileName), DateTimeOffset.UtcNow, items, _draftPolicy, false, false);
             await WriteTextAtomicallyAsync(Path.GetFullPath(dialog.FileName), PlanTemplateJson.Serialize(template, _catalog));
             ExecutionText.Text = Localization.Format("planTemplateExported", dialog.FileName);
         }
@@ -1404,8 +1403,8 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
             _draftItems.Clear();
             _draftItems.AddRange(staged);
             _draftPolicy = template.Policy;
-            AllowElevatedCheck.IsChecked = template.AllowElevated;
-            AllowHighRiskCheck.IsChecked = template.AllowHighRisk;
+            AllowElevatedCheck.IsChecked = false;
+            AllowHighRiskCheck.IsChecked = false;
             RefreshTaskPlanStates();
             SyncExecutionQueueWithDraft();
             ShowExecutionView(false);

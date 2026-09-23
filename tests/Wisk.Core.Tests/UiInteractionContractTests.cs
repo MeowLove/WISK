@@ -71,6 +71,28 @@ public sealed class UiInteractionContractTests
     }
 
     [Fact]
+    public void ConfigurableAddAndEditOnlyCommitAfterConfigurationIsAccepted()
+    {
+        var source = File.ReadAllText(Path.Combine(RepositoryRoot(), "src", "Wisk.App", "MainWindow.xaml.cs"));
+        var addStart = source.IndexOf("private void AddTask_Click", StringComparison.Ordinal);
+        var addEnd = source.IndexOf("private bool TryConfigureTask", addStart, StringComparison.Ordinal);
+        var editStart = source.IndexOf("private void EditQueueItem_Click", addEnd, StringComparison.Ordinal);
+        var editEnd = source.IndexOf("private bool ValidateDraftConfiguration", editStart, StringComparison.Ordinal);
+        Assert.True(addStart >= 0 && addEnd > addStart && editStart > addEnd && editEnd > editStart);
+
+        var add = source[addStart..addEnd];
+        var configure = add.IndexOf("!TryConfigureTask(item.Id, null, out configuration)) return;", StringComparison.Ordinal);
+        var commitAdditions = add.IndexOf("_draftItems.AddRange(additions);", StringComparison.Ordinal);
+        Assert.True(configure >= 0 && commitAdditions > configure);
+
+        var edit = source[editStart..editEnd];
+        var configureExisting = edit.IndexOf("TryConfigureTask(item.TaskId, item.Configuration, out var configuration)", StringComparison.Ordinal);
+        var commitEdit = edit.IndexOf("_draftItems[index] = item with { Configuration = configuration };", StringComparison.Ordinal);
+        Assert.True(configureExisting >= 0 && commitEdit > configureExisting);
+        Assert.Contains("if (!TryConfigureTask(item.TaskId, item.Configuration, out var configuration)) return;", edit, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void ApplicationRequestsAdministratorBeforeCreatingTheMainWindow()
     {
         var path = Path.Combine(RepositoryRoot(), "src", "Wisk.App", "app.manifest");
@@ -215,6 +237,32 @@ public sealed class UiInteractionContractTests
         Assert.Contains("AssemblyMetadata Include=\"SourceCommit\"", project);
         Assert.Contains("home-light-ar-rtl.png", capture);
         Assert.Contains("colors.Count -lt 8", capture);
+    }
+
+    [Fact]
+    public void ImportedTemplatesDoNotCarryRiskAuthorizationIntoTheCurrentSession()
+    {
+        var source = File.ReadAllText(Path.Combine(RepositoryRoot(), "src", "Wisk.App", "MainWindow.xaml.cs"));
+        var exportStart = source.IndexOf("private async void ExportPlanTemplate_Click", StringComparison.Ordinal);
+        var exportEnd = source.IndexOf("private async void ImportPlanTemplate_Click", exportStart, StringComparison.Ordinal);
+        var start = source.IndexOf("private async void ImportPlanTemplate_Click", StringComparison.Ordinal);
+        var end = source.IndexOf("private static bool HasDuplicateAccounts", start, StringComparison.Ordinal);
+        Assert.True(exportStart >= 0 && exportEnd > exportStart && start >= 0 && end > start);
+        var exportHandler = source[exportStart..exportEnd];
+        Assert.Contains("_draftPolicy, false, false)", exportHandler, StringComparison.Ordinal);
+        Assert.DoesNotContain("AllowElevatedCheck.IsChecked", exportHandler, StringComparison.Ordinal);
+        Assert.DoesNotContain("AllowHighRiskCheck.IsChecked", exportHandler, StringComparison.Ordinal);
+        var importHandler = source[start..end];
+        var replaceDraft = importHandler.IndexOf("_draftItems.Clear();", StringComparison.Ordinal);
+        var deserialize = importHandler.IndexOf("PlanTemplateJson.Deserialize", StringComparison.Ordinal);
+        var staged = importHandler.IndexOf("var staged =", StringComparison.Ordinal);
+
+        Assert.True(replaceDraft >= 0);
+        Assert.True(deserialize >= 0 && staged > deserialize && replaceDraft > staged);
+        Assert.Contains("AllowElevatedCheck.IsChecked = false;", importHandler[replaceDraft..], StringComparison.Ordinal);
+        Assert.Contains("AllowHighRiskCheck.IsChecked = false;", importHandler[replaceDraft..], StringComparison.Ordinal);
+        Assert.DoesNotContain("AllowElevatedCheck.IsChecked = template.AllowElevated", importHandler, StringComparison.Ordinal);
+        Assert.DoesNotContain("AllowHighRiskCheck.IsChecked = template.AllowHighRisk", importHandler, StringComparison.Ordinal);
     }
 
     private static string RepositoryRoot()

@@ -22,7 +22,7 @@ public static class PlanTemplateJson
     public static string Serialize(PlanTemplateDocument template, Catalog catalog)
     {
         Validate(template, catalog);
-        return JsonSerializer.Serialize(template, Options);
+        return JsonSerializer.Serialize(template with { AllowElevated = false, AllowHighRisk = false }, Options);
     }
 
     public static PlanTemplateDocument Deserialize(string json, Catalog catalog)
@@ -39,13 +39,18 @@ public static class PlanTemplateJson
             throw new ProfileValidationException($"Plan template JSON is invalid: {exception.Message}");
         }
         Validate(template, catalog);
-        return template! with { Items = template!.Items.ToImmutableArray() };
+        return template! with
+        {
+            Items = template!.Items.ToImmutableArray(),
+            AllowElevated = false,
+            AllowHighRisk = false
+        };
     }
 
     public static void Validate(PlanTemplateDocument? template, Catalog catalog)
     {
         if (template is null) throw new ProfileValidationException("Plan template is missing.");
-        if (!template.SchemaVersion.Equals(SchemaVersion, StringComparison.Ordinal))
+        if (!string.Equals(template.SchemaVersion, SchemaVersion, StringComparison.Ordinal))
             throw new ProfileValidationException($"Unsupported plan template schema '{template.SchemaVersion}'.");
         if (!Regex.IsMatch(template.TemplateId ?? string.Empty, "^[A-Za-z0-9._-]{1,80}$"))
             throw new ProfileValidationException("Plan template ID is invalid.");
@@ -53,16 +58,30 @@ public static class PlanTemplateJson
             throw new ProfileValidationException("Plan template name must contain 1-100 characters.");
         if (template.Items.IsDefaultOrEmpty || template.Items.Length > 200)
             throw new ProfileValidationException("Plan template must contain 1-200 items.");
+        if (template.Items.Any(item => item is null))
+            throw new ProfileValidationException("Plan template contains a missing item.");
+        if (template.Policy is null)
+            throw new ProfileValidationException("Plan template execution policy is missing.");
         var policyIssue = ProfileDocumentValidator.ValidateExecutionPolicy(template.Policy);
         if (policyIssue is not null) throw new ProfileValidationException(policyIssue.Message);
 
         var seenSingleTasks = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var item in template.Items)
         {
+            if (string.IsNullOrWhiteSpace(item.TaskId)) throw new ProfileValidationException("Plan template task ID is missing.");
             if (catalog.Find(item.TaskId) is null) throw new ProfileValidationException($"Unknown task: {item.TaskId}");
             if (!item.TaskId.Equals("accounts-local", StringComparison.OrdinalIgnoreCase) && !seenSingleTasks.Add(item.TaskId))
                 throw new ProfileValidationException($"Task '{item.TaskId}' cannot appear more than once in a plan template.");
             ValidateValue(item, catalog);
+        }
+
+        var selectedTaskIds = template.Items.Select(item => item.TaskId).ToArray();
+        foreach (var item in template.Items)
+        {
+            var task = catalog.Find(item.TaskId)!;
+            var conflict = TaskRelationPlanner.Conflicts(task, selectedTaskIds).FirstOrDefault();
+            if (conflict is not null)
+                throw new ProfileValidationException($"Task '{task.Id}' conflicts with '{conflict.TargetTaskId}'.");
         }
     }
 
