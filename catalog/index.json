@@ -1,8 +1,8 @@
 {
   "$schema": "../schema/catalog.schema.json",
   "schemaVersion": 1,
-  "catalogVersion": "3.0.0",
-  "updatedAt": "2026-09-21",
+  "catalogVersion": "3.1.0",
+  "updatedAt": "2026-10-13",
   "publisher": {
     "id": "meowlove",
     "name": "MeowLove",
@@ -22,9 +22,9 @@
     {
       "id": "wisk",
       "name": "WISK",
-      "description": "WISK 3.0 Windows 11 initialization and configuration workspace with auditable plans, software actions, and registry-backed settings.",
+      "description": "WISK 3.1 Windows 11 initialization and configuration workspace with auditable plans, software actions, registry-backed settings, and plugin management.",
       "status": "preview",
-      "version": "3.0.0",
+      "version": "3.1.0",
       "repositoryId": "wisk",
       "releasePage": "https://github.com/MeowLove/WISK/releases",
       "platforms": [

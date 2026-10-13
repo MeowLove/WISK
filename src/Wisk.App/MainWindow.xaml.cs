@@ -32,6 +32,7 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
     private readonly ObservableCollection<CompletedTaskRow> _completedTaskRows = [];
     private readonly ObservableCollection<RecoveryRunRow> _recoveryRuns = [];
     private readonly ObservableCollection<RecoveryRecordRow> _recoveryRecords = [];
+    private readonly ObservableCollection<InstalledExtension> _installedExtensions = [];
     private readonly List<DraftPlanItem> _draftItems = [];
     private ExecutionPolicy _draftPolicy = new();
     private CancellationTokenSource? _runCancellation;
@@ -71,6 +72,7 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
         CompletedTasksGrid.ItemsSource = _completedTaskRows;
         RecoveryRunsGrid.ItemsSource = _recoveryRuns;
         RecoveryRecordsGrid.ItemsSource = _recoveryRecords;
+        InstalledExtensionsGrid.ItemsSource = _installedExtensions;
         ThemeButton.IsEnabled = !SystemParameters.HighContrast;
         if (SystemParameters.HighContrast) ThemeButton.ToolTip = Localization.Get("highContrastActive");
         LoadCatalogRows();
@@ -128,8 +130,11 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
             : Localization.Get("selectCompletedTask");
         CompletedViewButton.Content = Localization.Format("completedRunsCount", _completedRuns.Count);
         if (_activeArea == WorkspaceArea.Recovery) _ = RefreshRecoveryAsync();
-        PageTitleText.Text = _activeArea switch { WorkspaceArea.System => Localization.Get("system"), WorkspaceArea.Registry => Localization.Get("registryOptimization"), WorkspaceArea.Software => Localization.Get("software"), WorkspaceArea.Recovery => Localization.Get("recoveryCenter"), _ => Localization.Get("home") };
-        PageSubtitleText.Text = _activeArea switch { WorkspaceArea.System => Localization.Get("settingsSubtitle"), WorkspaceArea.Registry => Localization.Get("registrySubtitle"), WorkspaceArea.Software => Localization.Get("softwareSubtitle"), WorkspaceArea.Recovery => Localization.Get("recoverySubtitle"), _ => Localization.Get("safePlan") };
+        PageTitleText.Text = _activeArea switch { WorkspaceArea.System => Localization.Get("system"), WorkspaceArea.Registry => Localization.Get("registryOptimization"), WorkspaceArea.Software => Localization.Get("software"), WorkspaceArea.Plugins => Localization.Get("plugins"), WorkspaceArea.AiAssistant => Localization.Get("aiAssistant"), WorkspaceArea.Recovery => Localization.Get("recoveryCenter"), _ => Localization.Get("home") };
+        PageSubtitleText.Text = _activeArea switch { WorkspaceArea.System => Localization.Get("settingsSubtitle"), WorkspaceArea.Registry => Localization.Get("registrySubtitle"), WorkspaceArea.Software => Localization.Get("softwareSubtitle"), WorkspaceArea.Plugins => Localization.Get("pluginsSubtitle"), WorkspaceArea.AiAssistant => Localization.Get("aiAssistantPositioning"), WorkspaceArea.Recovery => Localization.Get("recoverySubtitle"), _ => Localization.Get("safePlan") };
+        PluginsStatusText.Text = _installedExtensions.Count == 0
+            ? Localization.Get("pluginInstallHint")
+            : Localization.Format("installedPluginsCount", _installedExtensions.Count);
         ThemeButton.Content = Localization.Get(_darkTheme ? "lightTheme" : "darkTheme");
         UpdateCategoryExpansionLabels();
         ScheduleCategoryLayoutUpdate();
@@ -178,6 +183,8 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or InvalidOperationException)
         {
             ExecutionText.Text = Localization.Format("extensionCatalogRefreshFailed", SensitiveDataRedactor.Redact(exception.Message));
+            PluginsEmptyText.Visibility = Visibility.Collapsed;
+            PluginsStatusText.Text = ExecutionText.Text;
         }
         ScheduleCategoryLayoutUpdate();
         try { await RefreshCompletedRunsAsync(); }
@@ -199,11 +206,12 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
     {
         var isSoftware = _activeArea == WorkspaceArea.Software;
         var isRegistry = _activeArea == WorkspaceArea.Registry;
+        var isCatalogArea = _activeArea is WorkspaceArea.Home or WorkspaceArea.System or WorkspaceArea.Registry or WorkspaceArea.Software;
         var query = (isSoftware ? SoftwareSearchBox?.Text : isRegistry ? RegistrySearchBox?.Text : SearchBox?.Text)?.Trim() ?? string.Empty;
         var selectedCategory = isSoftware ? _softwareCategory : isRegistry ? _registryCategory : _systemCategory;
         _visibleRows.Clear();
         var rows = _allRows.Where(row =>
-                      (_activeArea == WorkspaceArea.Home || (isRegistry ? row.Kind == TaskKind.RegistrySetting : isSoftware ? IsSoftwareTask(row) : !IsSoftwareTask(row))) &&
+                      isCatalogArea && (_activeArea == WorkspaceArea.Home || (isRegistry ? row.Kind == TaskKind.RegistrySetting : isSoftware ? IsSoftwareTask(row) : !IsSoftwareTask(row))) &&
                       (!isSoftware || row.MatchesSoftwareFilter(_softwareStatusFilter)) &&
                       (string.IsNullOrEmpty(query) || row.DisplayName.Contains(query, StringComparison.OrdinalIgnoreCase) || row.Id.Contains(query, StringComparison.OrdinalIgnoreCase) || row.Location.Contains(query, StringComparison.OrdinalIgnoreCase) || row.Domain.Contains(query, StringComparison.OrdinalIgnoreCase) || row.PackageId.Contains(query, StringComparison.OrdinalIgnoreCase)) &&
                       (string.IsNullOrEmpty(selectedCategory) || row.RawDomain.Equals(selectedCategory, StringComparison.OrdinalIgnoreCase)));
@@ -362,13 +370,15 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
     private void Navigate(WorkspaceArea area)
     {
         _activeArea = area;
-        WorkspaceTabs.SelectedItem = area switch { WorkspaceArea.System => SystemTab, WorkspaceArea.Registry => RegistryTab, WorkspaceArea.Software => SoftwareTab, WorkspaceArea.Recovery => RecoveryTab, _ => HomeTab };
+        WorkspaceTabs.SelectedItem = area switch { WorkspaceArea.System => SystemTab, WorkspaceArea.Registry => RegistryTab, WorkspaceArea.Software => SoftwareTab, WorkspaceArea.Plugins => PluginsTab, WorkspaceArea.AiAssistant => AiAssistantTab, WorkspaceArea.Recovery => RecoveryTab, _ => HomeTab };
         UpdateActiveNavigation();
         (PageTitleText.Text, PageSubtitleText.Text) = area switch
         {
             WorkspaceArea.System => (Localization.Get("system"), Localization.Get("settingsSubtitle")),
             WorkspaceArea.Registry => (Localization.Get("registryOptimization"), Localization.Get("registrySubtitle")),
             WorkspaceArea.Software => (Localization.Get("software"), Localization.Get("softwareSubtitle")),
+            WorkspaceArea.Plugins => (Localization.Get("plugins"), Localization.Get("pluginsSubtitle")),
+            WorkspaceArea.AiAssistant => (Localization.Get("aiAssistant"), Localization.Get("aiAssistantPositioning")),
             WorkspaceArea.Recovery => (Localization.Get("recoveryCenter"), Localization.Get("recoverySubtitle")),
             _ => (Localization.Get("home"), Localization.Get("safePlan"))
         };
@@ -382,7 +392,7 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
         var activeBorder = (SolidColorBrush)Application.Current.Resources["ActiveNavBorderBrush"];
         var inactive = (SolidColorBrush)Application.Current.Resources["TransparentBrush"];
         var inactiveBorder = (SolidColorBrush)Application.Current.Resources["TransparentBrush"];
-        foreach (var button in new[] { HomeNavButton, SystemNavButton, RegistryNavButton, SoftwareNavButton, RecoveryNavButton })
+        foreach (var button in new[] { HomeNavButton, SystemNavButton, RegistryNavButton, SoftwareNavButton, PluginsNavButton, AiAssistantNavButton, RecoveryNavButton })
         {
             var selected = button.Tag?.ToString() == _activeArea.ToString();
             button.Background = selected ? active : inactive;
@@ -399,6 +409,12 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
         var installer = new ControlledExtensionInstaller(ExtensionTrustPolicy.CreateValidator());
         var installed = await installer.ListAsync(ExtensionPaths.UserRoot, compatibility.CurrentBuild,
             compatibility.OsArchitecture, CancellationToken.None);
+        _installedExtensions.Clear();
+        foreach (var extension in installed) _installedExtensions.Add(extension);
+        PluginsEmptyText.Visibility = installed.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+        PluginsStatusText.Text = installed.Count == 0
+            ? Localization.Get("pluginInstallHint")
+            : Localization.Format("installedPluginsCount", installed.Count);
         _catalog = new Catalog(installed);
         LoadCatalogRows();
         ApplyFilter();
@@ -968,14 +984,30 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
                 [AppContext.BaseDirectory, stateRoot], compatibility.CurrentBuild, compatibility.OsArchitecture, CancellationToken.None);
             await ReloadCatalogAsync();
             ExecutionText.Text = Localization.Format("extensionInstalled", installed.PackageId, installed.Version);
+            PluginsStatusText.Text = ExecutionText.Text;
         }
         catch (ExtensionInstallException exception)
         {
             ExecutionText.Text = Localization.Format("extensionInstallFailedWithCode", exception.Code, SensitiveDataRedactor.Redact(exception.Message));
+            PluginsStatusText.Text = ExecutionText.Text;
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or InvalidOperationException)
         {
             ExecutionText.Text = Localization.Format("extensionInstallFailed", SensitiveDataRedactor.Redact(exception.Message));
+            PluginsStatusText.Text = ExecutionText.Text;
+        }
+    }
+
+    private async void RefreshPlugins_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            await ReloadCatalogAsync();
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            PluginsEmptyText.Visibility = Visibility.Collapsed;
+            PluginsStatusText.Text = Localization.Format("extensionCatalogRefreshFailed", SensitiveDataRedactor.Redact(exception.Message));
         }
     }
 
@@ -1575,7 +1607,7 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
         };
     }
 
-    private enum WorkspaceArea { Home, System, Registry, Software, Recovery }
+    private enum WorkspaceArea { Home, System, Registry, Software, Plugins, AiAssistant, Recovery }
 
     private sealed record LocalizedCategory(string Key, string DisplayName, bool IsSelected)
     {

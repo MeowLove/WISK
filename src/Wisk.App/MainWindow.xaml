@@ -1,7 +1,7 @@
-<ui:FluentWindow x:Class="Wisk.App.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml" xmlns:local="clr-namespace:Wisk.App" Title="WISK v3.0.0" Width="1440" Height="900" MinWidth="1180" MinHeight="720" Background="{DynamicResource AppWindowBrush}" ExtendsContentIntoTitleBar="True" WindowBackdropType="Mica" WindowCornerPreference="Round">
+<ui:FluentWindow x:Class="Wisk.App.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml" xmlns:local="clr-namespace:Wisk.App" Title="WISK v3.1.0" Width="1440" Height="900" MinWidth="1180" MinHeight="720" Background="{DynamicResource AppWindowBrush}" ExtendsContentIntoTitleBar="True" WindowBackdropType="Mica" WindowCornerPreference="Round">
   <Grid>
     <Grid.RowDefinitions><RowDefinition Height="40"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-    <ui:TitleBar x:Name="AppTitleBar" Grid.Row="0" Grid.ColumnSpan="2" Title="WISK v3.0.0" ShowMinimize="True" ShowMaximize="True" ShowClose="True" AutomationProperties.Name="WISK title bar"/>
+    <ui:TitleBar x:Name="AppTitleBar" Grid.Row="0" Grid.ColumnSpan="2" Title="WISK v3.1.0" ShowMinimize="True" ShowMaximize="True" ShowClose="True" AutomationProperties.Name="WISK title bar"/>
     <Grid Grid.Row="1" x:Name="MainWorkspaceGrid">
     <Grid.ColumnDefinitions><ColumnDefinition x:Name="SidebarColumn" Width="264"/><ColumnDefinition Width="*"/><ColumnDefinition x:Name="ExecutionPaneColumn" Width="380"/></Grid.ColumnDefinitions>
     <Border Background="{DynamicResource AppSidebarBrush}" BorderBrush="{DynamicResource AppBorderBrush}" BorderThickness="0,0,1,0">
@@ -17,6 +17,10 @@
           <Button x:Name="SystemNavButton" Style="{StaticResource NavButtonStyle}" Content="{local:Loc systemConfiguration}" AutomationProperties.Name="{local:Loc systemConfiguration}" Tag="System" Click="Navigate_Click"/>
           <Button x:Name="RegistryNavButton" Visibility="Collapsed" Style="{StaticResource NavButtonStyle}" Content="{local:Loc registryOptimization}" AutomationProperties.Name="{local:Loc registryOptimization}" Tag="Registry" Click="Navigate_Click"/>
           <Button x:Name="SoftwareNavButton" Style="{StaticResource NavButtonStyle}" Content="{local:Loc software}" AutomationProperties.Name="{local:Loc software}" Tag="Software" Click="Navigate_Click"/>
+          <Button x:Name="PluginsNavButton" Style="{StaticResource NavButtonStyle}" Content="{local:Loc plugins}" AutomationProperties.Name="{local:Loc plugins}" Tag="Plugins" Click="Navigate_Click"/>
+          <Button x:Name="AiAssistantNavButton" Style="{StaticResource NavButtonStyle}" AutomationProperties.Name="{local:Loc aiAssistant}" Tag="AiAssistant" Click="Navigate_Click">
+            <Button.Content><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="{local:Loc aiAssistant}" VerticalAlignment="Center"/><Border Grid.Column="1" Background="{DynamicResource BadgeBrush}" BorderBrush="{DynamicResource BadgeBorderBrush}" BorderThickness="1" CornerRadius="4" Padding="5,2" Margin="8,0,0,0"><TextBlock Text="{local:Loc betaTesting}" Foreground="{DynamicResource AccentBrush}" FontSize="9" FontWeight="SemiBold"/></Border></Grid></Button.Content>
+          </Button>
           <Button x:Name="RecoveryNavButton" Style="{StaticResource NavButtonStyle}" Content="{local:Loc recoveryCenter}" AutomationProperties.Name="{local:Loc recoveryCenter}" Tag="Recovery" Click="Navigate_Click"/>
         </StackPanel>
         <Border Grid.Row="2" Style="{StaticResource PreferencesCardStyle}">
@@ -130,6 +134,47 @@
             <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto"><ItemsControl x:Name="SoftwareGrid"><ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel><ItemsControl.ItemTemplate><DataTemplate><Border Style="{StaticResource StoreCardStyle}" Width="274" Height="238"><Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions><DockPanel><Border Width="42" Height="42" Background="{DynamicResource AccentBrush}" CornerRadius="10" DockPanel.Dock="Left"><TextBlock Text="{local:Loc appBadge}" Foreground="White" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><Button Content="{Binding AddLabel}" IsEnabled="{Binding CanAdd}" Tag="{Binding Id}" Click="AddTask_Click" VerticalAlignment="Center" HorizontalAlignment="Right" Padding="10,5" MinHeight="32"/></DockPanel><StackPanel Grid.Row="1" Margin="0,12,0,0"><TextBlock Text="{Binding DisplayName}" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap"/><TextBlock Text="{Binding Domain}" Foreground="{DynamicResource AppMutedTextBrush}" Margin="0,5,0,0"/><TextBlock Text="{Binding Availability}" Foreground="{DynamicResource AppMutedTextBrush}" FontSize="11" Margin="0,5,0,0" TextWrapping="Wrap"/><TextBlock Text="{Binding PackageId}" Foreground="{DynamicResource AppMutedTextBrush}" FontSize="10" Margin="0,4,0,0" TextWrapping="Wrap"/><TextBlock Text="{Binding RelationSummary}" Foreground="{DynamicResource AccentBrush}" FontSize="10" Margin="0,4,0,0" TextWrapping="Wrap"/></StackPanel><DockPanel Grid.Row="2"><TextBlock Text="{Binding SoftwareStatus}" Foreground="{DynamicResource AppMutedTextBrush}" VerticalAlignment="Center"/><Button DockPanel.Dock="Right" Content="{local:Loc details}" Tag="{Binding Id}" Click="TaskDetails_Click" Padding="8,3" MinHeight="28"/></DockPanel></Grid></Border></DataTemplate></ItemsControl.ItemTemplate></ItemsControl></ScrollViewer>
             <DockPanel Grid.Row="4" Margin="0,16,0,0"><TextBlock x:Name="SoftwareSelectionText" Foreground="{DynamicResource AppMutedTextBrush}" VerticalAlignment="Center"/></DockPanel>
           </Grid>
+        </TabItem>
+
+        <TabItem x:Name="PluginsTab">
+          <Grid>
+            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+            <Border Style="{StaticResource SurfaceStyle}" Padding="22">
+              <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                <StackPanel><TextBlock Text="{local:Loc plugins}" FontSize="22" FontWeight="SemiBold"/><TextBlock Text="{local:Loc pluginsSubtitle}" Foreground="{DynamicResource AppMutedTextBrush}" Margin="0,6,0,0" TextWrapping="Wrap"/></StackPanel>
+                <Button Grid.Column="1" Content="{local:Loc installExtensionButton}" Click="InstallExtension_Click" VerticalAlignment="Center"/>
+              </Grid>
+            </Border>
+            <WrapPanel Grid.Row="1" Margin="0,16,0,10"><Button Content="{local:Loc refresh}" Click="RefreshPlugins_Click"/><TextBlock Text="{local:Loc trustedPackageHint}" Foreground="{DynamicResource AppMutedTextBrush}" VerticalAlignment="Center" Margin="8,0,0,0" TextWrapping="Wrap"/></WrapPanel>
+            <Grid Grid.Row="2">
+              <DataGrid x:Name="InstalledExtensionsGrid" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" HeadersVisibility="Column" GridLinesVisibility="Horizontal">
+                <DataGrid.Columns><DataGridTextColumn Header="{local:Loc packageId}" Binding="{Binding PackageId}" Width="1.2*"/><DataGridTextColumn Header="{local:Loc version}" Binding="{Binding Version}" Width="90"/><DataGridTextColumn Header="{local:Loc publisher}" Binding="{Binding Publisher}" Width="1.2*"/><DataGridTextColumn Header="{local:Loc installedAt}" Binding="{Binding InstalledAt, StringFormat={}{0:g}}" Width="150"/><DataGridTextColumn Header="{local:Loc providedTasks}" Binding="{Binding Tasks.Length}" Width="100"/></DataGrid.Columns>
+              </DataGrid>
+              <TextBlock x:Name="PluginsEmptyText" Text="{local:Loc noInstalledPlugins}" Foreground="{DynamicResource AppMutedTextBrush}" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="24" IsHitTestVisible="False"/>
+            </Grid>
+            <TextBlock x:Name="PluginsStatusText" Grid.Row="3" Foreground="{DynamicResource AppMutedTextBrush}" TextWrapping="Wrap" Margin="0,12,0,0"/>
+          </Grid>
+        </TabItem>
+
+        <TabItem x:Name="AiAssistantTab">
+          <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+              <Border Style="{StaticResource SurfaceStyle}" Padding="28">
+                <StackPanel>
+                  <Grid Margin="0,0,0,14"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="{local:Loc aiAssistant}" FontSize="24" FontWeight="SemiBold"/><Border Grid.Column="1" Background="{DynamicResource BadgeBrush}" BorderBrush="{DynamicResource BadgeBorderBrush}" BorderThickness="1" CornerRadius="4" Padding="9,5" VerticalAlignment="Center"><TextBlock Text="{local:Loc betaTesting}" Foreground="{DynamicResource AccentBrush}" FontWeight="SemiBold"/></Border></Grid>
+                  <TextBlock Text="{local:Loc aiAssistantPositioning}" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                  <TextBlock Text="{local:Loc aiAssistantScope}" Foreground="{DynamicResource AppMutedTextBrush}" Margin="0,10,0,0" TextWrapping="Wrap"/>
+                  <Border Background="{DynamicResource BadgeBrush}" BorderBrush="{DynamicResource BadgeBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,22,0,0"><TextBlock Text="{local:Loc aiAssistantUnavailable}" Foreground="{DynamicResource AppTextBrush}" TextWrapping="Wrap"/></Border>
+                </StackPanel>
+              </Border>
+              <TextBlock Text="{local:Loc aiAssistantPlannedUses}" FontSize="18" FontWeight="SemiBold" Margin="0,20,0,10"/>
+              <UniformGrid Columns="3">
+                <Border Style="{StaticResource StoreCardStyle}" Margin="0,0,12,0"><StackPanel><TextBlock Text="{local:Loc aiUseUnderstand}" FontWeight="SemiBold"/><TextBlock Text="{local:Loc aiUseUnderstandHint}" Foreground="{DynamicResource AppMutedTextBrush}" Margin="0,8,0,0" TextWrapping="Wrap"/></StackPanel></Border>
+                <Border Style="{StaticResource StoreCardStyle}" Margin="0,0,12,0"><StackPanel><TextBlock Text="{local:Loc aiUsePlan}" FontWeight="SemiBold"/><TextBlock Text="{local:Loc aiUsePlanHint}" Foreground="{DynamicResource AppMutedTextBrush}" Margin="0,8,0,0" TextWrapping="Wrap"/></StackPanel></Border>
+                <Border Style="{StaticResource StoreCardStyle}"><StackPanel><TextBlock Text="{local:Loc aiUseReview}" FontWeight="SemiBold"/><TextBlock Text="{local:Loc aiUseReviewHint}" Foreground="{DynamicResource AppMutedTextBrush}" Margin="0,8,0,0" TextWrapping="Wrap"/></StackPanel></Border>
+              </UniformGrid>
+            </StackPanel>
+          </ScrollViewer>
         </TabItem>
 
         <TabItem x:Name="RecoveryTab">

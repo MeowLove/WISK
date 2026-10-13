@@ -10,7 +10,7 @@ public static class BuildInfo
         .GroupBy(attribute => attribute.Key, StringComparer.OrdinalIgnoreCase)
         .ToDictionary(group => group.Key, group => group.Last().Value ?? string.Empty, StringComparer.OrdinalIgnoreCase);
 
-    public static string Version => Assembly.GetName().Version?.ToString(3) ?? "3.0.0";
+    public static string Version => Assembly.GetName().Version?.ToString(3) ?? "3.1.0";
     public static string SourceCommit => Value("SourceCommit", "local");
     public static string ShortCommit => SourceCommit.Length > 8 ? SourceCommit[..8] : SourceCommit;
     public static string BuildTimestampUtc => Value("BuildTimestampUtc", "development");

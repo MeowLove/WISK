@@ -1,4 +1,4 @@
-# WISK 3.0
+# WISK 3.1
 
 WISK (Windows Init Setup Kit) is an open-source Windows 11 initialization and
 configuration workspace. It combines auditable system settings, registry-backed
@@ -8,11 +8,13 @@ Verify execution model.
 WISK is the Windows member of the MeowLove Init Setup Kit family. The Linux
 counterpart is [LISK](https://github.com/MeowLove/LISK).
 
-## WISK 3.0 public release and feedback
+## WISK 3.1 update and feedback
 
-WISK 3.0.0 is the first public release of the new WISK implementation. We plan
-to iterate rapidly based on community feedback. Please report reproducible
-issues so we can prioritize fixes:
+The current source version is WISK 3.1.0. The first public release of this
+implementation was WISK 3.0.0. The 3.1 update adds plugin management and an AI
+assistant entry marked as in testing. We plan to iterate rapidly based on
+community feedback. Please report reproducible issues so we can prioritize
+fixes:
 
 - [Download WISK 3.0.0](https://github.com/MeowLove/WISK/releases/tag/v3.0.0)
 - [Read the release testing guide](docs/Preview-Testing.md)
@@ -29,7 +31,7 @@ This repository contains the application source, tests, public catalog data,
 schemas, packaging scripts, and architecture docs.
 The local product requirements manual remains under the ignored `requirements/`
 directory and is never published. Superseded source and compatibility paths are
-not part of this workspace. `src/` is the only WISK 3.0 implementation.
+not part of this workspace. `src/` is the only WISK 3.1 implementation.
 
 The public catalog is [`catalog/index.json`](catalog/index.json), validated by
 [`tools/validate-catalog.mjs`](tools/validate-catalog.mjs). It records WISK's
@@ -47,11 +49,11 @@ packaging/           Release and CLI publishing wrappers
 tools/               Read-only UI smoke and catalog validation tools
 artifacts/           Ignored build, test, and publish output
 docs/                Public architecture and development documentation
-requirements/        Local-only V3 requirements; ignored by Git
+requirements/        Local-only V3.1 requirements; ignored by Git
 ```
 
 The source namespaces and project paths use `Wisk.*`; the product, assembly
-metadata, executable names, title, and release version use WISK 3.0.0.
+metadata, executable names, title, and application version use WISK 3.1.0.
 
 ## Build and test
 

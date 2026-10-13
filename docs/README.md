@@ -8,7 +8,7 @@
 - The architecture document also defines the `Build-Wisk.ps1` profile/runtime
   matrix and the canonical `artifacts/` output boundary.
 - `requirements/` at the repository root is intentionally local-only and is
-  ignored by Git. The local WISK 3.0 requirements manual is the product
+  ignored by Git. The local WISK 3.1 requirements manual is the product
   behavior authority during development.
-- WISK 3.0 documentation describes the current product contract; superseded
+- WISK 3.x documentation describes the current product contract; superseded
   implementation notes and compatibility paths are not runtime inputs.
