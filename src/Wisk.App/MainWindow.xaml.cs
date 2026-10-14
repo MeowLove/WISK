@@ -1595,9 +1595,13 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
             AllowElevatedCheck.IsChecked == true, AllowHighRiskCheck.IsChecked == true);
         var parameters = ImmutableDictionary<string, string>.Empty;
         var accounts = ImmutableArray.CreateBuilder<ProfileAccount>();
-        foreach (var draft in _draftItems.Where(item => ConfigurationDialog.RequiresInput(item.TaskId)))
+        foreach (var draft in _draftItems)
         {
-            if (draft.Configuration is not { } configuration) return null;
+            if (draft.Configuration is not { } configuration)
+            {
+                if (ConfigurationDialog.RequiresInput(draft.TaskId)) return null;
+                continue;
+            }
             foreach (var pair in configuration.Parameters) parameters = parameters.SetItem(pair.Key, pair.Value);
             if (configuration.Accounts is { IsDefaultOrEmpty: false } configuredAccounts) accounts.AddRange(configuredAccounts);
         }
