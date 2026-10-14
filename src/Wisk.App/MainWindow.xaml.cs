@@ -39,7 +39,7 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
     private bool _darkTheme;
     private readonly string? _uacEnvelopePath;
     private WorkspaceArea _activeArea = WorkspaceArea.Home;
-    private bool _executionPaneExpanded = true;
+    private bool _executionPaneExpanded;
     private readonly AppSettingsStore _settingsStore = new();
     private AppSettings _settings = new();
     private bool _loadingLanguage;
@@ -81,7 +81,7 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
         UpdateActiveNavigation();
         Loaded += MainWindow_Loaded;
         SizeChanged += (_, _) => { UpdateResponsiveLayout(); ScheduleCategoryLayoutUpdate(); };
-        UpdateResponsiveLayout();
+        SetExecutionPaneExpanded(false);
     }
 
     private void AddLanguageSelector()
@@ -163,7 +163,7 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
         var compact = ActualWidth > 0 && ActualWidth < 1320;
         SidebarColumn.Width = new GridLength(compact ? 220 : 264);
         ContentColumnHost.Margin = compact ? new Thickness(22, 24, 18, 24) : new Thickness(36, 30, 28, 30);
-        if (_executionPaneExpanded) ExecutionPaneColumn.Width = new GridLength(compact ? 330 : 380);
+        ExecutionPaneColumn.Width = new GridLength(_executionPaneExpanded ? compact ? 330 : 380 : 56);
     }
 
     private static IEnumerable<T> FindVisualChildren<T>(DependencyObject parent) where T : DependencyObject
@@ -241,9 +241,9 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
         if (SelectionText is not null) SelectionText.Text = summary;
         if (SoftwareSelectionText is not null) SoftwareSelectionText.Text = summary;
         if (RegistrySelectionText is not null) RegistrySelectionText.Text = summary;
-        if (HomeSelectionText is not null) HomeSelectionText.Text = string.Format(Localization.Get("tasksSelected"), selected);
         if (HomeTaskCountText is not null) HomeTaskCountText.Text = selected.ToString();
         if (QueueCountText is not null) QueueCountText.Text = string.Format(Localization.Get("queueCount"), _executionRows.Count);
+        if (CollapsedQueueCountText is not null) CollapsedQueueCountText.Text = _executionRows.Count.ToString();
     }
 
     private void Filter_Changed(object sender, RoutedEventArgs e) => ApplyFilter();
@@ -336,7 +336,7 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
     private void SetExecutionPaneExpanded(bool expanded)
     {
         _executionPaneExpanded = expanded;
-        ExecutionPaneColumn.Width = expanded ? new GridLength(380) : new GridLength(56);
+        UpdateResponsiveLayout();
         ExecutionPaneHeader.Visibility = expanded ? Visibility.Visible : Visibility.Collapsed;
         ExecutionPaneToggleButton.Visibility = expanded ? Visibility.Visible : Visibility.Collapsed;
         ExecutionViewTabs.Visibility = expanded ? Visibility.Visible : Visibility.Collapsed;
@@ -508,6 +508,7 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
         _draftItems.AddRange(additions);
         RefreshTaskPlanStates();
         SyncExecutionQueueWithDraft();
+        SetExecutionPaneExpanded(true);
         var recommendations = TaskRelationPlanner.Recommendations(descriptor)
             .Where(item => !_draftItems.Any(draft => draft.TaskId.Equals(item.TargetTaskId, StringComparison.OrdinalIgnoreCase))).ToArray();
         if (recommendations.Length > 0)

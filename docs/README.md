@@ -1,5 +1,7 @@
 # WISK Documentation
 
+- [WISK 3.1 product overview](../README.md) summarizes the current plugin
+  workspace, AI assistant placeholder, branding asset, and feedback path.
 - [WISK 3.0 architecture](WISK-3.0-Architecture.md) is the public design
   authority for repository boundaries, runtime layers, safety, and verification.
 - [WISK 3.0.0 release testing guide](Preview-Testing.md) describes package

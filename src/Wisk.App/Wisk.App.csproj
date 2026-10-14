@@ -25,6 +25,9 @@
     <AssemblyMetadata Include="SignatureStatus" Value="$(SignatureStatus)" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Assets\wisk-logo.png" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="WPF-UI" Version="4.3.0" />
     <ProjectReference Include="..\Wisk.Contracts\Wisk.Contracts.csproj" />
     <ProjectReference Include="..\Wisk.Core\Wisk.Core.csproj" />

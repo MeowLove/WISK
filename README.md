@@ -1,5 +1,7 @@
 # WISK 3.1
 
+<p><img src="src/Wisk.App/Assets/wisk-logo.png" alt="WISK application icon" width="112" /></p>
+
 WISK (Windows Init Setup Kit) is an open-source Windows 11 initialization and
 configuration workspace. It combines auditable system settings, registry-backed
 features, software actions, recovery evidence, and a safe Check -> Apply ->
@@ -11,10 +13,12 @@ counterpart is [LISK](https://github.com/MeowLove/LISK).
 ## WISK 3.1 update and feedback
 
 The current source version is WISK 3.1.0. The first public release of this
-implementation was WISK 3.0.0. The 3.1 update adds plugin management and an AI
-assistant entry marked as in testing. We plan to iterate rapidly based on
-community feedback. Please report reproducible issues so we can prioritize
-fixes:
+implementation was WISK 3.0.0. WISK 3.1 adds a controlled plugin workspace
+and an AI assistant placeholder labeled “In beta development.” The assistant is
+intended to answer WISK initialization and supported-settings questions only.
+WISK 3.1.0 does not call a cloud AI API, run a local AI model, or execute
+AI-generated actions. We plan to iterate rapidly based on community feedback.
+Please report reproducible issues so we can prioritize fixes:
 
 - [Download WISK 3.0.0](https://github.com/MeowLove/WISK/releases/tag/v3.0.0)
 - [Read the release testing guide](docs/Preview-Testing.md)
@@ -53,13 +57,17 @@ requirements/        Local-only V3.1 requirements; ignored by Git
 ```
 
 The source namespaces and project paths use `Wisk.*`; the product, assembly
-metadata, executable names, title, and application version use WISK 3.1.0.
+metadata, executable names, title, and application version use WISK 3.1.0. The
+transparent logo at `src/Wisk.App/Assets/wisk-logo.png` is embedded as a WPF
+resource and used in the main window; the white-background variant is retained
+as a design reference.
 
 ## Build and test
 
 The repository pins .NET SDK `10.0.401` in `global.json`.
 
 ```powershell
+.\Build-Wisk.ps1 -Target Run -Profile Development -RuntimeMode FrameworkDependent -Restore
 .\Build-Wisk.ps1 -Target Build -Profile Development -RuntimeMode FrameworkDependent -Restore
 .\Build-Wisk.ps1 -Target Test -Profile Test -RuntimeMode FrameworkDependent -Restore -Coverage
 .\Build-Wisk.ps1 -Target Publish -Profile Release -RuntimeMode FrameworkDependent
