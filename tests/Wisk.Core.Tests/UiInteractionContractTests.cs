@@ -54,6 +54,29 @@ public sealed class UiInteractionContractTests
     }
 
     [Fact]
+    public void SelectedCategoryTabsHavePersistentVisualState()
+    {
+        var root = RepositoryRoot();
+        var app = File.ReadAllText(Path.Combine(root, "src", "Wisk.App", "App.xaml"));
+        var lightTheme = File.ReadAllText(Path.Combine(root, "src", "Wisk.App", "Themes", "Light.xaml"));
+        var darkTheme = File.ReadAllText(Path.Combine(root, "src", "Wisk.App", "Themes", "Dark.xaml"));
+        var code = File.ReadAllText(Path.Combine(root, "src", "Wisk.App", "App.xaml.cs"));
+
+        Assert.Contains("x:Key=\"CategoryTabButtonStyle\"", app);
+        Assert.Contains("Property=\"BorderThickness\" Value=\"1\"", app);
+        Assert.Contains("Property=\"BorderThickness\" Value=\"2\"", app);
+        Assert.Contains("Property=\"Effect\" Value=\"{DynamicResource CategoryTabSelectedShadow}\"", app);
+        Assert.Contains("CategoryTabSelectedBrush", app);
+        Assert.Contains("<MultiTrigger>", app);
+        Assert.Contains("<Condition Property=\"Tag\" Value=\"True\"/>", app);
+        Assert.Contains("<Condition Property=\"IsMouseOver\" Value=\"True\"/>", app);
+        Assert.Contains("<DataTrigger Binding=\"{Binding IsSelected}\" Value=\"True\">", app);
+        Assert.Contains("CategoryTabSelectedBrush", lightTheme);
+        Assert.Contains("CategoryTabSelectedBrush", darkTheme);
+        Assert.Contains("Resources[\"CategoryTabSelectedBrush\"] = SystemColors.HighlightBrush", code);
+    }
+
+    [Fact]
     public void AddFlowUsesDraftInstancesAndDoesNotConfigureDuringApply()
     {
         var root = RepositoryRoot();

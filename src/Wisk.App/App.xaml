@@ -20,7 +20,74 @@
     <Style TargetType="PasswordBox"><Setter Property="Padding" Value="12,9"/><Setter Property="MinHeight" Value="40"/><Setter Property="BorderBrush" Value="{DynamicResource AppBorderBrush}"/><Setter Property="BorderThickness" Value="1"/><Setter Property="Background" Value="{DynamicResource AppPanelBrush}"/><Setter Property="FontSize" Value="14"/></Style>
     <Style TargetType="ComboBox"><Setter Property="MinHeight" Value="40"/><Setter Property="Padding" Value="10,5"/><Setter Property="Background" Value="{DynamicResource AppPanelBrush}"/><Setter Property="BorderBrush" Value="{DynamicResource AppBorderBrush}"/><Setter Property="BorderThickness" Value="1"/><Setter Property="FontSize" Value="14"/></Style>
     <Style x:Key="PreferenceButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Setter Property="HorizontalContentAlignment" Value="Center"/><Setter Property="Margin" Value="0"/><Setter Property="Padding" Value="10,8"/><Setter Property="MinHeight" Value="34"/><Setter Property="FontSize" Value="12"/></Style>
-    <Style x:Key="CategoryTabButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Setter Property="MinHeight" Value="34"/><Setter Property="Padding" Value="16,6"/><Setter Property="Margin" Value="0,0,8,8"/><Setter Property="Background" Value="{DynamicResource AppPanelBrush}"/><Setter Property="BorderBrush" Value="{DynamicResource AppBorderBrush}"/><Style.Triggers><Trigger Property="Tag" Value="True"><Setter Property="Background" Value="{DynamicResource ActiveNavBrush}"/><Setter Property="BorderBrush" Value="{DynamicResource ActiveNavBorderBrush}"/><Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/><Setter Property="FontWeight" Value="SemiBold"/></Trigger></Style.Triggers></Style>
+    <Style x:Key="CategoryTabButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+      <Setter Property="MinHeight" Value="34"/>
+      <Setter Property="Padding" Value="16,6"/>
+      <Setter Property="Margin" Value="0,0,8,8"/>
+      <Setter Property="Background" Value="{DynamicResource AppPanelBrush}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource AppBorderBrush}"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="CategoryTabBorder"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="7"
+                    Padding="{TemplateBinding Padding}"
+                    Effect="{TemplateBinding Effect}">
+              <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                RecognizesAccessKey="True"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="CategoryTabBorder" Property="Background" Value="{DynamicResource HoverBrush}"/>
+                <Setter TargetName="CategoryTabBorder" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+              </Trigger>
+              <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                <Setter TargetName="CategoryTabBorder" Property="Background" Value="{DynamicResource CategoryTabSelectedBrush}"/>
+                <Setter TargetName="CategoryTabBorder" Property="BorderBrush" Value="{DynamicResource CategoryTabSelectedBorderBrush}"/>
+              </DataTrigger>
+              <MultiTrigger>
+                <MultiTrigger.Conditions>
+                  <Condition Property="Tag" Value="True"/>
+                  <Condition Property="IsMouseOver" Value="True"/>
+                </MultiTrigger.Conditions>
+                <Setter TargetName="CategoryTabBorder" Property="Background" Value="{DynamicResource CategoryTabSelectedBrush}"/>
+                <Setter TargetName="CategoryTabBorder" Property="BorderBrush" Value="{DynamicResource CategoryTabSelectedBorderBrush}"/>
+              </MultiTrigger>
+              <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Opacity" Value="0.82"/>
+              </Trigger>
+              <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="0.48"/>
+                <Setter Property="Cursor" Value="Arrow"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+      <Style.Triggers>
+        <Trigger Property="Tag" Value="True">
+          <Setter Property="Background" Value="{DynamicResource CategoryTabSelectedBrush}"/>
+          <Setter Property="BorderBrush" Value="{DynamicResource CategoryTabSelectedBorderBrush}"/>
+          <Setter Property="BorderThickness" Value="2"/>
+          <Setter Property="Foreground" Value="{DynamicResource CategoryTabSelectedForegroundBrush}"/>
+          <Setter Property="FontWeight" Value="SemiBold"/>
+          <Setter Property="Effect" Value="{DynamicResource CategoryTabSelectedShadow}"/>
+        </Trigger>
+        <DataTrigger Binding="{Binding IsSelected}" Value="True">
+          <Setter Property="Background" Value="{DynamicResource CategoryTabSelectedBrush}"/>
+          <Setter Property="BorderBrush" Value="{DynamicResource CategoryTabSelectedBorderBrush}"/>
+          <Setter Property="BorderThickness" Value="2"/>
+          <Setter Property="Foreground" Value="{DynamicResource CategoryTabSelectedForegroundBrush}"/>
+          <Setter Property="FontWeight" Value="SemiBold"/>
+          <Setter Property="Effect" Value="{DynamicResource CategoryTabSelectedShadow}"/>
+        </DataTrigger>
+      </Style.Triggers>
+    </Style>
     <Style x:Key="CategoryExpansionButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Setter Property="HorizontalAlignment" Value="Left"/><Setter Property="Margin" Value="0,4,0,0"/><Setter Property="Padding" Value="8,3"/><Setter Property="MinHeight" Value="28"/><Setter Property="Background" Value="Transparent"/><Setter Property="BorderThickness" Value="0"/><Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/></Style>
     <Style x:Key="ComboBoxToggleButtonStyle" TargetType="ToggleButton"><Setter Property="Focusable" Value="False"/><Setter Property="ClickMode" Value="Press"/><Setter Property="Background" Value="{DynamicResource AppPanelBrush}"/><Setter Property="BorderBrush" Value="{DynamicResource AppBorderBrush}"/><Setter Property="BorderThickness" Value="1"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ToggleButton"><Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6" Padding="{TemplateBinding Padding}"><ContentPresenter/></Border></ControlTemplate></Setter.Value></Setter></Style>
     <Style x:Key="PreferenceComboBoxStyle" TargetType="ComboBox"><Setter Property="MinHeight" Value="36"/><Setter Property="Foreground" Value="{DynamicResource AppTextBrush}"/><Setter Property="Background" Value="{DynamicResource AppPanelBrush}"/><Setter Property="BorderBrush" Value="{DynamicResource AppBorderBrush}"/><Setter Property="BorderThickness" Value="1"/><Setter Property="Padding" Value="10,5"/><Setter Property="ItemContainerStyle"><Setter.Value><Style TargetType="ComboBoxItem"><Setter Property="Foreground" Value="{DynamicResource AppTextBrush}"/><Setter Property="Background" Value="{DynamicResource AppPanelBrush}"/><Setter Property="Padding" Value="10,8"/><Style.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="{DynamicResource HoverBrush}"/></Trigger><Trigger Property="IsSelected" Value="True"><Setter Property="Background" Value="{DynamicResource ActiveNavBrush}"/><Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/></Trigger></Style.Triggers></Style></Setter.Value></Setter><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ComboBox"><Grid><ToggleButton Style="{StaticResource ComboBoxToggleButtonStyle}" IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"><Grid><ContentPresenter Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" VerticalAlignment="Center"/><TextBlock Text="v" Foreground="{DynamicResource AppMutedTextBrush}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0"/></Grid></ToggleButton><Popup IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" AllowsTransparency="True" Focusable="False"><Border Background="{DynamicResource AppPanelBrush}" BorderBrush="{DynamicResource AppBorderBrush}" BorderThickness="1" CornerRadius="6" Margin="0,4,0,0" MinWidth="180"><ScrollViewer MaxHeight="280"><ItemsPresenter/></ScrollViewer></Border></Popup></Grid></ControlTemplate></Setter.Value></Setter></Style>

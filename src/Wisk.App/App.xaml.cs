@@ -42,6 +42,9 @@ public partial class App : Application
         Resources["AccentBrush"] = SystemColors.HighlightBrush;
         Resources["AccentTextBrush"] = SystemColors.HighlightTextBrush;
         Resources["AppBorderBrush"] = SystemColors.ActiveBorderBrush;
+        Resources["CategoryTabSelectedBrush"] = SystemColors.HighlightBrush;
+        Resources["CategoryTabSelectedBorderBrush"] = SystemColors.HighlightBrush;
+        Resources["CategoryTabSelectedForegroundBrush"] = SystemColors.HighlightTextBrush;
         Resources["ElevatedRiskBrush"] = SystemColors.WindowBrush;
         Resources["HighRiskBrush"] = SystemColors.WindowBrush;
     }

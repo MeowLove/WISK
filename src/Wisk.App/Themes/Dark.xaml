@@ -18,6 +18,10 @@
   <SolidColorBrush x:Key="DataGridAlternateBrush" Color="#2B3850"/>
   <SolidColorBrush x:Key="ActiveNavBrush" Color="#244B78"/>
   <SolidColorBrush x:Key="ActiveNavBorderBrush" Color="#69A8FF"/>
+  <SolidColorBrush x:Key="CategoryTabSelectedBrush" Color="#315D8F"/>
+  <SolidColorBrush x:Key="CategoryTabSelectedBorderBrush" Color="#A5CEFF"/>
+  <SolidColorBrush x:Key="CategoryTabSelectedForegroundBrush" Color="#FFFFFF"/>
+  <DropShadowEffect x:Key="CategoryTabSelectedShadow" BlurRadius="8" ShadowDepth="1" Opacity="0.34" Color="#0B1424"/>
   <SolidColorBrush x:Key="TransparentBrush" Color="Transparent"/>
   <SolidColorBrush x:Key="TextFillColorPrimaryBrush" Color="#F3F4F6"/>
   <SolidColorBrush x:Key="TextFillColorSecondaryBrush" Color="#CBD5E1"/>
