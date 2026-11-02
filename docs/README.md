@@ -1,5 +1,7 @@
 # WISK Documentation
 
+- [English README](../README.md) is the canonical repository overview.
+- Localized overviews: [简体中文](README.zh-CN.md) | [Русский](README.ru-RU.md).
 - [WISK 3.2 product overview](../README.md) summarizes the current plugin
   workspace, AI assistant placeholder, branding asset, and feedback path.
 - [WISK 3.0 architecture](WISK-3.0-Architecture.md) is the public design
