@@ -10,7 +10,7 @@ param(
     [string]$Component = 'App',
     [ValidateSet('win-x64')]
     [string]$Runtime = 'win-x64',
-    [string]$Version = '3.1.0',
+    [string]$Version = '3.2.0',
     [ValidateSet('NotSignedInLocalBuild', 'SignedRelease')]
     [string]$SignatureStatus = 'NotSignedInLocalBuild',
     [switch]$Restore,

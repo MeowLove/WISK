@@ -1,4 +1,4 @@
-# WISK 3.1
+# WISK 3.2
 
 <p><img src="src/Wisk.App/Assets/wisk-logo.png" alt="WISK application icon" width="112" /></p>
 
@@ -10,17 +10,19 @@ Verify execution model.
 WISK is the Windows member of the MeowLove Init Setup Kit family. The Linux
 counterpart is [LISK](https://github.com/MeowLove/LISK).
 
-## WISK 3.1 update and feedback
+## WISK 3.2 update and feedback
 
-The current source version is WISK 3.1.0. The first public release of this
-implementation was WISK 3.0.0. WISK 3.1 adds a controlled plugin workspace
-and an AI assistant placeholder labeled “In beta development.” The assistant is
-intended to answer WISK initialization and supported-settings questions only.
-WISK 3.1.0 does not call a cloud AI API, run a local AI model, or execute
-AI-generated actions. We plan to iterate rapidly based on community feedback.
+The current source version is WISK 3.2.0. The first public release of this
+implementation was WISK 3.0.0. WISK 3.2 continues the controlled plugin
+workspace and the AI assistant placeholder labeled “In beta development.” The
+assistant is intended to answer WISK initialization and supported-settings
+questions only. WISK 3.2.0 does not call a cloud AI API, run a local AI model,
+or execute AI-generated actions. We plan to iterate rapidly based on community
+feedback.
 Please report reproducible issues so we can prioritize fixes:
 
-- [Download WISK 3.0.0](https://github.com/MeowLove/WISK/releases/tag/v3.0.0)
+- [查看 GitHub Releases](https://github.com/MeowLove/WISK/releases)
+- [查看最后一个公开版本 WISK 3.0.0](https://github.com/MeowLove/WISK/releases/tag/v3.0.0)
 - [Read the release testing guide](docs/Preview-Testing.md)
 - [Report a problem](https://github.com/MeowLove/WISK/issues/new?template=bug_report.md)
 
@@ -35,7 +37,7 @@ This repository contains the application source, tests, public catalog data,
 schemas, packaging scripts, and architecture docs.
 The local product requirements manual remains under the ignored `requirements/`
 directory and is never published. Superseded source and compatibility paths are
-not part of this workspace. `src/` is the only WISK 3.1 implementation.
+not part of this workspace. `src/` is the only WISK 3.2 implementation.
 
 The public catalog is [`catalog/index.json`](catalog/index.json), validated by
 [`tools/validate-catalog.mjs`](tools/validate-catalog.mjs). It records WISK's
@@ -53,11 +55,11 @@ packaging/           Release and CLI publishing wrappers
 tools/               Read-only UI smoke and catalog validation tools
 artifacts/           Ignored build, test, and publish output
 docs/                Public architecture and development documentation
-requirements/        Local-only V3.1 requirements; ignored by Git
+requirements/        Local-only V3.2 requirements; ignored by Git
 ```
 
 The source namespaces and project paths use `Wisk.*`; the product, assembly
-metadata, executable names, title, and application version use WISK 3.1.0. The
+metadata, executable names, title, and application version use WISK 3.2.0. The
 transparent logo at `src/Wisk.App/Assets/wisk-logo.png` is embedded as a WPF
 resource and used in the main window; the white-background variant is retained
 as a design reference.
