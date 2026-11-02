@@ -29,28 +29,24 @@ The 3.2 source line continues the controlled plugin workspace and the AI assista
 ## Screenshots
 
 <!-- WISK_SCREENSHOT_1_START: Main workspace and navigation -->
-<!-- Replace this block with a sanitized screenshot before publication. -->
-> Screenshot placeholder: Main workspace and navigation.
-<!-- Example: <img width="1200" alt="WISK main workspace" src="https://github.com/user-attachments/assets/PLACEHOLDER" /> -->
+<img width="1200" alt="WISK main workspace and navigation" src="docs/media/wisk-home.png" />
 <!-- WISK_SCREENSHOT_1_END -->
 
-<!-- WISK_SCREENSHOT_2_START: Task catalog and plan -->
-<!-- Replace this block with a sanitized screenshot before publication. -->
-> Screenshot placeholder: Task catalog and plan.
-<!-- Example: <img width="1200" alt="WISK task catalog and plan" src="https://github.com/user-attachments/assets/PLACEHOLDER" /> -->
+<!-- WISK_SCREENSHOT_2_START: Settings catalog and category filter -->
+<img width="1200" alt="WISK settings catalog and selected category" src="docs/media/wisk-settings.png" />
 <!-- WISK_SCREENSHOT_2_END -->
 
-<!-- WISK_SCREENSHOT_3_START: Check, Apply, Verify workflow -->
-<!-- Replace this block with a sanitized screenshot before publication. -->
-> Screenshot placeholder: Check, Apply, Verify workflow.
-<!-- Example: <img width="1200" alt="WISK Check Apply Verify workflow" src="https://github.com/user-attachments/assets/PLACEHOLDER" /> -->
+<!-- WISK_SCREENSHOT_3_START: Software catalog and selected filters -->
+<img width="1200" alt="WISK software catalog and selected filters" src="docs/media/wisk-software.png" />
 <!-- WISK_SCREENSHOT_3_END -->
 
-<!-- WISK_SCREENSHOT_4_START: Plugin workspace and AI assistant status -->
-<!-- Replace this block with a sanitized screenshot before publication. -->
-> Screenshot placeholder: Plugin workspace and AI assistant status.
-<!-- Example: <img width="1200" alt="WISK plugin workspace and AI assistant" src="https://github.com/user-attachments/assets/PLACEHOLDER" /> -->
+<!-- WISK_SCREENSHOT_4_START: Controlled plugin workspace -->
+<img width="1200" alt="WISK controlled plugin workspace" src="docs/media/wisk-plugins.png" />
 <!-- WISK_SCREENSHOT_4_END -->
+
+<!-- WISK_SCREENSHOT_5_START: AI assistant status -->
+<img width="1200" alt="WISK AI assistant status" src="docs/media/wisk-ai-assistant.png" />
+<!-- WISK_SCREENSHOT_5_END -->
 
 ## What It Does
 

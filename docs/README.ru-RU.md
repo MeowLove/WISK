@@ -27,28 +27,24 @@ WISK предназначен для повторяемого и проверя�
 ## Скриншоты
 
 <!-- WISK_SCREENSHOT_1_START: Основная рабочая область и навигация -->
-<!-- Перед публикацией замените этот блок на скриншот без личных данных. -->
-> Место для скриншота: основная рабочая область и навигация.
-<!-- Пример: <img width="1200" alt="Основная рабочая область WISK" src="https://github.com/user-attachments/assets/PLACEHOLDER" /> -->
+<img width="1200" alt="Основная рабочая область и навигация WISK" src="media/wisk-home.png" />
 <!-- WISK_SCREENSHOT_1_END -->
 
-<!-- WISK_SCREENSHOT_2_START: Каталог задач и план -->
-<!-- Перед публикацией замените этот блок на скриншот без личных данных. -->
-> Место для скриншота: каталог задач и план.
-<!-- Пример: <img width="1200" alt="Каталог задач и план WISK" src="https://github.com/user-attachments/assets/PLACEHOLDER" /> -->
+<!-- WISK_SCREENSHOT_2_START: Каталог настроек и фильтр категорий -->
+<img width="1200" alt="Каталог настроек и выбранная категория WISK" src="media/wisk-settings.png" />
 <!-- WISK_SCREENSHOT_2_END -->
 
-<!-- WISK_SCREENSHOT_3_START: Процесс Check, Apply, Verify -->
-<!-- Перед публикацией замените этот блок на скриншот без личных данных. -->
-> Место для скриншота: процесс Check, Apply, Verify.
-<!-- Пример: <img width="1200" alt="Процесс Check Apply Verify в WISK" src="https://github.com/user-attachments/assets/PLACEHOLDER" /> -->
+<!-- WISK_SCREENSHOT_3_START: Каталог программ и фильтры -->
+<img width="1200" alt="Каталог программ и выбранные фильтры WISK" src="media/wisk-software.png" />
 <!-- WISK_SCREENSHOT_3_END -->
 
-<!-- WISK_SCREENSHOT_4_START: Расширения и статус AI-помощника -->
-<!-- Перед публикацией замените этот блок на скриншот без личных данных. -->
-> Место для скриншота: рабочая область расширений и статус AI-помощника.
-<!-- Пример: <img width="1200" alt="Расширения и AI-помощник WISK" src="https://github.com/user-attachments/assets/PLACEHOLDER" /> -->
+<!-- WISK_SCREENSHOT_4_START: Управляемая рабочая область расширений -->
+<img width="1200" alt="Управляемая рабочая область расширений WISK" src="media/wisk-plugins.png" />
 <!-- WISK_SCREENSHOT_4_END -->
+
+<!-- WISK_SCREENSHOT_5_START: Статус AI-помощника -->
+<img width="1200" alt="Статус AI-помощника WISK" src="media/wisk-ai-assistant.png" />
+<!-- WISK_SCREENSHOT_5_END -->
 
 ## Возможности
 

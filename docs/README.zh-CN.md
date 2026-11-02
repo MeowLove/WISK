@@ -27,28 +27,24 @@ WISK 面向希望拥有可重复、可审查 Windows 配置流程的用户，而
 ## 截图
 
 <!-- WISK_SCREENSHOT_1_START：主工作区与导航 -->
-<!-- 发布前请将此段替换为脱敏截图。 -->
-> 截图预留：主工作区与导航。
-<!-- 示例：<img width="1200" alt="WISK 主工作区" src="https://github.com/user-attachments/assets/PLACEHOLDER" /> -->
+<img width="1200" alt="WISK 主工作区与导航" src="media/wisk-home.png" />
 <!-- WISK_SCREENSHOT_1_END -->
 
-<!-- WISK_SCREENSHOT_2_START：任务目录与计划 -->
-<!-- 发布前请将此段替换为脱敏截图。 -->
-> 截图预留：任务目录与计划。
-<!-- 示例：<img width="1200" alt="WISK 任务目录与计划" src="https://github.com/user-attachments/assets/PLACEHOLDER" /> -->
+<!-- WISK_SCREENSHOT_2_START：设置目录与分类筛选 -->
+<img width="1200" alt="WISK 设置目录与当前分类" src="media/wisk-settings.png" />
 <!-- WISK_SCREENSHOT_2_END -->
 
-<!-- WISK_SCREENSHOT_3_START：Check、Apply、Verify 工作流 -->
-<!-- 发布前请将此段替换为脱敏截图。 -->
-> 截图预留：Check、Apply、Verify 工作流。
-<!-- 示例：<img width="1200" alt="WISK Check Apply Verify 工作流" src="https://github.com/user-attachments/assets/PLACEHOLDER" /> -->
+<!-- WISK_SCREENSHOT_3_START：软件目录与筛选 -->
+<img width="1200" alt="WISK 软件目录与当前筛选" src="media/wisk-software.png" />
 <!-- WISK_SCREENSHOT_3_END -->
 
-<!-- WISK_SCREENSHOT_4_START：插件工作区与 AI 助手状态 -->
-<!-- 发布前请将此段替换为脱敏截图。 -->
-> 截图预留：插件工作区与 AI 助手状态。
-<!-- 示例：<img width="1200" alt="WISK 插件工作区与 AI 助手" src="https://github.com/user-attachments/assets/PLACEHOLDER" /> -->
+<!-- WISK_SCREENSHOT_4_START：受控插件工作区 -->
+<img width="1200" alt="WISK 受控插件工作区" src="media/wisk-plugins.png" />
 <!-- WISK_SCREENSHOT_4_END -->
+
+<!-- WISK_SCREENSHOT_5_START：AI 助手状态 -->
+<img width="1200" alt="WISK AI 助手状态" src="media/wisk-ai-assistant.png" />
+<!-- WISK_SCREENSHOT_5_END -->
 
 ## 功能概览
 
