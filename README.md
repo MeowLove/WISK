@@ -21,8 +21,8 @@ or execute AI-generated actions. We plan to iterate rapidly based on community
 feedback.
 Please report reproducible issues so we can prioritize fixes:
 
-- [查看 GitHub Releases](https://github.com/MeowLove/WISK/releases)
-- [查看最后一个公开版本 WISK 3.0.0](https://github.com/MeowLove/WISK/releases/tag/v3.0.0)
+- [View GitHub Releases](https://github.com/MeowLove/WISK/releases)
+- [View the last public release, WISK 3.0.0](https://github.com/MeowLove/WISK/releases/tag/v3.0.0)
 - [Read the release testing guide](docs/Preview-Testing.md)
 - [Report a problem](https://github.com/MeowLove/WISK/issues/new?template=bug_report.md)
 
