@@ -1,12 +1,12 @@
-# WISK 3.0.0 Release Testing Guide
+# WISK 3.2.0 Release Testing Guide
 
 ## English (authoritative)
 
-WISK 3.0.0 is the first public release of the new WISK implementation. It is a
-regular GitHub Release, not marked as a pre-release, and is intended for rapid
-feedback-driven iteration. This unsigned release has not completed isolated
-system-change acceptance. Get the packages from the official release page:
-<https://github.com/MeowLove/WISK/releases/tag/v3.0.0>.
+WISK 3.2.0 is a regular GitHub Release, not marked as a pre-release, and is
+intended for feedback-driven iteration. This unsigned release has not completed
+isolated system-change acceptance. Get the packages from the official release
+page:
+<https://github.com/MeowLove/WISK/releases/tag/v3.2.0>.
 
 ### Choose a package
 
@@ -54,10 +54,10 @@ personal information. Do not attach passwords, tokens, or signing material.
 
 ## 简体中文
 
-WISK 3.0.0 是全新 WISK 实现的首个公开 Release，不标记为 Pre-release，
-并计划根据社区反馈快速迭代。此版本尚未签名，也尚未完成隔离环境中的系统修改验收。
+WISK 3.2.0 是正式公开 Release，不标记为 Pre-release，
+并将根据社区反馈持续迭代。此版本尚未签名，也尚未完成隔离环境中的系统修改验收。
 请从官方 Release 页面下载：
-<https://github.com/MeowLove/WISK/releases/tag/v3.0.0>。
+<https://github.com/MeowLove/WISK/releases/tag/v3.2.0>。
 
 ### 选择试用包
 
@@ -86,7 +86,7 @@ PowerShell 策略阻止运行校验器，请勿放宽策略；可用内置命令
 Apply/Verify 验收。随包提供的启动截图（如有）只覆盖所列界面，不能证明系统
 修改安全。
 
-我们计划根据可复现的社区反馈快速迭代 3.0。请使用 [WISK 3.0 问题反馈模板](https://github.com/MeowLove/WISK/issues/new?template=bug_report.md)
+我们计划根据可复现的社区反馈持续迭代 3.2。请使用 [WISK 问题反馈模板](https://github.com/MeowLove/WISK/issues/new?template=bug_report.md)
 提交问题，并包含 WISK 版本、包类型、Windows 版本和内部版本号、复现步骤、预期结果、实际结果，以及界面上可见的任务 ID。
 
 诊断导出会尝试隐藏已知账户、计算机、配置档、
