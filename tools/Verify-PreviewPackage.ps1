@@ -2,13 +2,17 @@
 param(
     [string]$PackageDirectory = $PSScriptRoot,
     [string]$ArchivePath,
-    [string]$ExpectedRuntimeMode
+    [string]$ExpectedRuntimeMode,
+    [string]$ExpectedVersion
 )
 
 $ErrorActionPreference = 'Stop'
 
 if ($ExpectedRuntimeMode -and $ExpectedRuntimeMode -notin @('FrameworkDependent', 'SelfContained')) {
     throw 'ExpectedRuntimeMode must be FrameworkDependent or SelfContained.'
+}
+if ($ExpectedVersion -and $ExpectedVersion -notmatch '^\d+\.\d+\.\d+$') {
+    throw 'ExpectedVersion must be a semantic version.'
 }
 
 $expectedNames = @('LICENSE', 'README.md', 'Verify-Package.ps1', 'WISK.exe', 'release-manifest.json')
@@ -75,7 +79,10 @@ else {
 
 $manifest = $manifestText | ConvertFrom-Json
 if ($manifest.product -cne 'WISK') { throw 'Manifest product is not WISK.' }
-if ($manifest.version -cne '3.0.0') { throw "Unexpected WISK version: $($manifest.version)" }
+if ($manifest.version -notmatch '^\d+\.\d+\.\d+$') { throw "Unexpected WISK version: $($manifest.version)" }
+if ($ExpectedVersion -and $manifest.version -cne $ExpectedVersion) {
+    throw "Unexpected WISK version: $($manifest.version), expected $ExpectedVersion"
+}
 if ($manifest.rid -cne 'win-x64' -or $manifest.architecture -cne 'x64') { throw 'Package is not Windows x64.' }
 if ($manifest.runtime -notmatch '^10\.') { throw "Unexpected .NET runtime line: $($manifest.runtime)" }
 if ($manifest.publishSingleFile -ne $true) { throw 'Package is not a single-file publish.' }
@@ -97,6 +104,6 @@ if ($ExpectedRuntimeMode -and $ExpectedRuntimeMode -cne $actualMode) {
     throw "Expected $ExpectedRuntimeMode but manifest describes $actualMode."
 }
 
-Write-Output "Verified $actualMode WISK 3.0.0 package payload: $payloadLength bytes, SHA-256 $payloadHash"
+Write-Output "Verified $actualMode WISK $($manifest.version) package payload: $payloadLength bytes, SHA-256 $payloadHash"
 Write-Output "Source commit: $($manifest.sourceCommit)"
 Write-Output 'This check confirms package consistency; it does not authenticate the publisher.'

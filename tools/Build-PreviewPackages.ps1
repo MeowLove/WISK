@@ -86,10 +86,10 @@ try {
         Copy-Item -LiteralPath $license -Destination (Join-Path $packageRoot 'LICENSE')
         Copy-Item -LiteralPath $verifier -Destination (Join-Path $packageRoot 'Verify-Package.ps1')
 
-        & $verifier -PackageDirectory $packageRoot -ExpectedRuntimeMode $spec.Mode
+        & $verifier -PackageDirectory $packageRoot -ExpectedRuntimeMode $spec.Mode -ExpectedVersion $Version
         $archivePath = Join-Path $stageRoot $spec.Archive
         Compress-Archive -Path (Join-Path $packageRoot '*') -DestinationPath $archivePath -CompressionLevel Optimal
-        & $verifier -ArchivePath $archivePath -ExpectedRuntimeMode $spec.Mode
+        & $verifier -ArchivePath $archivePath -ExpectedRuntimeMode $spec.Mode -ExpectedVersion $Version
         $archiveItem = Get-Item -LiteralPath $archivePath
         $archiveHash = (Get-FileHash -LiteralPath $archivePath -Algorithm SHA256).Hash.ToUpperInvariant()
         $builtPackages.Add([pscustomobject]@{
