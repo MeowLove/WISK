@@ -9,9 +9,8 @@ param(
 
 $ErrorActionPreference = "Stop"
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
-$versionReader = Join-Path $repoRoot "tools/Get-WiskVersion.ps1"
 if ([string]::IsNullOrWhiteSpace($Version)) {
-    $Version = (& $versionReader -RepositoryRoot $repoRoot).Trim()
+    $Version = (Get-Content -Raw -LiteralPath (Join-Path $repoRoot "VERSION")).Trim()
 }
 $project = Join-Path $repoRoot "src\Wisk.Cli\Wisk.Cli.csproj"
 $output = Join-Path $repoRoot "artifacts\publish\Release\SelfContained\cli\$Runtime"

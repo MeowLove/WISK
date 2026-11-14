@@ -1,9 +1,8 @@
 <Project>
   <PropertyGroup>
-    <WiskVersion>$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)VERSION').Trim())</WiskVersion>
-    <Version Condition="'$(Version)' == ''">$(WiskVersion)</Version>
-    <AssemblyVersion Condition="'$(AssemblyVersion)' == ''">$(WiskVersion).0</AssemblyVersion>
-    <FileVersion Condition="'$(FileVersion)' == ''">$(WiskVersion).0</FileVersion>
+    <Version Condition="'$(Version)' == ''">$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)VERSION').Trim())</Version>
+    <AssemblyVersion Condition="'$(AssemblyVersion)' == ''">$(Version).0</AssemblyVersion>
+    <FileVersion Condition="'$(FileVersion)' == ''">$(Version).0</FileVersion>
   </PropertyGroup>
   <PropertyGroup>
     <LangVersion>latest</LangVersion>

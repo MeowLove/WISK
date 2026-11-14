@@ -7,10 +7,10 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
-$versionReader = Join-Path $repoRoot 'tools/Get-WiskVersion.ps1'
 if ([string]::IsNullOrWhiteSpace($Version)) {
-    $Version = (& $versionReader -RepositoryRoot $repoRoot).Trim()
+    $Version = (Get-Content -Raw -LiteralPath (Join-Path $repoRoot 'VERSION')).Trim()
 }
+if ($Version -notmatch '^\d+\.\d+\.\d+$') { throw 'Version must be a semantic version.' }
 $sourceCommit = (& git -C $repoRoot rev-parse HEAD).Trim()
 if ($LASTEXITCODE -ne 0) { throw 'Unable to resolve the current Git commit.' }
 

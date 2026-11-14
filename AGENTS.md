@@ -20,9 +20,9 @@
 - Use `./Build-Wisk.ps1` for application/solution build, test, run, and publish
   operations. `packaging/Publish-*.ps1` are release wrappers that delegate
   compilation to it before signing and writing manifests.
-- `VERSION` is the canonical release version. Build, packaging, and catalog
-  validation scripts read or validate against it; do not add a second default
-  version in a script or project file.
+- `VERSION` is the canonical release version. Build and packaging scripts read
+  it when no version override is supplied; catalog validation checks public
+  catalog versions against it. Do not add another hard-coded default version.
 - Build profiles are `Test`, `Development`, and `Release`; runtime modes are
   `FrameworkDependent` and `SelfContained`.
 - All intermediate output belongs under
