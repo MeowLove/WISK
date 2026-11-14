@@ -1,4 +1,4 @@
-# WISK 3.2
+# WISK
 
 [English](README.md) | [简体中文](docs/README.zh-CN.md) | [Русский](docs/README.ru-RU.md)
 
@@ -17,14 +17,14 @@ WISK is the Windows member of the MeowLove Init Setup Kit family. The Linux coun
 
 WISK is designed for people who want a repeatable, reviewable Windows setup workflow instead of a collection of opaque one-click tweaks.
 
-- Current source version: **WISK 3.2.0**
-- Last public release: [WISK 3.0.0](https://github.com/MeowLove/WISK/releases/tag/v3.0.0)
+- Canonical version: [`VERSION`](VERSION)
+- Current public release: [GitHub Releases](https://github.com/MeowLove/WISK/releases/latest)
 - Project releases: [GitHub Releases](https://github.com/MeowLove/WISK/releases)
 - Issue reporting: [GitHub Issues](https://github.com/MeowLove/WISK/issues/new?template=bug_report.md)
 - Architecture: [WISK architecture](docs/WISK-3.0-Architecture.md)
 - Testing guide: [Release testing guide](docs/Preview-Testing.md)
 
-The 3.2 source line continues the controlled plugin workspace and the AI assistant placeholder labeled “In beta development.” It does not call a cloud AI API, run a local AI model, or execute AI-generated actions.
+The current release continues the controlled plugin workspace and the AI assistant placeholder labeled “In beta development.” It does not call a cloud AI API, run a local AI model, or execute AI-generated actions.
 
 ## Screenshots
 
@@ -83,7 +83,7 @@ The runtime and operating-system baseline alone do not guarantee that every task
 
 ## Quick Start
 
-1. Download the last public release, WISK 3.0.0, or build the WISK 3.2 source locally.
+1. Download the current public release, or build the source locally.
 2. Start the application and inspect the catalog.
 3. Configure parameterized tasks before adding them to the plan.
 4. Review dependencies, conflicts, risk levels, and required permissions.
@@ -163,6 +163,7 @@ Diagnostic exports use best-effort redaction. Review screenshots, logs, paths, d
 ```text
 src/                 WISK application layers and shared contracts
 tests/               Core, execution, bridge, catalog, and UI contract tests
+VERSION              Canonical release version consumed by builds and validation
 catalog/             Public software/settings catalog metadata
 schema/              Machine-readable catalog and profile schemas
 packaging/           Release and CLI publishing wrappers

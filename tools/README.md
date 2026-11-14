@@ -13,6 +13,8 @@ verifies both the staged package and the completed ZIP. It refuses to overwrite
 existing ZIPs by default and leaves unrelated files or subdirectories alone.
 `-ReplaceExisting` moves the known ZIPs and checksum file into a timestamped
 `.superseded-*` folder before creating replacements.
+When `-Version` is omitted, the script reads the canonical version from the
+repository-root `VERSION` file.
 
 `Verify-PreviewPackage.ps1` checks an extracted package or ZIP for the exact
 expected file set and verifies the WISK executable's length and SHA-256 against

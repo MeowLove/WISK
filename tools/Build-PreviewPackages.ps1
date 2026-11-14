@@ -1,12 +1,16 @@
 [CmdletBinding()]
 param(
     [ValidatePattern('^\d+\.\d+\.\d+$')]
-    [string]$Version = '3.0.0',
+    [string]$Version = '',
     [switch]$ReplaceExisting
 )
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+$versionReader = Join-Path $repoRoot 'tools/Get-WiskVersion.ps1'
+if ([string]::IsNullOrWhiteSpace($Version)) {
+    $Version = (& $versionReader -RepositoryRoot $repoRoot).Trim()
+}
 $sourceCommit = (& git -C $repoRoot rev-parse HEAD).Trim()
 if ($LASTEXITCODE -ne 0) { throw 'Unable to resolve the current Git commit.' }
 

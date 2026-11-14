@@ -10,7 +10,7 @@ param(
     [string]$Component = 'App',
     [ValidateSet('win-x64')]
     [string]$Runtime = 'win-x64',
-    [string]$Version = '3.2.0',
+    [string]$Version = '',
     [ValidateSet('NotSignedInLocalBuild', 'SignedRelease')]
     [string]$SignatureStatus = 'NotSignedInLocalBuild',
     [switch]$Restore,
@@ -20,6 +20,10 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = (Resolve-Path $PSScriptRoot).Path
+$versionReader = Join-Path $repoRoot 'tools/Get-WiskVersion.ps1'
+if ([string]::IsNullOrWhiteSpace($Version)) {
+    $Version = (& $versionReader -RepositoryRoot $repoRoot).Trim()
+}
 $solution = Join-Path $repoRoot 'Wisk.sln'
 $appProject = Join-Path $repoRoot 'src/Wisk.App/Wisk.App.csproj'
 $cliProject = Join-Path $repoRoot 'src/Wisk.Cli/Wisk.Cli.csproj'

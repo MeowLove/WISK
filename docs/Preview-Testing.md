@@ -1,12 +1,12 @@
-# WISK 3.2.0 Release Testing Guide
+# WISK Release Testing Guide
 
 ## English (authoritative)
 
-WISK 3.2.0 is a regular GitHub Release, not marked as a pre-release, and is
-intended for feedback-driven iteration. This unsigned release has not completed
+The current WISK release is a regular GitHub Release, not marked as a
+pre-release, and is intended for feedback-driven iteration. This unsigned
+release has not completed
 isolated system-change acceptance. Get the packages from the official release
-page:
-<https://github.com/MeowLove/WISK/releases/tag/v3.2.0>.
+page: <https://github.com/MeowLove/WISK/releases/latest>.
 
 ### Choose a package
 
@@ -42,7 +42,7 @@ isolated UAC, registry, software-install, reboot, or real Apply/Verify
 acceptance. UI startup screenshots, if supplied with the package, cover only
 the listed views and do not establish system-change safety.
 
-When reporting a problem, use the [WISK 3.0 issue template](https://github.com/MeowLove/WISK/issues/new?template=bug_report.md)
+When reporting a problem, use the [WISK issue template](https://github.com/MeowLove/WISK/issues/new?template=bug_report.md)
 and include WISK version, package type, Windows edition and build, reproduction
 steps, expected result, actual result, and the relevant task ID if visible.
 Diagnostic exports attempt to redact known account,
@@ -54,10 +54,10 @@ personal information. Do not attach passwords, tokens, or signing material.
 
 ## 简体中文
 
-WISK 3.2.0 是正式公开 Release，不标记为 Pre-release，
+当前 WISK 版本是正式公开 Release，不标记为 Pre-release，
 并将根据社区反馈持续迭代。此版本尚未签名，也尚未完成隔离环境中的系统修改验收。
 请从官方 Release 页面下载：
-<https://github.com/MeowLove/WISK/releases/tag/v3.2.0>。
+<https://github.com/MeowLove/WISK/releases/latest>。
 
 ### 选择试用包
 
@@ -86,7 +86,7 @@ PowerShell 策略阻止运行校验器，请勿放宽策略；可用内置命令
 Apply/Verify 验收。随包提供的启动截图（如有）只覆盖所列界面，不能证明系统
 修改安全。
 
-我们计划根据可复现的社区反馈持续迭代 3.2。请使用 [WISK 问题反馈模板](https://github.com/MeowLove/WISK/issues/new?template=bug_report.md)
+我们计划根据可复现的社区反馈持续迭代。请使用 [WISK 问题反馈模板](https://github.com/MeowLove/WISK/issues/new?template=bug_report.md)
 提交问题，并包含 WISK 版本、包类型、Windows 版本和内部版本号、复现步骤、预期结果、实际结果，以及界面上可见的任务 ID。
 
 诊断导出会尝试隐藏已知账户、计算机、配置档、

@@ -5,8 +5,10 @@ import path from "node:path";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const catalogPath = path.join(root, "catalog", "index.json");
 const schemaPath = path.join(root, "schema", "catalog.schema.json");
+const versionPath = path.join(root, "VERSION");
 
 const readJson = async (filePath) => JSON.parse(await readFile(filePath, "utf8"));
+const canonicalVersion = (await readFile(versionPath, "utf8")).trim();
 const fail = (message) => {
   console.error(`WISK catalog invalid: ${message}`);
   process.exitCode = 1;
@@ -34,6 +36,8 @@ const idsAreUnique = (items, label) => {
 
 if (catalog.schemaVersion !== 1) fail("schemaVersion must be 1");
 if (!isSemver(catalog.catalogVersion)) fail("catalogVersion must use x.y.z format");
+if (!isSemver(canonicalVersion)) fail("VERSION must use x.y.z format");
+if (catalog.catalogVersion !== canonicalVersion) fail(`catalogVersion must match VERSION (${canonicalVersion})`);
 if (!/^\d{4}-\d{2}-\d{2}$/.test(catalog.updatedAt)) fail("updatedAt must use YYYY-MM-DD format");
 if (!catalog.publisher || !isId(catalog.publisher.id) || !catalog.publisher.name || !isUrl(catalog.publisher.website)) {
   fail("publisher must contain a valid id, name, and HTTP(S) website");
@@ -55,6 +59,9 @@ for (const repository of repositories) {
 for (const application of applications) {
   if (!isId(application.id)) fail(`invalid application id: ${application.id}`);
   if (!isSemver(application.version)) fail(`application ${application.id} has an invalid version`);
+  if (application.id === "wisk" && application.version !== canonicalVersion) {
+    fail(`application ${application.id} version must match VERSION (${canonicalVersion})`);
+  }
   if (!repositoryIds.has(application.repositoryId)) {
     fail(`application ${application.id} references unknown repository ${application.repositoryId}`);
   }

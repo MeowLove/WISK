@@ -22,7 +22,7 @@
     {
       "id": "wisk",
       "name": "WISK",
-      "description": "WISK 3.2 Windows 11 initialization and configuration workspace with auditable plans, software actions, registry-backed settings, and plugin management.",
+      "description": "WISK Windows 11 initialization and configuration workspace with auditable plans, software actions, registry-backed settings, and plugin management.",
       "status": "preview",
       "version": "3.2.0",
       "repositoryId": "wisk",

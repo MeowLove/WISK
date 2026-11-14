@@ -1,4 +1,4 @@
-# WISK 3.2
+# WISK
 
 [English](../README.md) | [简体中文](README.zh-CN.md) | [Русский](README.ru-RU.md)
 
@@ -15,14 +15,14 @@ WISK 是 MeowLove Init Setup Kit 系列中的 Windows 项目，Linux 对应项�
 
 WISK 面向希望拥有可重复、可审查 Windows 配置流程的用户，而不是一组无法解释的一键优化开关。
 
-- 当前源码版本：**WISK 3.2.0**
-- 最后一个公开版本：[WISK 3.0.0](https://github.com/MeowLove/WISK/releases/tag/v3.0.0)
+- 版本源：[`VERSION`](../VERSION)
+- 当前公开版本：[GitHub Releases](https://github.com/MeowLove/WISK/releases/latest)
 - 项目发布页：[GitHub Releases](https://github.com/MeowLove/WISK/releases)
 - 问题反馈：[GitHub Issues](https://github.com/MeowLove/WISK/issues/new?template=bug_report.md)
 - 架构说明：[WISK 架构文档](WISK-3.0-Architecture.md)
 - 测试指南：[Release 测试指南](Preview-Testing.md)
 
-3.2 源码线延续受控插件工作区和标记为“内测开发中”的 AI 助手占位页面。当前版本不调用云端 AI API、不运行本地 AI 模型，也不执行 AI 生成的操作。
+当前版本延续受控插件工作区和标记为“内测开发中”的 AI 助手占位页面。当前版本不调用云端 AI API、不运行本地 AI 模型，也不执行 AI 生成的操作。
 
 ## 截图
 
@@ -79,7 +79,7 @@ WISK 是管理工具，不是通用系统优化器、云端 AI 代理或无人�
 
 ## 快速开始
 
-1. 下载最后一个公开版本 WISK 3.0.0，或在本地构建 WISK 3.2 源码。
+1. 下载当前公开版本，或在本地构建源码。
 2. 启动程序并浏览任务目录。
 3. 先配置参数，再把需要参数的任务加入计划。
 4. 检查依赖、冲突、风险等级和所需权限。

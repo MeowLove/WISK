@@ -2,13 +2,17 @@
 param(
     [string]$Configuration = "Release",
     [string]$Runtime = "win-x64",
-    [string]$Version = "3.2.0",
+    [string]$Version = "",
     [string]$CertificateThumbprint = "",
     [string]$TimestampServer = ""
 )
 
 $ErrorActionPreference = "Stop"
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+$versionReader = Join-Path $repoRoot "tools/Get-WiskVersion.ps1"
+if ([string]::IsNullOrWhiteSpace($Version)) {
+    $Version = (& $versionReader -RepositoryRoot $repoRoot).Trim()
+}
 $project = Join-Path $repoRoot "src\Wisk.Cli\Wisk.Cli.csproj"
 $output = Join-Path $repoRoot "artifacts\publish\Release\SelfContained\cli\$Runtime"
 $manifestPath = Join-Path $output "release-manifest.json"
